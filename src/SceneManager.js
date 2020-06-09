@@ -26,7 +26,7 @@ function init(scenes){
     scenes[0].add(cube2);
 
     let cube3=cube.clone();
-    cube3.position.set(-20,20,0);
+    cube3.position.set(-40,20,0);
     cubes.push(cube3)
     scenes[0].add(cube3);
 

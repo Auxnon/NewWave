@@ -21,7 +21,7 @@ var loader;
 var mixer;
 
 var SHADOW_SIZE=2048;
-var SIZE_DIVIDER=1;
+var SIZE_DIVIDER=2;
 
 var alphaCanvas;
 var betaCanvas;
@@ -33,8 +33,8 @@ var activeCanvas;
 
 function init(){
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
-    camera.position.z = 400;
-    camera.position.y = -800;
+    camera.position.z = 100; //400
+    camera.position.y = -200; //-800
     camera.up=new THREE.Vector3(0,0,1)
 
     camera.lookAt(new THREE.Vector3( 0, 100, 0 ));
@@ -50,11 +50,11 @@ function init(){
     betaCanvas.reserved=false;
 
 
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer({alpha: true});
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    renderer.setClearColor(0xb0e9fd,1);//0xb0e9fd,1)
+    renderer.setClearColor(0x000000, 0);//0xb0e9fd,1);//0xb0e9fd,1)
 
     alphaCanvas.appendChild( renderer.domElement );
 
@@ -69,6 +69,7 @@ function init(){
     resizer();
 
     animate();
+    window.camera=camera;
 }
 function getAlphaCanvas(){
     return alphaCanvas;
@@ -175,7 +176,7 @@ function animationControl(ev){
 */
 
 function resizer(){
-    docWidth=window.innerWidth;
+    docWidth=Math.floor(window.innerWidth*0.76);
     docHeight=window.innerHeight;
     camera.aspect=docWidth/docHeight;
     camera.updateProjectionMatrix();
@@ -194,8 +195,22 @@ function animate(time) {
     renderer.render( activeScene, camera );
     //prevTime=time;
     //applyCursor();
+    //if(_grabImage == true){
+       // dumpImage(renderer.domElement.toDataURL());
+        //_grabImage = false;
+   // }
  
     requestAnimationFrame( animate );
+}
+function dumpImage(img){
+    let dom=document.querySelector('#afterImage');
+    if(dom)
+        dom.setAttribute('src',img);
+}
+function bufferPrint(){
+    //_grabImage=true;
+    renderer.render( activeScene, camera );
+    dumpImage(renderer.domElement.toDataURL());
 }
 
 var anchors=[];
@@ -408,4 +423,4 @@ function projectVector(object){
 }
 
 
-export {init,getAlphaCanvas,getBetaCanvas,flipScene}
+export {init,getAlphaCanvas,getBetaCanvas,flipScene,bufferPrint}
