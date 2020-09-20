@@ -2,7 +2,7 @@ import * as THREE from "./lib/three.module.js";
 import * as Render from "./Render.js";
 
 let cubes=[];
-
+let greenModel
 
 function init(scenes){
 	for(let i=0;i<5;i++){
@@ -10,17 +10,38 @@ function init(scenes){
     }
 
     let cubeGeometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
-   	let cubeMaterial = new THREE.MeshBasicMaterial( { color:0xff8833 } ); //map: texture
+   	let cubeMaterial = new THREE.MeshStandardMaterial( { color:0xff8833 } ); //map: texture
 
-   	let cube=new THREE.Mesh(cubeGeometry,cubeMaterial);
+   /*	let cube=new THREE.Mesh(cubeGeometry,cubeMaterial);
 
    	cube.position.set(10,10,10);
 
 
    	cubes.push(cube)
-    scenes[0].add(cube);
+    scenes[0].add(cube);*/
 
-    let cube2=cube.clone();
+    Render.loadModel('assets/island.glb',function(m){
+      m.scale.set(10,10,10)
+      m.position.set(0,260,-40)
+      scenes[0].add(m);
+      greenModel=m
+      window.model=m;
+    })
+
+    var ambientLight = new THREE.AmbientLight( 0xffffff ); // soft white light
+    scenes[0].add( ambientLight );
+    var sunLight = new THREE.DirectionalLight( 0xffffff, 2 ); //DirectionalLight
+    sunLight.position.set(0,1,0);
+    sunLight.castShadow = true;
+    scenes[0].add( sunLight );
+    var sunTarget=new THREE.Object3D();
+    sunTarget.position.set(-20,0,-20);
+    scenes[0].add( sunTarget );
+    sunLight.target=sunTarget;
+    window.sunTarget=sunTarget;
+    window.sunLight=sunLight
+
+   /* let cube2=cube.clone();
     cube2.position.set(-20,-20,0);
     cubes.push(cube2)
     scenes[0].add(cube2);
@@ -28,7 +49,7 @@ function init(scenes){
     let cube3=cube.clone();
     cube3.position.set(-40,20,0);
     cubes.push(cube3)
-    scenes[0].add(cube3);
+    scenes[0].add(cube3);*/
 
 
 
@@ -60,10 +81,25 @@ function init(scenes){
 
 }
 
+var value=0;
+var dir=1;
+
 function animate(){
 	cubes.forEach(c=>{
 		c.rotation.z+=0.1;
 	})
+
+  if(greenModel){
+    value+=0.0005*dir
+    if(value>1 || value<0){
+      dir=-dir
+    }
+    greenModel.rotation.y=5.4+value*0.6//5.2 - 6
+    //m.position.set(0,260,-40)
+    greenModel.position.set(30-30*value,-80 +340*value,20 -60*value)
+   // x: 30, y: -80, z: 20
+    //console.log(greenModel.rotation.y)
+  }
 }
 function flipScene(i){
 

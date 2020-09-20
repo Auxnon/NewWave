@@ -2,12 +2,18 @@ const path = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-module.exports = {
-  mode: 'production', //'production',
+module.exports = (env,argv) => {
+	let devMode= argv.mode !== 'production';
+	console.log("dev mode is "+devMode+" "+argv.mode);
+
+return {
+  mode: 'development', //'production',
   entry: './src/Main.js',
   plugins:[
-  	new CleanWebpackPlugin({
-  		protectWebpackAssets: false,
+  	new CleanWebpackPlugin({ 
+  		dry:false,
+  		cleanOnceBeforeBuildPatterns:['**/*','!styles','!styles/*','!assets','!assets/*'],
+  		verbose: true
   	}),
   	new HtmlWebpackPlugin({template: './src/index.html'}),
   ],
@@ -34,3 +40,4 @@ module.exports = {
 		},
 	},*/
 };
+}

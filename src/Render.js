@@ -68,6 +68,10 @@ function init(){
     window.addEventListener('resize',resizer);
     resizer();
 
+
+
+    
+
     animate();
     window.camera=camera;
 }
@@ -80,7 +84,6 @@ function getBetaCanvas(){
 function flipScene(i,c){
     activeScene=scenes[i];
 }
-
 function loadModel(model,callback,texture,color){
     loader.load(
         ('./'+model),//villager22.gltf',
@@ -107,7 +110,7 @@ function loadModel(model,callback,texture,color){
                                 child.material = new THREE.MeshStandardMaterial({ vertexColors: THREE.VertexColors, metalness: 0, roughness: 1.0}); // 
                           
                             child.material.needsUpdate = true;
-                            child.material.skinning=true;
+                            //child.material.skinning=true;
                         }
                         //child.material.morphTargets=true;
 
@@ -148,9 +151,9 @@ function loadModel(model,callback,texture,color){
                             action.play();
                     }
                 }
-                 mainScene.add( gltf.scene.children[0] );
+                 //mainScene.add( gltf.scene.children[0] );
              }
-            callback(m2);
+            callback(gltf.scene);
         },
         ( xhr ) => {
             // called while loading is progressing
@@ -420,7 +423,8 @@ function projectVector(object){
     vector.x = ( vector.x * widthHalf ) + widthHalf;
     vector.y = - ( vector.y * heightHalf ) + heightHalf;
     return vector;
+
 }
 
 
-export {init,getAlphaCanvas,getBetaCanvas,flipScene,bufferPrint}
+export {init,getAlphaCanvas,getBetaCanvas,flipScene,bufferPrint,loadModel}
