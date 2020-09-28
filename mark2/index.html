@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		body{
+			background-color: white;
+		}
+		.app{
+			position: absolute;
+			background-color: red;
+			border-radius:  16px;
+			width: 128px;
+			height: 128px;
+			left: 128px;
+			top: 128px;
+			transform: translate(-50%,-50%);
+			transition: 0.4s;
+			z-index: 1;
+		}
+		#bar{
+			position: absolute;
+			width: 256px;
+			height: 128px;
+			border-radius: 32px;
+			background-color: #0004;
+			bottom: 64px;
+			left: 50%;
+			transform: translate(-50%,-50%);
+		}
+		.appMax{
+			width: 100%;
+			height: 100%;
+			border-radius: 0px;
+			top: 50% !important;
+			left: 50% !important;
+		}
+		#two{
+			background-color: blue;
+			left: 256px;
+			top: 264px;
+		}
+		#thr{
+			background-color: green;
+			left: 356px;
+			top: 34px;
+		}
+		svg{
+			position: absolute;
+			left: 0;
+			top: 0;
+			margin:0;
+		}
+
+
+	</style>
+</head>
+<body>
+	<div id="bar"></div>
+	<div class="app" id="one"></div>
+	<div class="app" id="two"></div>
+	<div class="app" id="thr"></div>
+	<svg stroke="black" fill="none" stroke-width="6" stroke-linecap="round">
+		<path d="M0 0 L 100 100"/>	
+	</svg>
+</body>
+<script>
+	var focused;
+	var apps;
+	var path;
+	function init(argument) {
+		// body...
+		apps=document.querySelectorAll('.app');
+		apps.forEach(app=>{
+			app.style.top=Math.random()*512+'px'
+			app.style.left=Math.random()*512+'px'
+			app.addEventListener('click',ev=>{
+				if(focused && focused==app){
+					app.classList.remove('appMax')
+					focused=undefined;
+					app.style.zIndex=1;
+				}else{
+					app.classList.add('appMax')
+					if(focused){
+						focused.classList.remove('appMax')
+						focused.style.zIndex=1;
+						/*apps.forEach(appi=>{
+							appi.style.zIndex=0;
+						}*/
+					}
+					app.style.zIndex=0;
+					focused=app;
+				}
+			
+		})
+		})
+		setInterval(()=>{
+			apps.forEach(app=>{
+				app.style.top=parseInt(app.style.top)+rand()+'px'
+				app.style.left=parseInt(app.style.left)+rand()+'px'
+			})
+		},1000);
+		path=document.querySelector('path')
+		let svg=document.querySelector('svg')
+		svg.setAttribute('width',window.innerWidth+"px")
+		svg.setAttribute('height',window.innerHeight+"px")
+		initLine();
+		window.addEventListener('mousemove',mousemove)
+		
+	}init();
+	function rand(){
+		return Math.random()*100 -50;
+	}
+	//var mousePrev={x:0,y:0}
+	var mouseObj={x:0,y:0}
+	var points
+	function initLine(){
+		points=[];
+		for(let i=0;i<10;i++){
+			points.push({x:0,y:0});
+		}
+	}
+	var count=0;
+	var tick=false;
+	
+	function mousemove(ev){
+		if(count>20){
+			count=0;
+			mouseObj={x:ev.clientX,y:ev.clientY}
+			let diff={x:mouseObj.x-points[0].x,y:mouseObj.y-points[0].y}
+			let dr=Math.sqrt(diff.x*diff.x + diff.y*diff.y)
+			console.log(diff)
+			mouseObj.x-=(tick?1:-1)*20*diff.y/dr;
+			mouseObj.y+=(tick?1:-1)*20*diff.x/dr;
+			let dir=Math.abs(diff.x)>Math.abs(diff.y);
+
+			
+			tick=!tick
+			let st="M"+mouseObj.x+" "+mouseObj.y;//+"L"+mousePrev.x+" "+mousePrev.y
+			let last={x:mouseObj.x,y:mouseObj.y,dir:dir};
+			let lastMode=-1;
+			for(let i=0;i<points.length;i++){
+				//st+="M"+last.x+" "+last.y
+				let halfy=(points[i].y-last.y)/2
+				let halfx=(points[i].x-last.x)/2
+				if(lastMode==-1){
+					lastMode=(Math.abs(halfx)<Math.abs(halfy))?1:0
+				}
+				if(points[i].dir==last.dir){
+					if(points[i].dir){ //up down dir
+						st+="Q"+last.x+" "+(last.y+halfy)+" "+(last.x+halfx)+" "+(last.y+halfy);
+						st+="Q"+points[i].x+" "+(last.y+halfy)+" "+points[i].x+" "+points[i].y;
+						
+					}else{ //left right dir
+						st+="Q"+(last.x+halfx)+" "+last.y+" "+(last.x+halfx)+" "+(last.y+halfy);
+						st+="Q"+(last.x+halfx)+" "+points[i].y+" "+points[i].x+" "+points[i].y;
+						
+					}
+				}else{ //curve in then
+					if(last.dir){ // true is x left right
+						st+="Q"+(points[i].x)+" "+last.y+" "+points[i].x+" "+points[i].y;
+					}else{
+						st+="Q"+(last.x)+" "+points[i].y+" "+points[i].x+" "+points[i].y;
+					}
+				}
+				
+				
+
+				
+
+
+				let prev={x:points[i].x,y:points[i].y};
+				points[i]={x:last.x,y:last.y,dir:last.dir};
+				last=prev;
+			}
+			path.setAttribute('d',st)
+
+			mousePrev=mouseObj;
+		}count++
+		
+	}
+
+</script>
+</html>
