@@ -6,7 +6,7 @@
 	<title>Document</title>
 	<style>
 		body{
-			background-color: white;
+			background-color: black;
 		}
 		.app{
 			position: absolute;
@@ -25,7 +25,7 @@
 			width: 256px;
 			height: 128px;
 			border-radius: 32px;
-			background-color: #0004;
+			background-color: #4444;
 			bottom: 64px;
 			left: 50%;
 			transform: translate(-50%,-50%);
@@ -52,6 +52,7 @@
 			left: 0;
 			top: 0;
 			margin:0;
+			pointer-events: none;
 		}
 
 
@@ -62,7 +63,7 @@
 	<div class="app" id="one"></div>
 	<div class="app" id="two"></div>
 	<div class="app" id="thr"></div>
-	<svg stroke="black" fill="none" stroke-width="6" stroke-linecap="round">
+	<svg stroke="white" fill="none" stroke-width="6" stroke-linecap="round">
 		<path d="M0 0 L 100 100"/>	
 	</svg>
 </body>
@@ -124,6 +125,7 @@
 	}
 	var count=0;
 	var tick=false;
+	var lastDir=false
 	
 	function mousemove(ev){
 		if(count>20){
@@ -131,15 +133,19 @@
 			mouseObj={x:ev.clientX,y:ev.clientY}
 			let diff={x:mouseObj.x-points[0].x,y:mouseObj.y-points[0].y}
 			let dr=Math.sqrt(diff.x*diff.x + diff.y*diff.y)
-			console.log(diff)
+			///console.log(diff)
 			mouseObj.x-=(tick?1:-1)*20*diff.y/dr;
 			mouseObj.y+=(tick?1:-1)*20*diff.x/dr;
 			let dir=Math.abs(diff.x)>Math.abs(diff.y);
+			let pos=dir?diff.x>0:diff.y>0
+			/*if(dir!=lastDir)
+				tick=!tick
+			lastDir=dir*/
 
 			
 			tick=!tick
 			let st="M"+mouseObj.x+" "+mouseObj.y;//+"L"+mousePrev.x+" "+mousePrev.y
-			let last={x:mouseObj.x,y:mouseObj.y,dir:dir};
+			let last={x:mouseObj.x,y:mouseObj.y,dir:dir,pos:pos};
 			let lastMode=-1;
 			for(let i=0;i<points.length;i++){
 				//st+="M"+last.x+" "+last.y
@@ -149,10 +155,9 @@
 					lastMode=(Math.abs(halfx)<Math.abs(halfy))?1:0
 				}
 				if(points[i].dir==last.dir){
-					if(points[i].dir){ //up down dir
+					if(!last.dir){ //up down dir //points[i].dir
 						st+="Q"+last.x+" "+(last.y+halfy)+" "+(last.x+halfx)+" "+(last.y+halfy);
 						st+="Q"+points[i].x+" "+(last.y+halfy)+" "+points[i].x+" "+points[i].y;
-						
 					}else{ //left right dir
 						st+="Q"+(last.x+halfx)+" "+last.y+" "+(last.x+halfx)+" "+(last.y+halfy);
 						st+="Q"+(last.x+halfx)+" "+points[i].y+" "+points[i].x+" "+points[i].y;
@@ -160,7 +165,17 @@
 					}
 				}else{ //curve in then
 					if(last.dir){ // true is x left right
-						st+="Q"+(points[i].x)+" "+last.y+" "+points[i].x+" "+points[i].y;
+						if((halfy>0)!=last.pos){
+							st+="C"+(last.x)+" "+(last.y-halfy)+" "+(last.x+halfx)+" "+(last.y-halfy)+" "+(last.x+halfx)+" "+(last.y+halfy);
+
+							st+="Q"+(last.x+halfx)+" "+(last.y+halfy)+" "+points[i].x+" "+points[i].y;
+													console.log('special')
+
+
+						}else{
+							st+="Q"+(points[i].x)+" "+last.y+" "+points[i].x+" "+points[i].y;
+						}
+						
 					}else{
 						st+="Q"+(last.x)+" "+points[i].y+" "+points[i].x+" "+points[i].y;
 					}
@@ -171,8 +186,8 @@
 				
 
 
-				let prev={x:points[i].x,y:points[i].y};
-				points[i]={x:last.x,y:last.y,dir:last.dir};
+				let prev={x:points[i].x,y:points[i].y,dir:points[i].dir,pos:points[i].pos};
+				points[i]={x:last.x,y:last.y,dir:last.dir,pos:last.pos};
 				last=prev;
 			}
 			path.setAttribute('d',st)
