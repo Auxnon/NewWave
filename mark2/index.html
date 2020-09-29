@@ -109,13 +109,16 @@
 		svg.setAttribute('height',window.innerHeight+"px")
 		initLine();
 		window.addEventListener('mousemove',mousemove)
+		window.addEventListener('click',click)
+		mouseObj={x:0,y:0}
+		animate();
 		
 	}init();
 	function rand(){
 		return Math.random()*100 -50;
 	}
 	//var mousePrev={x:0,y:0}
-	var mouseObj={x:0,y:0}
+	var mouseObj;
 	var points
 	function initLine(){
 		points=[];
@@ -126,74 +129,133 @@
 	var count=0;
 	var tick=false;
 	var lastDir=false
-	
-	function mousemove(ev){
-		if(count>20){
-			count=0;
-			mouseObj={x:ev.clientX,y:ev.clientY}
+	var mouseToggle=0;
+
+	function click(){
+		if(mouseToggle>0)
+			mouseToggle=0;
+		else
+			mouseToggle=1;
+	}
+	function animate(){
+			if(mouseToggle){
+				let target={};
+				switch(mouseToggle){
+					case 2: target={x:100,y:200};break;
+					case 3: target={x:100,y:600};break;
+					default:target={x:100,y:100}
+				}
+				let dx=mouseObj.x-target.x;
+				let dy=mouseObj.y-target.y;
+				let dr=Math.sqrt(dx*dx +dy*dy)
+				mouseObj.x-=dx/20
+				mouseObj.y-=dy/20
+				if(dr<1 && mouseToggle<3 )
+					mouseToggle++;
+			}
+		
 			let diff={x:mouseObj.x-points[0].x,y:mouseObj.y-points[0].y}
 			let dr=Math.sqrt(diff.x*diff.x + diff.y*diff.y)
-			///console.log(diff)
-			mouseObj.x-=(tick?1:-1)*20*diff.y/dr;
-			mouseObj.y+=(tick?1:-1)*20*diff.x/dr;
-			let dir=Math.abs(diff.x)>Math.abs(diff.y);
-			let pos=dir?diff.x>0:diff.y>0
-			/*if(dir!=lastDir)
+			if(dr>40){
+				///console.log(diff)
+
+				let fresh;
+				if(mouseToggle>1){
+					fresh={x:mouseObj.x,y:mouseObj.y};
+				}else{
+					fresh={x:mouseObj.x-(tick?1:-1)*20*diff.y/dr,y:mouseObj.y+(tick?1:-1)*20*diff.x/dr};
+				}
+				
+
+				/*mouseObj.x-=(tick?1:-1)*20*diff.y/dr;
+				mouseObj.y+=(tick?1:-1)*20*diff.x/dr;*/
+				let dir=Math.abs(diff.x)>Math.abs(diff.y);
+				let pos=dir?diff.x>0:diff.y>0
+				/*if(dir!=lastDir)
+					tick=!tick
+				lastDir=dir*/
 				tick=!tick
-			lastDir=dir*/
 
-			
-			tick=!tick
-			let st="M"+mouseObj.x+" "+mouseObj.y;//+"L"+mousePrev.x+" "+mousePrev.y
-			let last={x:mouseObj.x,y:mouseObj.y,dir:dir,pos:pos};
-			let lastMode=-1;
-			for(let i=0;i<points.length;i++){
-				//st+="M"+last.x+" "+last.y
-				let halfy=(points[i].y-last.y)/2
-				let halfx=(points[i].x-last.x)/2
-				if(lastMode==-1){
-					lastMode=(Math.abs(halfx)<Math.abs(halfy))?1:0
+				let st="M"+mouseObj.x+" "+mouseObj.y;
+				let last={x:fresh.x,y:fresh.y};
+				for(let i=0;i<points.length;i++){
+					let halfy=(points[i].y-last.y)/2
+					let halfx=(points[i].x-last.x)/2
+					let midx=last.x+halfx;
+					let midy=last.y+halfy;
+					st+="Q"+last.x+" "+last.y+" "+midx+" "+midy//+points[i].x+" "+points[i].y
+
+					let prev={x:points[i].x,y:points[i].y};
+					points[i]={x:last.x,y:last.y};
+					last=prev;
 				}
-				if(points[i].dir==last.dir){
-					if(!last.dir){ //up down dir //points[i].dir
-						st+="Q"+last.x+" "+(last.y+halfy)+" "+(last.x+halfx)+" "+(last.y+halfy);
-						st+="Q"+points[i].x+" "+(last.y+halfy)+" "+points[i].x+" "+points[i].y;
-					}else{ //left right dir
-						st+="Q"+(last.x+halfx)+" "+last.y+" "+(last.x+halfx)+" "+(last.y+halfy);
-						st+="Q"+(last.x+halfx)+" "+points[i].y+" "+points[i].x+" "+points[i].y;
-						
-					}
-				}else{ //curve in then
-					if(last.dir){ // true is x left right
-						if((halfy>0)!=last.pos){
-							st+="C"+(last.x)+" "+(last.y-halfy)+" "+(last.x+halfx)+" "+(last.y-halfy)+" "+(last.x+halfx)+" "+(last.y+halfy);
-
-							st+="Q"+(last.x+halfx)+" "+(last.y+halfy)+" "+points[i].x+" "+points[i].y;
-													console.log('special')
-
-
-						}else{
-							st+="Q"+(points[i].x)+" "+last.y+" "+points[i].x+" "+points[i].y;
-						}
-						
-					}else{
-						st+="Q"+(last.x)+" "+points[i].y+" "+points[i].x+" "+points[i].y;
-					}
-				}
-				
-				
-
-				
-
-
-				let prev={x:points[i].x,y:points[i].y,dir:points[i].dir,pos:points[i].pos};
-				points[i]={x:last.x,y:last.y,dir:last.dir,pos:last.pos};
-				last=prev;
+				path.setAttribute('d',st)
 			}
-			path.setAttribute('d',st)
 
-			mousePrev=mouseObj;
-		}count++
+		requestAnimationFrame(animate);
+	}
+	
+	function mousemove(ev){
+		if(mouseToggle==0){
+			if(count>2){
+				count=0;
+				/*let dd={x:mouseObj.x-ev.clientX,y:mouseObj.y-ev.clientY}
+				mouseObj.x-=dd.x/20
+				mouseObj.y-=dd.y/20*/
+				mouseObj={x:ev.clientX,y:ev.clientY}
+				/*
+
+				let last={x:mouseObj.x,y:mouseObj.y,dir:dir,pos:pos};
+				let lastMode=-1;
+				for(let i=0;i<points.length;i++){
+					//st+="M"+last.x+" "+last.y
+					let halfy=(points[i].y-last.y)/2
+					let halfx=(points[i].x-last.x)/2
+					if(lastMode==-1){
+						lastMode=(Math.abs(halfx)<Math.abs(halfy))?1:0
+					}
+					if(points[i].dir==last.dir){
+						if(!last.dir){ //up down dir //points[i].dir
+							st+="Q"+last.x+" "+(last.y+halfy)+" "+(last.x+halfx)+" "+(last.y+halfy);
+							st+="Q"+points[i].x+" "+(last.y+halfy)+" "+points[i].x+" "+points[i].y;
+						}else{ //left right dir
+							st+="Q"+(last.x+halfx)+" "+last.y+" "+(last.x+halfx)+" "+(last.y+halfy);
+							st+="Q"+(last.x+halfx)+" "+points[i].y+" "+points[i].x+" "+points[i].y;
+							
+						}
+					}else{ //curve in then
+						if(last.dir){ // true is x left right
+							if((halfy>0)!=last.pos){
+								st+="C"+(last.x)+" "+(last.y-halfy)+" "+(last.x+halfx)+" "+(last.y-halfy)+" "+(last.x+halfx)+" "+(last.y+halfy);
+
+								st+="Q"+(last.x+halfx)+" "+(last.y+halfy)+" "+points[i].x+" "+points[i].y;
+														console.log('special')
+
+
+							}else{
+								st+="Q"+(points[i].x)+" "+last.y+" "+points[i].x+" "+points[i].y;
+							}
+							
+						}else{
+							st+="Q"+(last.x)+" "+points[i].y+" "+points[i].x+" "+points[i].y;
+						}
+					}
+					
+					
+
+					
+
+
+					let prev={x:points[i].x,y:points[i].y,dir:points[i].dir,pos:points[i].pos};
+					points[i]={x:last.x,y:last.y,dir:last.dir,pos:last.pos};
+					last=prev;
+				}*/
+				
+
+				//mousePrev=mouseObj;
+			}count++
+		}
+		
 		
 	}
 
