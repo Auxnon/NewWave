@@ -20,6 +20,10 @@
 			transition: 0.4s;
 			z-index: 1;
 		}
+		.appMove{
+			bor
+			transition: border-radius 0.4s, width 0.4s, height 0.4s;
+		}
 		#bar{
 			position: absolute;
 			width: 256px;
@@ -94,15 +98,22 @@
 					app.style.zIndex=0;
 					focused=app;
 				}
-			
+
+			})
+			app.addEventListener('mousedown',function(ev){
+				targetMove=app;
+			})
 		})
+		window.addEventListener('mouseup',function(ev){
+			targetMove=undefined;
 		})
-		setInterval(()=>{
+		/*setInterval(()=>{
 			apps.forEach(app=>{
 				app.style.top=parseInt(app.style.top)+rand()+'px'
 				app.style.left=parseInt(app.style.left)+rand()+'px'
+				
 			})
-		},1000);
+		},1000);*/
 		path=document.querySelector('path')
 		let svg=document.querySelector('svg')
 		svg.setAttribute('width',window.innerWidth+"px")
@@ -110,6 +121,7 @@
 		initLine();
 		window.addEventListener('mousemove',mousemove)
 		window.addEventListener('click',click)
+
 		mouseObj={x:0,y:0}
 		animate();
 		
@@ -130,6 +142,7 @@
 	var tick=false;
 	var lastDir=false
 	var mouseToggle=0;
+	var targetMove=undefined;
 
 	function click(){
 		if(mouseToggle>0)
@@ -196,7 +209,10 @@
 	}
 	
 	function mousemove(ev){
-		if(mouseToggle==0){
+		if(targetMove){
+			targetMove.style.left=ev.clientX+'px'
+			targetMove.style.top=ev.clientY+'px'
+		}else if(mouseToggle==0){
 			if(count>2){
 				count=0;
 				/*let dd={x:mouseObj.x-ev.clientX,y:mouseObj.y-ev.clientY}
