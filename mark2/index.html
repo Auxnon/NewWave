@@ -21,7 +21,7 @@
 			z-index: 1;
 		}
 		.appMove{
-			bor
+			border-top: 3px white solid;
 			transition: border-radius 0.4s, width 0.4s, height 0.4s;
 		}
 		#bar{
@@ -102,9 +102,12 @@
 			})
 			app.addEventListener('mousedown',function(ev){
 				targetMove=app;
+				targetMove.classList.add('appMove')
 			})
 		})
 		window.addEventListener('mouseup',function(ev){
+			if(targetMove)
+				targetMove.classList.remove('appMove')
 			targetMove=undefined;
 		})
 		/*setInterval(()=>{
