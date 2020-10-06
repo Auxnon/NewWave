@@ -7,6 +7,7 @@
 	<style>
 		body{
 			background-color: black;
+			overflow: hidden;
 		}
 		.app{
 			position: absolute;
@@ -21,7 +22,7 @@
 			z-index: 1;
 		}
 		.appMove{
-			border-top: 3px white solid;
+			border-top: 6px white solid;
 			transition: border-radius 0.4s, width 0.4s, height 0.4s;
 		}
 		#bar{
@@ -74,42 +75,24 @@
 <script>
 	var focused;
 	var apps;
+	var svg;
 	var path;
+	var bar;
+	var appPoints;
 	function init(argument) {
 		// body...
 		apps=document.querySelectorAll('.app');
-		apps.forEach(app=>{
+		apps.forEach((app,index)=>{
 			app.style.top=Math.random()*512+'px'
 			app.style.left=Math.random()*512+'px'
 			app.addEventListener('click',ev=>{
-				if(focused && focused==app){
-					app.classList.remove('appMax')
-					focused=undefined;
-					app.style.zIndex=1;
-				}else{
-					app.classList.add('appMax')
-					if(focused){
-						focused.classList.remove('appMax')
-						focused.style.zIndex=1;
-						/*apps.forEach(appi=>{
-							appi.style.zIndex=0;
-						}*/
-					}
-					app.style.zIndex=0;
-					focused=app;
-				}
-
+				
 			})
-			app.addEventListener('mousedown',function(ev){
-				targetMove=app;
-				targetMove.classList.add('appMove')
-			})
+			app.origin={x:0,y:0};
+			app.offset={x:0,y:0};
+			app.addEventListener('mousedown',ev=>{appMouseDown(app,ev);})
 		})
-		window.addEventListener('mouseup',function(ev){
-			if(targetMove)
-				targetMove.classList.remove('appMove')
-			targetMove=undefined;
-		})
+		window.addEventListener('mouseup',winMouseUp)
 		/*setInterval(()=>{
 			apps.forEach(app=>{
 				app.style.top=parseInt(app.style.top)+rand()+'px'
@@ -118,17 +101,23 @@
 			})
 		},1000);*/
 		path=document.querySelector('path')
-		let svg=document.querySelector('svg')
-		svg.setAttribute('width',window.innerWidth+"px")
-		svg.setAttribute('height',window.innerHeight+"px")
+		svg=document.querySelector('svg')
+		resize();
+		window.addEventListener('resize', resize);
 		initLine();
 		window.addEventListener('mousemove',mousemove)
 		window.addEventListener('click',click)
 
 		mouseObj={x:0,y:0}
+		
+		barInit();
 		animate();
 		
 	}init();
+	function resize(){
+		svg.setAttribute('width',window.innerWidth+"px")
+		svg.setAttribute('height',window.innerHeight+"px")
+	}
 	function rand(){
 		return Math.random()*100 -50;
 	}
@@ -153,6 +142,26 @@
 		else
 			mouseToggle=1;
 	}
+	function barInit(){
+		bar=document.querySelector('#bar');
+		
+		appPoints=[];
+		
+		barCalculate();
+	}
+	function barCalculate(){
+		const count=5;
+
+		let rect = bar.getBoundingClientRect();
+		console.log(rect.top, rect.right, rect.bottom, rect.left);
+		let width=rect.right-rect.left;
+		let height=rect.bottom-rect.top;
+		let ratio=width/(count+2);
+		
+		for(let i=0;i<count;i++){
+			appPoints[i]={x:rect.left+(i+1)*ratio,y:height/2};
+		}
+	}
 	function animate(){
 			if(mouseToggle){
 				let target={};
@@ -172,8 +181,10 @@
 		
 			let diff={x:mouseObj.x-points[0].x,y:mouseObj.y-points[0].y}
 			let dr=Math.sqrt(diff.x*diff.x + diff.y*diff.y)
+
+			
 			if(dr>40){
-				///console.log(diff)
+
 
 				let fresh;
 				if(mouseToggle>1){
@@ -213,8 +224,29 @@
 	
 	function mousemove(ev){
 		if(targetMove){
-			targetMove.style.left=ev.clientX+'px'
-			targetMove.style.top=ev.clientY+'px'
+
+			targetMove.pos={x:ev.clientX+targetMove.offset.x,y:ev.clientY+targetMove.offset.y}
+			let d={x:targetMove.origin.x-targetMove.pos.x,y:targetMove.origin.y-targetMove.pos.y}
+			let dr=Math.sqrt(d.x*d.x +d.y*d.y);
+			if(dr<80){
+				targetMove.pos={x:targetMove.origin.x-d.x/3,y:targetMove.origin.y-d.y/3}
+				if(targetMove.moving){
+					targetMove.moving=undefined
+					//targetMove.classList.remove('appMove')
+				}
+			}else{
+				if(!targetMove.moving){
+					targetMove.moving=true;
+					//targetMove.classList.add('appMove')
+				}
+			}
+
+			appPoints.forEach(point=>{
+				point.x
+			})
+			
+			targetMove.style.left=targetMove.pos.x+'px'
+			targetMove.style.top=targetMove.pos.y+'px'
 		}else if(mouseToggle==0){
 			if(count>2){
 				count=0;
@@ -276,7 +308,40 @@
 		}
 		
 		
+	
 	}
+
+	function appMouseDown(app,ev){
+		targetMove=app;
+		app.pos={x:parseInt(app.style.left),y:parseInt(app.style.top)}
+		app.origin={x:app.pos.x,y:app.pos.y}
+		app.offset={x:app.pos.x-ev.clientX,y:app.pos.y-ev.clientY}
+		app.classList.add('appMove')
+		app.moving=undefined;
+	}
+
+	function winMouseUp(ev){
+			if(targetMove){
+				targetMove.classList.remove('appMove')
+				if(!targetMove.moving){
+					if(focused && focused==targetMove){
+							targetMove.classList.remove('appMax')
+							focused=undefined;
+							targetMove.style.zIndex=1;
+					}else{
+						targetMove.classList.add('appMax')
+						if(focused){
+							focused.classList.remove('appMax')
+							focused.style.zIndex=1;
+						}
+						targetMove.style.zIndex=0;
+						focused=targetMove;
+					}
+				}
+				
+			}
+			targetMove=undefined;
+		}
 
 </script>
 </html>
