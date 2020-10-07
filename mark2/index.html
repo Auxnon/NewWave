@@ -150,7 +150,9 @@
 		barCalculate();
 	}
 	function barCalculate(){
-		const count=5;
+		
+		let count=apps.length;
+		bar.style.width=count*128+'px'
 
 		let rect = bar.getBoundingClientRect();
 		console.log(rect.top, rect.right, rect.bottom, rect.left);
@@ -159,7 +161,9 @@
 		let ratio=width/(count+2);
 		
 		for(let i=0;i<count;i++){
-			appPoints[i]={x:rect.left+(i+1)*ratio,y:height/2};
+			appPoints[i]={x:rect.left+(i+1)*ratio,y:rect.top+height/2,app:apps[i]};
+			apps[i].spot=i;
+			_moveEle(appPoints[i].app,appPoints[i].x,appPoints[i].y)
 		}
 	}
 	function animate(){
@@ -178,6 +182,7 @@
 				if(dr<1 && mouseToggle<3 )
 					mouseToggle++;
 			}
+
 		
 			let diff={x:mouseObj.x-points[0].x,y:mouseObj.y-points[0].y}
 			let dr=Math.sqrt(diff.x*diff.x + diff.y*diff.y)
@@ -226,7 +231,7 @@
 		if(targetMove){
 
 			targetMove.pos={x:ev.clientX+targetMove.offset.x,y:ev.clientY+targetMove.offset.y}
-			let d={x:targetMove.origin.x-targetMove.pos.x,y:targetMove.origin.y-targetMove.pos.y}
+			/*let d={x:targetMove.origin.x-targetMove.pos.x,y:targetMove.origin.y-targetMove.pos.y}
 			let dr=Math.sqrt(d.x*d.x +d.y*d.y);
 			if(dr<80){
 				targetMove.pos={x:targetMove.origin.x-d.x/3,y:targetMove.origin.y-d.y/3}
@@ -239,10 +244,38 @@
 					targetMove.moving=true;
 					//targetMove.classList.add('appMove')
 				}
-			}
+			}*/
 
-			appPoints.forEach(point=>{
-				point.x
+			appPoints.forEach((point,index)=>{
+				let d={x:point.x-targetMove.pos.x,y:point.y-targetMove.pos.y}
+				let dr=Math.sqrt(d.x*d.x +d.y*d.y);
+
+				if(dr<40){
+					targetMove.pos={x:point.x-d.x/3,y:point.y-d.y/3}
+					if(targetMove.moving){
+						targetMove.moving=undefined
+						//targetMove.classList.remove('appMove')
+					}
+					if(point.app==targetMove){
+
+					}else{ //switcheroo
+						let oldPoint=appPoints[targetMove.spot];
+						let swapApp=point.app;
+
+						oldPoint.app=swapApp;
+						swapApp.pos.x=oldPoint.x; swapApp.pos.x=oldPoint.y;
+						_moveEle(swapApp,swapApp.pos.x,swapApp.pos.y);
+						swapApp.spot=targetMove.spot;
+
+						point.app=targetMove; targetMove.spot=index;
+
+					}
+				}else{
+					if(!targetMove.moving){
+						targetMove.moving=true;
+						//targetMove.classList.add('appMove')
+					}
+				}
 			})
 			
 			targetMove.style.left=targetMove.pos.x+'px'
@@ -321,27 +354,32 @@
 	}
 
 	function winMouseUp(ev){
-			if(targetMove){
-				targetMove.classList.remove('appMove')
-				if(!targetMove.moving){
-					if(focused && focused==targetMove){
-							targetMove.classList.remove('appMax')
-							focused=undefined;
-							targetMove.style.zIndex=1;
-					}else{
-						targetMove.classList.add('appMax')
-						if(focused){
-							focused.classList.remove('appMax')
-							focused.style.zIndex=1;
-						}
-						targetMove.style.zIndex=0;
-						focused=targetMove;
+		if(targetMove){
+			targetMove.classList.remove('appMove')
+			if(!targetMove.moving){
+				if(focused && focused==targetMove){
+						targetMove.classList.remove('appMax')
+						focused=undefined;
+						targetMove.style.zIndex=1;
+				}else{
+					targetMove.classList.add('appMax')
+					if(focused){
+						focused.classList.remove('appMax')
+						focused.style.zIndex=1;
 					}
+					targetMove.style.zIndex=0;
+					focused=targetMove;
 				}
-				
 			}
-			targetMove=undefined;
 		}
+		targetMove=undefined;
+	}
+
+	function _moveEle(ele,x,y){
+		ele.pos={x:x,y:y}
+		ele.style.left=x+'px'
+		ele.style.top=y+'px'
+	}
 
 </script>
 </html>
