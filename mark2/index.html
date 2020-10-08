@@ -159,10 +159,13 @@
 
 		
 		let count=0;
-		if(notate){
+		let appsInRow=[];
+		if(!notate){
 			apps.forEach(app=>{
-				if(app.spot!=-1)
+				if(app.spot!=-1){
+					appsInRow.push(app)
 					count++;
+				}
 			})
 		}else{
 			count=apps.length;
@@ -177,7 +180,7 @@
 		let ratio=width/(count+2);
 
 		if(!notate)
-			apps.sort(function(a, b) {
+			appsInRow.sort(function(a, b) {
 			  //sort by x, secondary by y
 			  return parseInt(a.style.left) - parseInt(b.style.left);
 			});
@@ -193,16 +196,9 @@
 				_moveEle(appPoints[i].app,appPoints[i].x,appPoints[i].y)
 
 			}else{
-				_moveEle(apps[i],appPoints[i].x,appPoints[i].y)
+				_moveEle(appsInRow[i],appPoints[i].x,appPoints[i].y)
 			}
-
-			
-			
-			
 		}
-		
-
-			
 	}
 	function animate(){
 			if(mouseToggle){
@@ -227,7 +223,6 @@
 
 			
 			if(dr>40){
-
 
 				let fresh;
 				if(mouseToggle>1){
@@ -283,9 +278,46 @@
 					//targetMove.classList.add('appMove')
 				}
 			}*/
-			targetMove.spot=-1;
+			
+			
+			if(ev.clientY>600){ //dev temp
+					let point={x:600,y:600}
+					let d={x:point.x-targetMove.pos.x,y:point.y-targetMove.pos.y}
+					targetMove.pos={x:point.x-d.x/3,y:point.y-d.y/3}
+					if(targetMove.moving){ //called once per state change
+						targetMove.moving=undefined
+						targetMove.spot=-1;
+						barCalculate()
+					}
+					
+						//let swapApp=point.app;
+						//targetMove.spot=index;
+						
+					
+				}else{
+					if(!targetMove.moving){ //called once per state change
+						targetMove.moving=true;
+						targetMove.spot=0;
+						barCalculate()
+					}
+					apps.forEach(app=>{
+							if(app==targetMove){
 
-			appPoints.forEach(pointCheck)
+							}else{
+								if(app.pos.x>targetMove.pos.x){
+									_moveEle(app,128+app.pos.x,app.pos.y,true)
+								}else{
+									_moveEle(app,-128+app.pos.x,app.pos.y,true)
+								}
+							}
+
+						})
+				}
+
+
+
+
+			//appPoints.forEach(pointCheck)
 			
 			targetMove.style.left=targetMove.pos.x+'px'
 			targetMove.style.top=targetMove.pos.y+'px'
