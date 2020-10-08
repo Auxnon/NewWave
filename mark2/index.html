@@ -246,13 +246,31 @@
 				}
 			}*/
 
-			appPoints.forEach((point,index)=>{
-				let d={x:point.x-targetMove.pos.x,y:point.y-targetMove.pos.y}
+			appPoints.forEach(pointCheck)
+			
+			targetMove.style.left=targetMove.pos.x+'px'
+			targetMove.style.top=targetMove.pos.y+'px'
+		}else if(mouseToggle==0){
+			if(count>2){
+				count=0;
+				/*let dd={x:mouseObj.x-ev.clientX,y:mouseObj.y-ev.clientY}
+				mouseObj.x-=dd.x/20
+				mouseObj.y-=dd.y/20*/
+				mouseObj={x:ev.clientX,y:ev.clientY}
+				
+				
+
+				//mousePrev=mouseObj;
+			}count++
+		}
+	}
+	function pointCheck(point,index){
+		let d={x:point.x-targetMove.pos.x,y:point.y-targetMove.pos.y}
 				let dr=Math.sqrt(d.x*d.x +d.y*d.y);
 
 				if(dr<40){
 					targetMove.pos={x:point.x-d.x/3,y:point.y-d.y/3}
-					if(targetMove.moving){
+					if(targetMove.moving){ //called once per state change
 						targetMove.moving=undefined
 						//targetMove.classList.remove('appMove')
 					}
@@ -268,26 +286,58 @@
 						swapApp.spot=targetMove.spot;
 
 						point.app=targetMove; targetMove.spot=index;
-
 					}
 				}else{
-					if(!targetMove.moving){
+					if(!targetMove.moving){ //called once per state change
 						targetMove.moving=true;
 						//targetMove.classList.add('appMove')
 					}
 				}
-			})
-			
-			targetMove.style.left=targetMove.pos.x+'px'
-			targetMove.style.top=targetMove.pos.y+'px'
-		}else if(mouseToggle==0){
-			if(count>2){
-				count=0;
-				/*let dd={x:mouseObj.x-ev.clientX,y:mouseObj.y-ev.clientY}
-				mouseObj.x-=dd.x/20
-				mouseObj.y-=dd.y/20*/
-				mouseObj={x:ev.clientX,y:ev.clientY}
-				/*
+	}
+
+	function appMouseDown(app,ev){
+		targetMove=app;
+		app.pos={x:parseInt(app.style.left),y:parseInt(app.style.top)}
+		app.origin={x:app.pos.x,y:app.pos.y}
+		app.offset={x:app.pos.x-ev.clientX,y:app.pos.y-ev.clientY}
+		app.classList.add('appMove')
+		app.moving=undefined;
+	}
+
+	function winMouseUp(ev){
+		if(targetMove){
+			targetMove.classList.remove('appMove')
+			if(!targetMove.moving){
+				if(focused && focused==targetMove){
+						targetMove.classList.remove('appMax')
+						focused=undefined;
+						targetMove.style.zIndex=1;
+				}else{
+					targetMove.classList.add('appMax')
+					if(focused){
+						focused.classList.remove('appMax')
+						focused.style.zIndex=1;
+					}
+					targetMove.style.zIndex=0;
+					focused=targetMove;
+				}
+			}
+		}
+		targetMove=undefined;
+	}
+
+	function _moveEle(ele,x,y){
+		ele.pos={x:x,y:y}
+		ele.style.left=x+'px'
+		ele.style.top=y+'px'
+	}
+
+
+
+	/**
+	OlD curve code
+
+	
 
 				let last={x:mouseObj.x,y:mouseObj.y,dir:dir,pos:pos};
 				let lastMode=-1;
@@ -333,53 +383,8 @@
 					let prev={x:points[i].x,y:points[i].y,dir:points[i].dir,pos:points[i].pos};
 					points[i]={x:last.x,y:last.y,dir:last.dir,pos:last.pos};
 					last=prev;
-				}*/
-				
-
-				//mousePrev=mouseObj;
-			}count++
-		}
-		
-		
-	
-	}
-
-	function appMouseDown(app,ev){
-		targetMove=app;
-		app.pos={x:parseInt(app.style.left),y:parseInt(app.style.top)}
-		app.origin={x:app.pos.x,y:app.pos.y}
-		app.offset={x:app.pos.x-ev.clientX,y:app.pos.y-ev.clientY}
-		app.classList.add('appMove')
-		app.moving=undefined;
-	}
-
-	function winMouseUp(ev){
-		if(targetMove){
-			targetMove.classList.remove('appMove')
-			if(!targetMove.moving){
-				if(focused && focused==targetMove){
-						targetMove.classList.remove('appMax')
-						focused=undefined;
-						targetMove.style.zIndex=1;
-				}else{
-					targetMove.classList.add('appMax')
-					if(focused){
-						focused.classList.remove('appMax')
-						focused.style.zIndex=1;
-					}
-					targetMove.style.zIndex=0;
-					focused=targetMove;
 				}
-			}
-		}
-		targetMove=undefined;
-	}
-
-	function _moveEle(ele,x,y){
-		ele.pos={x:x,y:y}
-		ele.style.left=x+'px'
-		ele.style.top=y+'px'
-	}
+	**/
 
 </script>
 </html>
