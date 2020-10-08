@@ -8,6 +8,7 @@
 		body{
 			background-color: black;
 			overflow: hidden;
+			touch-action:none;
 		}
 		.app{
 			position: absolute;
@@ -81,7 +82,11 @@
 	var appPoints;
 	function init(argument) {
 		// body...
-		apps=document.querySelectorAll('.app');
+		let preApps=document.querySelectorAll('.app');
+		apps=[]
+		preApps.forEach(app=>{ //convert out of a nodelist to an array, it matters trust me
+			apps.push(app)
+		})
 		apps.forEach((app,index)=>{
 			app.style.top=Math.random()*512+'px'
 			app.style.left=Math.random()*512+'px'
@@ -90,9 +95,10 @@
 			})
 			app.origin={x:0,y:0};
 			app.offset={x:0,y:0};
-			app.addEventListener('mousedown',ev=>{appMouseDown(app,ev);})
+			//app.addEventListener('mousedown',ev=>{appMouseDown(app,ev);})
+			app.addEventListener('pointerdown',ev=>{appMouseDown(app,ev);})
 		})
-		window.addEventListener('mouseup',winMouseUp)
+		window.addEventListener('pointerup',winMouseUp)
 		/*setInterval(()=>{
 			apps.forEach(app=>{
 				app.style.top=parseInt(app.style.top)+rand()+'px'
@@ -105,7 +111,7 @@
 		resize();
 		window.addEventListener('resize', resize);
 		initLine();
-		window.addEventListener('mousemove',mousemove)
+		window.addEventListener('pointermove',mousemove)
 		window.addEventListener('click',click)
 
 		mouseObj={x:0,y:0}
@@ -147,11 +153,21 @@
 		
 		appPoints=[];
 		
-		barCalculate();
+		barCalculate(true);
 	}
-	function barCalculate(){
+	function barCalculate(notate){
+
 		
-		let count=apps.length;
+		let count=0;
+		if(notate){
+			apps.forEach(app=>{
+				if(app.spot!=-1)
+					count++;
+			})
+		}else{
+			count=apps.length;
+		}
+		
 		bar.style.width=count*128+'px'
 
 		let rect = bar.getBoundingClientRect();
@@ -159,12 +175,34 @@
 		let width=rect.right-rect.left;
 		let height=rect.bottom-rect.top;
 		let ratio=width/(count+2);
+
+		if(!notate)
+			apps.sort(function(a, b) {
+			  //sort by x, secondary by y
+			  return parseInt(a.style.left) - parseInt(b.style.left);
+			});
 		
 		for(let i=0;i<count;i++){
-			appPoints[i]={x:rect.left+(i+1)*ratio,y:rect.top+height/2,app:apps[i]};
-			apps[i].spot=i;
-			_moveEle(appPoints[i].app,appPoints[i].x,appPoints[i].y)
+			appPoints[i]={x:rect.left+(i+1)*ratio,y:rect.top+height/2};
+
+			let app=apps[i]
+
+			if(notate){
+				apps[i].spot=i;
+				appPoints[i].app=apps[i]
+				_moveEle(appPoints[i].app,appPoints[i].x,appPoints[i].y)
+
+			}else{
+				_moveEle(apps[i],appPoints[i].x,appPoints[i].y)
+			}
+
+			
+			
+			
 		}
+		
+
+			
 	}
 	function animate(){
 			if(mouseToggle){
@@ -245,6 +283,7 @@
 					//targetMove.classList.add('appMove')
 				}
 			}*/
+			targetMove.spot=-1;
 
 			appPoints.forEach(pointCheck)
 			
@@ -268,6 +307,7 @@
 		let d={x:point.x-targetMove.pos.x,y:point.y-targetMove.pos.y}
 				let dr=Math.sqrt(d.x*d.x +d.y*d.y);
 
+
 				if(dr<40){
 					targetMove.pos={x:point.x-d.x/3,y:point.y-d.y/3}
 					if(targetMove.moving){ //called once per state change
@@ -276,21 +316,41 @@
 					}
 					if(point.app==targetMove){
 
-					}else{ //switcheroo
-						let oldPoint=appPoints[targetMove.spot];
+					}else{ //switcheroo the app icons
+						//let oldPoint=appPoints[targetMove.spot];
 						let swapApp=point.app;
+						targetMove.spot=index;
+						apps.forEach(app=>{
+							if(app==targetMove){
 
-						oldPoint.app=swapApp;
-						swapApp.pos.x=oldPoint.x; swapApp.pos.x=oldPoint.y;
-						_moveEle(swapApp,swapApp.pos.x,swapApp.pos.y);
-						swapApp.spot=targetMove.spot;
+							}else{
+								if(app.pos.x>targetMove.pos.x){
+									_moveEle(app,64+app.pos.x,app.pos.y,true)
+								}else{
+									_moveEle(app,-64+app.pos.x,app.pos.y,true)
+								}
+							}
 
-						point.app=targetMove; targetMove.spot=index;
+						})
+						//_moveEle()
+
+						//oldPoint.app=swapApp;
+						//swapApp.pos.x=oldPoint.x; swapApp.pos.x=oldPoint.y;
+						//_moveEle(swapApp,swapApp.pos.x,swapApp.pos.y);
+						//swapApp.spot=targetMove.spot;
+
+
+						//point.app=targetMove; targetMove.spot=index;
+
+
 					}
 				}else{
 					if(!targetMove.moving){ //called once per state change
 						targetMove.moving=true;
 						//targetMove.classList.add('appMove')
+						/*apps.forEach(app=>{
+							_moveEle(app,app.pos.x,app.pos.y)
+						});*/
 					}
 				}
 	}
@@ -322,12 +382,15 @@
 					focused=targetMove;
 				}
 			}
-		}
+		}else{
+				barCalculate();
+			}
 		targetMove=undefined;
 	}
 
-	function _moveEle(ele,x,y){
-		ele.pos={x:x,y:y}
+	function _moveEle(ele,x,y,bool){
+		if(!bool)
+			ele.pos={x:x,y:y}
 		ele.style.left=x+'px'
 		ele.style.top=y+'px'
 	}
