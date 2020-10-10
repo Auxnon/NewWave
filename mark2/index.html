@@ -27,6 +27,7 @@
 			border-top: 6px white solid;
 			transition: border-radius 0.4s, width 0.4s, height 0.4s;
 		}
+
 		#bar{
 			position: absolute;
 			width: 256px;
@@ -37,6 +38,7 @@
 			transform: translate(-50%,-50%);
 			left: 50%;
 			bottom: 64px;
+			box-sizing: border-box;
 		}
 		#barHandle{
 			width: 80%;
@@ -95,8 +97,11 @@
 	var svg;
 	var path;
 	var bar;
+	var barMove=-1;
+	var barPos=1;
 	var appPoints;
 	var moveFactor=0;
+
 	function init(argument) {
 		let preApps=document.querySelectorAll('.app');
 		apps=[]
@@ -128,7 +133,7 @@
 		window.addEventListener('resize', resize);
 		initLine();
 		window.addEventListener('pointermove',mousemove)
-		window.addEventListener('click',click)
+		
 
 		mouseObj={x:0,y:0}
 		
@@ -156,72 +161,25 @@
 	var count=0;
 	var tick=false;
 	var lastDir=false
-	var mouseToggle=0;
+	var barLineFactor=0;
 	var targetMove=undefined;
 	var targetPoint={x:0,y:0}
 
-	function click(){
-		if(mouseToggle>0)
-			mouseToggle=0;
-		else
-			mouseToggle=1;
-	}
-	var barMove=false;
+	
 	function barInit(){
 		bar=document.querySelector('#bar')
 		let barHandle=document.querySelector('#barHandle')
 		barHandle.addEventListener('pointerdown',ev=>{
-			let xx=barBox.left+(barBox.right-barBox.left)/2
-			let yy=barBox.top+(barBox.bottom-barBox.top)/2
+			let xx=barBox.left//-(barBox.right-barBox.left)/2
+			let yy=barBox.top//-(barBox.bottom-barBox.top)/2
 
-			barMove={x:ev.clientX-xx,y:ev.clientY-yy};
+			barMove=true;//{x:ev.clientX-xx,y:ev.clientY-yy};
+			barLineFactor= 0;
 		})
-		barHandle.addEventListener('pointerup',ev=>{
+		/*barHandle.addEventListener('pointerup',ev=>{
 			barMove=false;
-		})
+		})*/
 
-
-		barHandle.addEventListener('pointermove',ev=>{
-			let xx=-barMove.x+ev.clientX;
-			let yy=-barMove.y+ev.clientY
-			if(window.innerWidth>window.innerHeight){ //landscape
-				let half=(window.innerWidth - window.innerHeight)/2
-				if(xx<half){ //left
-					bar.style.transform='rotate(90deg)'
-					barHandle.style.transform='translate(-50%,-200%)'
-				}else if(xx>window.innerWidth-half){ //right
-					bar.style.transform='rotate(90deg)'
-					barHandle.style.transform='translate(-50%,100%)'
-				}else{
-					bar.style.transform='rotate(0deg)'
-					if(yy>window.innerHeight/2){
-						barHandle.style.transform='translate(-50%,-200%)'
-					}else{
-						barHandle.style.transform='translate(-50%,100%)'
-					}
-				}
-			}else{ //portrait
-				let half=(window.innerHeight - window.innerWidth)/2
-				if(yy<half){ //top
-					bar.style.transform='rotate(0deg)'
-					barHandle.style.transform='translate(-50%,-200%)'
-				}else if(yy>window.innerHeight-half){ //bottom
-					bar.style.transform='rotate(0deg)'
-					barHandle.style.transform='translate(-50%,100%)'
-				}else{
-					bar.style.transform='rotate(90deg)'
-					if(xx>window.innerWidth/2){
-						barHandle.style.transform='translate(-50%,-200%)'
-					}else{
-						barHandle.style.transform='translate(-50%,100%)'
-					}
-				}
-			}
-			
-			bar.style.left=xx+'px'
-			bar.style.top=yy+'px'
-		})
-		
 		appPoints=[];
 		
 		barCalculate(true);
@@ -231,6 +189,8 @@
 		//first determine  how many apps will be visably part of the app bar
 		let count=0;
 		let appsInRow=[];
+		let sideWays=barPos==0 || barPos==2;
+
 		if(!notate){
 			apps.forEach(app=>{
 				if(app.spot!=-1){
@@ -242,24 +202,46 @@
 			count=apps.length;
 			appsInRow=apps;
 		}
+		if(sideWays){
+			bar.style.height=(count>0?count:1)*128+'px'
+			bar.style.width='128px'
+		}else{
+			bar.style.width=(count>0?count:1)*128+'px'
+			bar.style.height='128px'
+		}
 		
-		bar.style.width=(count>0?count:1)*128+'px'
+		
+
 
 		let rect = bar.getBoundingClientRect();
 		barBox=rect
-		console.log(rect.top, rect.right, rect.bottom, rect.left);
+		console.log(rect.top, rect.right, rect.bottom, rect.left); 
 		let width=rect.right-rect.left;
 		let height=rect.bottom-rect.top;
-		let ratio=width/(count);
 
-		if(!notate)
-			appsInRow.sort(function(a, b) {
-			  //sort by x, secondary by y
-			  return parseInt(a.style.left) - parseInt(b.style.left);
-			});
+		let ratio;
+		if(sideWays)
+			ratio=height/(count);
+		else
+			ratio=width/(count);
+
+		if(!notate){
+			if(sideWays)
+				appsInRow.sort(function(a, b) {
+				  return parseInt(a.style.top) - parseInt(b.style.top);
+				});
+			else
+				appsInRow.sort(function(a, b) {
+				  return parseInt(a.style.left) - parseInt(b.style.left);
+				});
+		}
+			
 		
 		for(let i=0;i<count;i++){
-			appPoints[i]={x:64+rect.left+(i)*ratio,y:rect.top+height/2};
+			if(sideWays)
+				appPoints[i]={x:rect.left+width/2,y:64+rect.top+(i)*ratio};
+			else
+				appPoints[i]={x:64+rect.left+(i)*ratio,y:rect.top+height/2};
 
 			
 			if(targetMove && targetMove==appsInRow[i])
@@ -274,20 +256,33 @@
 		}
 	}
 	function animate(){
-			if(mouseToggle){
+		if(barLineFactor!=4){
+			if(barLineFactor){
 				let target={};
-				switch(mouseToggle){
-					case 2: target={x:100,y:200};break;
-					case 3: target={x:100,y:600};break;
-					default:target={x:100,y:100}
+				let rect=barHandle.getBoundingClientRect();
+				let mid={x:rect.width/2,y:rect.height/2}
+
+				if(barPos==0 || barPos==2){
+					switch(barLineFactor){
+						case 3: target={x:rect.left+mid.x,y:rect.top};break;
+						case 2: target={x:rect.left+mid.x,y:rect.top+mid.y};break;
+						default:target={x:rect.left+mid.x,y:rect.bottom}
+					}
+				}else{
+					switch(barLineFactor){
+						case 3: target={x:rect.left,y:rect.top+mid.y};break;
+						case 2: target={x:rect.left+mid.x,y:rect.top+mid.y};break;
+						default:target={x:rect.right,y:rect.top+mid.y}
+					}
 				}
+				
 				let dx=mouseObj.x-target.x;
 				let dy=mouseObj.y-target.y;
 				let dr=Math.sqrt(dx*dx +dy*dy)
-				mouseObj.x-=dx/20
-				mouseObj.y-=dy/20
-				if(dr<1 && mouseToggle<3 )
-					mouseToggle++;
+				mouseObj.x-=dx/10
+				mouseObj.y-=dy/10
+				if(dr<1 && barLineFactor<4 )
+					barLineFactor++;
 			}
 
 		
@@ -296,7 +291,7 @@
 
 			if(dr>40){
 				let fresh;
-				if(mouseToggle>1){
+				if(barLineFactor>1){
 					fresh={x:mouseObj.x,y:mouseObj.y};
 				}else{
 					fresh={x:mouseObj.x-(tick?1:-1)*20*diff.y/dr,y:mouseObj.y+(tick?1:-1)*20*diff.x/dr};
@@ -326,13 +321,15 @@
 				}
 				path.setAttribute('d',st)
 			}
+		}
+		if(targetMove)
+			moveFactor++;
 
-			if(targetMove)
-				moveFactor++;
 		requestAnimationFrame(animate);
 	}
 	
 	function mousemove(ev){
+		barMoveHandler(ev);
 		if(targetMove){
 			moveFactor++;
 			targetMove.pos={x:ev.clientX+targetMove.offset.x,y:ev.clientY+targetMove.offset.y}
@@ -385,7 +382,7 @@
 
 			targetMove.style.left=targetMove.pos.x+'px'
 			targetMove.style.top=targetMove.pos.y+'px'
-		}else if(mouseToggle==0){
+		}else if(barLineFactor==0){
 			if(count>2){
 				count=0;
 				/*let dd={x:mouseObj.x-ev.clientX,y:mouseObj.y-ev.clientY}
@@ -399,6 +396,93 @@
 			}count++
 		}
 	}
+	function barMoveHandler(ev){
+		if(barMove){
+			let xx=ev.clientX;
+			let yy=ev.clientY;
+			let dx=xx-window.innerWidth/2;
+			let dy=yy-window.innerHeight/2;
+			let r=Math.atan2(dy,dx)/Math.PI;
+			let ar=Math.abs(r)
+			if(ar<0.25){ //right
+				//bar.style.transform='translate(-50%,-50%) rotate(90deg)'
+				if(barPos!=2){
+					barPos=2;
+
+					bar.style.left=window.innerWidth-64+'px';bar.style.top='50%';//window.innerHeight/2;
+					barCalculate();
+					barHandle.style.transform='translate(-200%,-50%)'
+					barHandle.style.width='64px';barHandle.style.height='80%';
+				}
+			}else if(ar<0.75){ //top or bottom
+				if(r<0){ //botttom
+					if(barPos!=1){
+						barPos=1;
+						barHandle.style.transform='translate(-50%,100%)'
+						bar.style.left='50%';bar.style.top='64px' //-196+window.innerWidth/2
+					}
+				}else{ //top
+					if(barPos!=3){
+						barPos=3
+						barHandle.style.transform='translate(-50%,-200%)'
+						bar.style.left='50%';bar.style.top=(window.innerHeight-64)+'px'; //-196+window.innerWidth/2
+					}
+				}
+				barCalculate();
+				barHandle.style.height='64px';barHandle.style.width='80%';
+			}else{ //left
+				if(barPos!=0){
+					barPos=0;
+					barHandle.style.transform='translate(100%,-50%)'
+					bar.style.left='64px';bar.style.top='50%'
+					barCalculate()
+					barHandle.style.width='64px'
+					barHandle.style.height='80%'
+				}
+			}
+
+
+
+/*
+				if(window.innerWidth>window.innerHeight){ //landscape
+					let half=(window.innerWidth - window.innerHeight)/2
+					if(xx<half){ //left
+						bar.style.transform='rotate(90deg)'
+						barHandle.style.transform='translate(-50%,-200%)'
+					}else if(xx>window.innerWidth-half){ //right
+						bar.style.transform='rotate(90deg)'
+						barHandle.style.transform='translate(-50%,100%)'
+					}else{
+						bar.style.transform='rotate(0deg)'
+						if(yy>window.innerHeight/2){
+							barHandle.style.transform='translate(-50%,-200%)'
+						}else{
+							barHandle.style.transform='translate(-50%,100%)'
+						}
+					}
+				}else{ //portrait
+					let half=(window.innerHeight - window.innerWidth)/2
+					if(yy<half){ //top
+						bar.style.transform='rotate(0deg)'
+						barHandle.style.transform='translate(-50%,-200%)'
+					}else if(yy>window.innerHeight-half){ //bottom
+						bar.style.transform='rotate(0deg)'
+						barHandle.style.transform='translate(-50%,100%)'
+					}else{
+						bar.style.transform='rotate(90deg)'
+						if(xx>window.innerWidth/2){
+							barHandle.style.transform='translate(-50%,-200%)'
+						}else{
+							barHandle.style.transform='translate(-50%,100%)'
+						}
+					}
+				}*/
+				
+				
+				
+		}
+	}
+	/*
 	function pointCheck(point,index){
 		let d={x:point.x-targetMove.pos.x,y:point.y-targetMove.pos.y}
 				let dr=Math.sqrt(d.x*d.x +d.y*d.y);
@@ -428,15 +512,6 @@
 							}
 
 						})
-						//_moveEle()
-
-						//oldPoint.app=swapApp;
-						//swapApp.pos.x=oldPoint.x; swapApp.pos.x=oldPoint.y;
-						//_moveEle(swapApp,swapApp.pos.x,swapApp.pos.y);
-						//swapApp.spot=targetMove.spot;
-
-
-						//point.app=targetMove; targetMove.spot=index;
 
 
 					}
@@ -444,12 +519,10 @@
 					if(!targetMove.moving){ //called once per state change
 						targetMove.moving=true;
 						//targetMove.classList.add('appMove')
-						/*apps.forEach(app=>{
-							_moveEle(app,app.pos.x,app.pos.y)
-						});*/
+
 					}
 				}
-	}
+	}*/
 
 	function appMouseDown(app,ev){
 		targetMove=app;
@@ -462,6 +535,11 @@
 	}
 
 	function winMouseUp(ev){
+		if(barMove){
+			barMove=false;
+			barLineFactor=1;
+		}
+
 		if(targetMove){
 			targetMove.classList.remove('appMove')
 			if(moveFactor<20){
@@ -488,6 +566,7 @@
 				console.log('fix bar')
 			}
 		targetMove=undefined;
+
 	}
 
 	function boundaryCheck() {
