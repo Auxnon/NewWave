@@ -3,6 +3,12 @@ import * as THREE from "./lib/three.module.js";
 import {GLTFLoader} from "./lib/GLTFLoader.js";
 
 import * as SceneManager from "./SceneManager.js";
+import { EffectComposer } from './lib/EffectComposer.js';
+import { ShaderPass } from './lib/ShaderPass.js';
+import { LuminosityShader } from './lib/LuminosityShader.js';
+
+
+
 //import * as Control from "./Control.js?v=16";
 //import * as World from "./World.js?v=16";
 //import {OrbitControls} from "./lib/OrbitControls.js";
@@ -28,6 +34,8 @@ var betaCanvas;
 
 var activeScene;
 var activeCanvas;
+
+var composer;
 
 
 
@@ -74,6 +82,10 @@ function init(){
 
     animate();
     window.camera=camera;
+
+    composer = new EffectComposer( renderer );
+var luminosityPass = new ShaderPass( LuminosityShader );
+composer.addPass( luminosityPass );
 }
 function getAlphaCanvas(){
     return alphaCanvas;
@@ -195,13 +207,14 @@ function animate(time) {
 
     //if(mixer)mixer.update(delta);
     SceneManager.animate();
-    renderer.render( activeScene, camera );
+    //renderer.render( activeScene, camera );
     //prevTime=time;
     //applyCursor();
     //if(_grabImage == true){
        // dumpImage(renderer.domElement.toDataURL());
         //_grabImage = false;
    // }
+   composer.render();
  
     requestAnimationFrame( animate );
 }
