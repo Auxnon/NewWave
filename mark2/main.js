@@ -26,23 +26,23 @@
 		preApps.forEach(app=>{ //convert out of a nodelist to an array, it matters trust me
 			apps.push(app)
 		});
+
+		apps[0].name="Main";
+		apps[1].name="Two";
+		apps[2].name="Thrreeee";
+
 		apps.forEach((app,index)=>{
 			app.style.top=Math.random()*window.innerWidth+'px'
 			app.style.left=Math.random()*window.innerHeight+'px'
-			//app.origin={x:0,y:0};
 			app.offset={x:0,y:0};
-			//app.addEventListener('mousedown',ev=>{appMouseDown(app,ev);})
-			app.addEventListener('pointerdown',ev=>{appMouseDown(app,ev);})
+			app.appId=index;
+			app.addEventListener('pointerdown',ev=>{appSelect(app,ev);})
 			app.addEventListener('dragstart',ev=>{ev.preventDefault()})
 		});
+		
+		
 		window.addEventListener('pointerup',winMouseUp)
-		/*setInterval(()=>{
-			apps.forEach(app=>{
-				app.style.top=parseInt(app.style.top)+rand()+'px'
-				app.style.left=parseInt(app.style.left)+rand()+'px'
-				
-			})
-		},1000);*/
+
 		path=document.querySelector('path')
 		svg=document.querySelector('svg')
 		mainTitle=document.querySelector('#mainTitle');
@@ -54,8 +54,6 @@
 		window.addEventListener('pointermove',mousemove)
 		
 
-		
-		
 		barInit();
 
 		resize();
@@ -76,8 +74,41 @@
 			}
 			brightness.classList.toggle('brightnessDark')
 		})	
+
+		if(window.location.search.length){
+			let params=new URLSearchParams(window.location.search)
+			let id=params.get('id')
+			if(id && id.length){
+				openApp(parseInt(id))
+			}
+		}
+		
+		
+		// button.onclick = e => import(/* webpackChunkName: "print" */ './print').then(module => {
+	 //     const print = module.default;
+
+	 //     print();
+	 //   });
 		
 	}init();
+
+	function openApp(id){
+		let app=apps[id];
+		if(app){
+			app.classList.add('appMax')
+			app.focused=true;
+			app.style.zIndex=0;
+			focused=app;
+		}
+	}
+	function closeApp(){
+		if(focused){
+			focused.classList.remove('appMax')
+			focused.style.zIndex=2;
+			focused.focused=undefined; //wow why did i do this
+		}
+	}
+
 	function resize(){
 		svg.setAttribute('width',window.innerWidth+"px")
 		svg.setAttribute('height',window.innerHeight+"px")
@@ -272,8 +303,8 @@
 
 			}
 		}
-		if(targetMove)
-			moveFactor++;
+		/*if(targetMove)
+			moveFactor++;*/
 
 		requestAnimationFrame(animate);
 	}
@@ -313,19 +344,7 @@
 						targetMove.spot=0;
 						barCalculate();
 					}
-
-					/* //this push method is now superflueous 
-					apps.forEach(app=>{ 
-							if(app==targetMove || app.spot==-1){
-
-							}else{
-								if(app.pos.x>targetMove.pos.x){
-									_moveEle(app,32+app.pos.x,app.pos.y,true)
-								}else{
-									_moveEle(app,-32+app.pos.x,app.pos.y,true)
-								}
-							}
-						})*/					
+					
 				}else{
 					if(!targetMove.moving){ //called once per state change
 						targetMove.moving=true;
@@ -347,6 +366,7 @@
 	}
 	function barMoveHandler(ev){
 		if(barMove){
+			moveFactor++;
 			let xx=ev.clientX;
 			let yy=ev.clientY;
 			let dx=xx-window.innerWidth/2;
@@ -476,9 +496,10 @@
 				}
 	}*/
 
-	function appMouseDown(app,ev){
+	function appSelect(app,ev){
 		if(!app.focused){
 			targetMove=app;
+
 			app.pos={x:parseInt(app.style.left),y:parseInt(app.style.top)}
 			targetPoint={x:app.pos.x,y:app.pos.y}
 			//app.origin={x:app.pos.x,y:app.pos.y}
@@ -487,31 +508,35 @@
 			app.moving=undefined;
 			
 		}
-		moveFactor=0;
 	}
 
 	function winMouseUp(ev){
 		if(barMove){
 			barMove=false;
 			barLineFactor=1;
+			console.log(moveFactor)
+			if(moveFactor<10){
+				closeApp();
+			}
 		}
 
 		if(targetMove){
 			targetMove.classList.remove('appMove')
-			if(moveFactor<20){
+			console.log(moveFactor)
+			if(moveFactor<10){
 				if(focused && focused==targetMove){
 						targetMove.classList.remove('appMax')
+						targetMove.focused=undefined;
 						focused=undefined;
 						targetMove.style.zIndex=2;
-				}else{
-					targetMove.classList.add('appMax')
-					if(focused){
-						focused.classList.remove('appMax')
-						focused.style.zIndex=2;
-					}
+						window.history.pushState({},'','/');
 
-					targetMove.style.zIndex=0;
-					focused=targetMove;
+				}else{
+					closeApp();
+
+					openApp(targetMove.appId);
+
+					window.history.pushState({appId:targetMove.appId}, targetMove.name, '?id='+targetMove.appId+'&app='+targetMove.name);
 				}
 			}else{
 				barCalculate();
@@ -523,6 +548,8 @@
 				console.log('fix bar')
 			}
 		targetMove=undefined;
+
+		moveFactor=0;
 
 	}
 

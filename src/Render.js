@@ -19,7 +19,7 @@ import { LuminosityShader } from './lib/LuminosityShader.js';
 
 
 var camera, renderer;
-var scenes=[];
+
 
 var docWidth,docHeight;
 
@@ -32,10 +32,12 @@ var SIZE_DIVIDER=2;
 var alphaCanvas;
 var betaCanvas;
 
-var activeScene;
+
 var activeCanvas;
 
 var composer;
+
+var specterMaterial;
 
 
 
@@ -58,7 +60,7 @@ function init(){
     betaCanvas.reserved=false;
 
 
-    renderer = new THREE.WebGLRenderer({alpha: true});
+    renderer = new THREE.WebGLRenderer({alpha: true, antialias:true});
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -68,24 +70,25 @@ function init(){
 
     loader = new GLTFLoader();
 
-    SceneManager.init(scenes);
+    initCustomMaterial();
+
+    SceneManager.init();
     activeCanvas=alphaCanvas;
-    activeScene=scenes[0];
 
 
     window.addEventListener('resize',resizer);
     resizer();
 
 
-
+    composer = new EffectComposer( renderer );
+    var luminosityPass = new ShaderPass( LuminosityShader );
+    composer.addPass( luminosityPass );
     
 
     animate();
     window.camera=camera;
 
-    composer = new EffectComposer( renderer );
-var luminosityPass = new ShaderPass( LuminosityShader );
-composer.addPass( luminosityPass );
+    
 }
 function getAlphaCanvas(){
     return alphaCanvas;
@@ -93,9 +96,7 @@ function getAlphaCanvas(){
 function getBetaCanvas(){
     return betaCanvas;
 }
-function flipScene(i,c){
-    activeScene=scenes[i];
-}
+
 function loadModel(model,callback,texture,color){
     loader.load(
         ('./'+model),//villager22.gltf',
@@ -119,7 +120,7 @@ function loadModel(model,callback,texture,color){
                             if(color)
                                 child.material = new THREE.MeshStandardMaterial({ color: color, metalness: 0, roughness: 1.0}); // 
                             else
-                                child.material = new THREE.MeshStandardMaterial({ vertexColors: THREE.VertexColors, metalness: 0, roughness: 1.0}); // 
+                                child.material = specterMaterial; //new THREE.MeshStandardMaterial({ vertexColors: THREE.VertexColors, metalness: 0, roughness: 1.0}); // 
                           
                             child.material.needsUpdate = true;
                             //child.material.skinning=true;
@@ -207,15 +208,16 @@ function animate(time) {
 
     //if(mixer)mixer.update(delta);
     SceneManager.animate();
-    //renderer.render( activeScene, camera );
+    //
     //prevTime=time;
     //applyCursor();
     //if(_grabImage == true){
        // dumpImage(renderer.domElement.toDataURL());
         //_grabImage = false;
    // }
-   composer.render();
- 
+   
+    renderer.render( SceneManager.getScene(), camera );
+    //composer.render();
     requestAnimationFrame( animate );
 }
 function dumpImage(img){
@@ -225,7 +227,7 @@ function dumpImage(img){
 }
 function bufferPrint(){
     //_grabImage=true;
-    renderer.render( activeScene, camera );
+    renderer.render( SceneManager.getScene(), camera );
     dumpImage(renderer.domElement.toDataURL());
 }
 
@@ -379,6 +381,7 @@ function createModel(index){
 	modelsIndexed[index]=model;
 	return model;
 }
+/*
 function cubit(w,h,d,x,y,z,color,layer){
 	let geom = new THREE.BoxBufferGeometry( w, h, d );
     let mat;
@@ -396,7 +399,7 @@ function cubit(w,h,d,x,y,z,color,layer){
     }else
 	   scenes[0].add(model);
     return model;
-}
+}*/
 function getRandomColor() {
   var letters = '0123456789ABCDEF';
   var color = Math.random()>0.5?0x66B136:0x76610E;
@@ -440,4 +443,212 @@ function projectVector(object){
 }
 
 
-export {init,getAlphaCanvas,getBetaCanvas,flipScene,bufferPrint,loadModel}
+var specterMaterial
+function initCustomMaterial(){
+
+    var meshphysical_frag = `
+    #define STANDARD
+#ifdef PHYSICAL
+    #define REFLECTIVITY
+    #define CLEARCOAT
+    #define TRANSPARENCY
+#endif
+uniform vec3 diffuse;
+uniform vec3 emissive;
+uniform float roughness;
+uniform float metalness;
+uniform float opacity;
+#ifdef TRANSPARENCY
+    uniform float transparency;
+#endif
+#ifdef REFLECTIVITY
+    uniform float reflectivity;
+#endif
+#ifdef CLEARCOAT
+    uniform float clearcoat;
+    uniform float clearcoatRoughness;
+#endif
+#ifdef USE_SHEEN
+    uniform vec3 sheen;
+#endif
+varying vec3 vViewPosition;
+#ifndef FLAT_SHADED
+    varying vec3 vNormal;
+    #ifdef USE_TANGENT
+        varying vec3 vTangent;
+        varying vec3 vBitangent;
+    #endif
+#endif
+#include <common>
+#include <packing>
+#include <dithering_pars_fragment>
+#include <color_pars_fragment>
+#include <uv_pars_fragment>
+#include <uv2_pars_fragment>
+#include <map_pars_fragment>
+#include <alphamap_pars_fragment>
+#include <aomap_pars_fragment>
+#include <lightmap_pars_fragment>
+#include <emissivemap_pars_fragment>
+#include <bsdfs>
+#include <cube_uv_reflection_fragment>
+#include <envmap_common_pars_fragment>
+#include <envmap_physical_pars_fragment>
+#include <fog_pars_fragment>
+#include <lights_pars_begin>
+#include <lights_physical_pars_fragment>
+#include <shadowmap_pars_fragment>
+#include <bumpmap_pars_fragment>
+#include <normalmap_pars_fragment>
+
+#include <roughnessmap_pars_fragment>
+#include <metalnessmap_pars_fragment>
+#include <logdepthbuf_pars_fragment>
+#include <clipping_planes_pars_fragment>
+void main() {
+    #include <clipping_planes_fragment>
+    vec4 diffuseColor = vec4( diffuse, opacity );
+    ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
+    vec3 totalEmissiveRadiance = emissive;
+    #include <logdepthbuf_fragment>
+    #include <map_fragment>
+    #include <color_fragment>
+    #include <alphamap_fragment>
+    #include <alphatest_fragment>
+    #include <roughnessmap_fragment>
+    #include <metalnessmap_fragment>
+    #include <normal_fragment_begin>
+    #include <normal_fragment_maps>
+    #include <clearcoat_normal_fragment_begin>
+    #include <clearcoat_normal_fragment_maps>
+    #include <emissivemap_fragment>
+    #include <lights_physical_fragment>
+    #include <lights_fragment_begin>
+    #include <lights_fragment_maps>
+    #include <lights_fragment_end>
+    #include <aomap_fragment>
+    vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;
+    #ifdef TRANSPARENCY
+        diffuseColor.a *= saturate( 1. - transparency + linearToRelativeLuminance( reflectedLight.directSpecular + reflectedLight.indirectSpecular ) );
+    #endif
+    gl_FragColor = vec4( outgoingLight,1.-(((0.2125 * outgoingLight.r) + (0.7154 * outgoingLight.g) + (0.0721 * outgoingLight.b)) ) );
+    #include <tonemapping_fragment>
+    #include <encodings_fragment>
+    #include <fog_fragment>
+    #include <premultiplied_alpha_fragment>
+    #include <dithering_fragment>
+}`
+
+//gl_FragColor = vec4( outgoingLight, diffuseColor.a );
+
+
+/*
+#ifdef USE_COLOR
+            if(vColor==vec3(0,0,1))
+                diffuseColor.rgb *= vec3(1,0,0);
+            else
+                diffuseColor.rgb *= vColor;
+    #endif*/
+
+    //    #include <color_vertex>
+
+    var meshphysical_vert = `#define STANDARD
+varying vec3 vViewPosition;
+#ifndef FLAT_SHADED
+    varying vec3 vNormal;
+    #ifdef USE_TANGENT
+        varying vec3 vTangent;
+        varying vec3 vBitangent;
+    #endif
+#endif
+#include <common>
+#include <uv_pars_vertex>
+#include <uv2_pars_vertex>
+#include <displacementmap_pars_vertex>
+#include <color_pars_vertex>
+#include <fog_pars_vertex>
+#include <morphtarget_pars_vertex>
+#include <skinning_pars_vertex>
+#include <shadowmap_pars_vertex>
+#include <logdepthbuf_pars_vertex>
+#include <clipping_planes_pars_vertex>
+
+uniform vec3 shirt;
+uniform vec3 wind;
+
+void main() {
+    #include <uv_vertex>
+    #include <uv2_vertex>
+    #ifdef USE_COLOR
+        if(color==vec3(0,0,1))
+            vColor.xyz = shirt;
+        else
+            vColor.xyz = color.xyz;
+        
+    #endif
+    #include <beginnormal_vertex>
+    #include <morphnormal_vertex>
+    #include <skinbase_vertex>
+    #include <skinnormal_vertex>
+    #include <defaultnormal_vertex>
+#ifndef FLAT_SHADED
+    vNormal = normalize( transformedNormal );
+    #ifdef USE_TANGENT
+        vTangent = normalize( transformedTangent );
+        vBitangent = normalize( cross( vNormal, vTangent ) * tangent.w );
+    #endif
+#endif
+    #include <begin_vertex>
+    #include <morphtarget_vertex>
+    #include <skinning_vertex>
+    #include <displacementmap_vertex>
+
+    
+        if(color==vec3(1,0,0)){
+            float val=max(0.0, 1.0976 - transformed.z);
+            transformed.xyz+=val*wind;
+            transformed.y*=1.0+sin((wind.z+transformed.z)*4.0)/2.0;
+
+        }
+    
+
+    #include <project_vertex>
+    #include <logdepthbuf_vertex>
+    #include <clipping_planes_vertex>
+    vViewPosition = - mvPosition.xyz;
+    #include <worldpos_vertex>
+    #include <shadowmap_vertex>
+    #include <fog_vertex>
+}`
+
+    var uniforms = THREE.UniformsUtils.merge(
+       [THREE.ShaderLib.standard.uniforms,
+       //{shirt: {value:new THREE.Vector3(0,1,0)},
+        //wind: {value:new THREE.Vector3(0,0,0)}}
+        ]
+    );
+
+    /*specterMaterial =  new THREE.ShaderMaterial({
+    uniforms: uniforms,
+    fragmentShader: fragmentShader(),
+    vertexShader: vertexShader(),
+  })**/
+
+
+    specterMaterial=new THREE.ShaderMaterial( {
+        uniforms: uniforms,
+        derivatives: false,
+        lights: true,
+        vertexColors: true,
+        vertexShader: meshphysical_vert,
+        fragmentShader: meshphysical_frag,
+        roughness: 0.0,
+        metalness: 1.0,
+        //vertexShader: THREE.ShaderChunk.cube_vert,
+        //fragmentShader: THREE.ShaderChunk.cube_frag
+    });
+
+}
+
+
+export {init,getAlphaCanvas,getBetaCanvas,bufferPrint,loadModel,specterMaterial}

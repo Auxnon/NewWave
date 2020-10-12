@@ -1,4 +1,5 @@
 import * as Render from "./Render.js";
+import * as SceneManager from "./SceneManager.js";
 
 function init(){
 	Render.init();
@@ -56,7 +57,7 @@ function init(){
 				//if(i<4)
 				opened.classList.add('openedColumn');
 
-				Render.flipScene(i);
+				SceneManager.flipScene(i);
 
 				let mainTitle=document.querySelector('#mainTitle');
 				if(mainTitle)
