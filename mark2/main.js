@@ -27,9 +27,6 @@
 			apps.push(app)
 		});
 
-		apps[0].name="Main";
-		apps[1].name="Two";
-		apps[2].name="Thrreeee";
 
 		apps.forEach((app,index)=>{
 			app.style.top=Math.random()*window.innerWidth+'px'
@@ -82,8 +79,8 @@
 				openApp(parseInt(id))
 			}
 		}
-		
-		
+
+
 		// button.onclick = e => import(/* webpackChunkName: "print" */ './print').then(module => {
 	 //     const print = module.default;
 
@@ -106,6 +103,7 @@
 			focused.classList.remove('appMax')
 			focused.style.zIndex=2;
 			focused.focused=undefined; //wow why did i do this
+			window.history.pushState({},'','/');
 		}
 	}
 
@@ -175,11 +173,11 @@
 			appsInRow=apps;
 		}
 		if(sideWays){
-			bar.style.height=(count>0?count:1)*128+'px'
-			bar.style.width='128px'
+			bar.style.height=(count>0?count:1)*64+'px'
+			bar.style.width='64px'
 		}else{
-			bar.style.width=(count>0?count:1)*128+'px'
-			bar.style.height='128px'
+			bar.style.width=(count>0?count:1)*64+'px'
+			bar.style.height='64px'
 		}
 		
 		
@@ -210,9 +208,9 @@
 		
 		for(let i=0;i<count;i++){
 			if(sideWays)
-				appPoints[i]={x:rect.left+width/2,y:64+rect.top+(i)*ratio};
+				appPoints[i]={x:rect.left+width/2,y:32+rect.top+(i)*ratio};
 			else
-				appPoints[i]={x:64+rect.left+(i)*ratio,y:rect.top+height/2};
+				appPoints[i]={x:32+rect.left+(i)*ratio,y:rect.top+height/2};
 
 			
 			if(targetMove && targetMove==appsInRow[i])
@@ -380,7 +378,7 @@
 					bar.style.left=window.innerWidth-64+'px';bar.style.top='50%';//window.innerHeight/2;
 					barCalculate();
 					barHandle.style.transform='translate(-200%,-50%)'
-					barHandle.style.width='64px';barHandle.style.height='80%';
+					barHandle.style.width='32px';barHandle.style.height='80%';
 					mainTitle.style.top='28px';
 				}
 			}else if(ar<0.75){ //top or bottom
@@ -400,14 +398,14 @@
 					}
 				}
 				barCalculate();
-				barHandle.style.height='64px';barHandle.style.width='80%';
+				barHandle.style.height='32px';barHandle.style.width='80%';
 			}else{ //left
 				if(barPos!=0){
 					barPos=0;
 					barHandle.style.transform='translate(100%,-50%)'
 					bar.style.left='64px';bar.style.top='50%'
 					barCalculate()
-					barHandle.style.width='64px'
+					barHandle.style.width='32px'
 					barHandle.style.height='80%'
 					mainTitle.style.top='28px';
 				}
@@ -536,7 +534,7 @@
 
 					openApp(targetMove.appId);
 
-					window.history.pushState({appId:targetMove.appId}, targetMove.name, '?id='+targetMove.appId+'&app='+targetMove.name);
+					window.history.pushState({appId:targetMove.appId}, targetMove.name, '?id='+targetMove.appId+'&app='+targetMove.id);
 				}
 			}else{
 				barCalculate();

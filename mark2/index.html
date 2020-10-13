@@ -18,8 +18,8 @@
 			background-color: #4158D0;
 			background-image: linear-gradient(156deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
 			border-radius:  16px;
-			width: 128px;
-			height: 128px;
+			width: 56px;
+			height: 56px;
 			top: -100px;
 			transform: translate(-50%,-50%);
 			transition: 0.4s;
@@ -34,9 +34,9 @@
 			position: absolute;
 			width: 256px;
 			height: 128px;
-			border-radius: 32px;
+			border-radius: 16px;
 			/*border: white 3px solid;*/
-			background-color: #4444;
+			background-color: #7774;
 			transform: translate(-50%,-50%);
 			left: 50%;
 			bottom: 64px;
@@ -45,7 +45,7 @@
 		}
 		#barHandle{
 			width: 80%;
-			height: 64px;
+			height: 32px;
 			border-radius: 32px;
 			/*border: white solid 3px;*/
 			position: absolute;
@@ -65,12 +65,34 @@
 			background-image: linear-gradient(90deg, #FAD961 0%, #F76B1C 100%);
 		}
 		#thr{
-			background-color: #FA8BFF;
+			background-color: #17145D;
 			/*background-image: linear-gradient(45deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%);*/
 
-			background-image: url('data:image/svg+xml,<svg height="10" width="10" xmlns="http://www.w3.org/2000/svg" version="1.1"> <defs> <pattern id="dots-8" patternUnits="userSpaceOnUse" width="10" height="10"> <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScgLz4KICA8cmVjdCB4PScwJyB5PScwJyB3aWR0aD0nOCcgaGVpZ2h0PSc4JyBmaWxsPSdibGFjaycgLz4KPC9zdmc+" x="0" y="0" width="10" height="10"> </image> </pattern> </defs> </svg>');
 
-			
+
+			/*background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='#000000' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E") !important;*/
+
+			/*background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'><path stroke='#000000' stroke-width='3' fill-opacity='1.0' d='M1 0L0 3'></path></svg>");*/
+
+
+			background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 0 24 24" width="48"  ><path stroke-width="4" stroke="rgb(150,000,250)" d="M1 1h24v24H1V1z" fill="none"/><path stroke-width="2" stroke="rgb(250,1,200)" d="M0 0h24v24H0V0z" fill="none"/></svg>');
+			animation: backgroundMove 2s infinite linear;
+
+		}
+		#appCenter{
+			position: absolute;
+			border: white solid 3px;
+			box-sizing: border-box;
+			border-radius: 16px;
+			width: 80%;
+			height: 80%;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%,-50%);
+		}
+		@keyframes backgroundMove {
+			from{background-position: 0 48px;}
+			to{background-position: 0 0px;}
 		}
 		svg{
 			position: absolute;
@@ -164,6 +186,7 @@
 	</style>
 </head>
 <body>
+	<div id="appCenter"></div>
 	<div id="bar">
 		<div id="barHandle"></div>
 	</div>
