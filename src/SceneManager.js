@@ -34,7 +34,6 @@ function init(){
       greenModel.position.set(0,260,-40)
        greenModel.scale.set(10,10,10)
       scenes[0].add(greenModel);
-      window.model=m;
     })
 /*
     Render.loadModel('assets/tree.gltf',function(m){
@@ -70,8 +69,7 @@ function init(){
       window.sunLight=sunLight
 
       cubeGeometry = new THREE.BoxBufferGeometry( 20, 20, 40 );
-
-    cubeMaterial = Render.specterMaterial;//new THREE.MeshBasicMaterial( { color:0xD53229 } )
+      cubeMaterial = Render.specterMaterial;//new THREE.MeshBasicMaterial( { color:0xD53229 } )
 
       let cubeO=new THREE.Mesh(cubeGeometry,cubeMaterial);
       cubeO.position.set(-40,0,0);
@@ -86,6 +84,14 @@ function init(){
 
 
       barGraph([70.114, 69.14, 69.14, 68.653, 68.653, 69.14, 68.653, 69.627, 69.627, 68.653, 69.627, 69.14, 69.14, 68.653, 70.114, 69.14, 69.14, 69.14, 68.653, 69.14],scenes[1]);
+
+        Render.loadModel('assets/skull.glb',function(m){
+        m.position.set(0,0,0)
+         m.scale.set(10,10,10)
+        scenes[1].add(m);
+        window.model=m;
+      })
+
     }
 
 
