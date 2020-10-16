@@ -5,7 +5,14 @@ var cubes=[];
 var greenModel;
 var scenes;
 
+var animators=[];
+
 var shapesTwo=[];
+
+
+ 
+app.animate=function(){}
+app.objects.*
 
 function init(){
   scenes=[];
@@ -83,11 +90,13 @@ function init(){
       window.pyr=pyramid
 
 
+
       barGraph([70.114, 69.14, 69.14, 68.653, 68.653, 69.14, 68.653, 69.627, 69.627, 68.653, 69.627, 69.14, 69.14, 68.653, 70.114, 69.14, 69.14, 69.14, 68.653, 69.14],scenes[1]);
 
         Render.loadModel('assets/skull.glb',function(m){
         m.position.set(0,0,0)
          m.scale.set(10,10,10)
+         m.rotation.y=-Math.PI/2 pi2 to pi
         scenes[1].add(m);
         window.model=m;
       })
