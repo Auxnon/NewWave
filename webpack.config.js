@@ -22,7 +22,7 @@ return {
 	    path: path.resolve(__dirname, "public"), // string
 	    // the target directory for all output files
 	},
-	/*optimization: {
+	optimization: {
 		runtimeChunk: 'single',
 		splitChunks: {
 			cacheGroups: {
@@ -35,9 +35,16 @@ return {
 					test: path.resolve('src/lib'),
 					name: 'libs',
 					chunks:'all',
+				},
+				apps:{
+					test: /[\\/]App[\\/]/,
+		          	name(module) {
+		            const packageName = module.context.match(/[\\/]App[\\/](.*?)([\\/]|$)/)[1];
+		            return packageName;
+		          	},
 				}
 			},
 		},
-	},*/
+	},
 };
 }
