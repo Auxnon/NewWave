@@ -4,6 +4,10 @@ import * as Render from "./Render.js";
 
 var emptyScene;
 var scenes;
+var animators = [];
+
+var loadTest = false;
+
 
 var data = [
     [ /* webpackChunkName: "App1SkyIsland" */ './App1SkyIsland', 'Sky Island'],
@@ -20,6 +24,23 @@ function init() {
         scenes[i] = new THREE.Scene();
     }
 
+
+    // import(/* webpackChunkName: "App1SkyIsland" */ './App1SkyIsland').then(module => {
+    //     scenes[0]=module.init('Sky Island',Render,THREE);
+    // }); 
+
+    // import(/* webpackChunkName: "App2Punk" */ './App2Punk').then(module => {
+    //     scenes[1]=module.init('Punk App',Render,THREE);
+    // });
+    //   }
+    // })
+
+
+
+
+
+
+
     /*
       var geometry = new THREE.SphereGeometry( 5, 32, 32 );
       var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
@@ -28,12 +49,16 @@ function init() {
       sphere.position.set(0,0,-30);
       cubes.push(sphere);
       scenes[2].add(sphere);
+
+
       var geo = new THREE.OctahedronGeometry( 30, 1 );
       var mat = new THREE.MeshBasicMaterial( {color: 0xC92DD1} ); 
       var octa= new THREE.Mesh( geo, mat );
       octa.position.set(0,0,20);
       cubes.push(octa);
       scenes[3].add(octa);*/
+
+
 }
 
 

@@ -36,6 +36,7 @@ return {
 					name: 'libs',
 					chunks:'all',
 				},
+				
 				apps:{
 					test: /[\\/]App[\\/]/,
 		          	name(module) {

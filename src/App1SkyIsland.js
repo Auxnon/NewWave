@@ -1,7 +1,8 @@
+import * as Render from "./Render.js";
 
 let greenModel;
 
-function init(n,Render,THREE) {
+function init(n,THREE) {
 	let scene=new THREE.Scene();
 
     Render.loadModel('assets/island.glb',function(m){

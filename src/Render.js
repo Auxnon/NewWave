@@ -1,8 +1,9 @@
 
 import * as THREE from "./lib/three.module.js";
+import * as Main from "./Main.js";
 import {GLTFLoader} from "./lib/GLTFLoader.js";
 
-import * as SceneManager from "./SceneManager.js";
+
 import { EffectComposer } from './lib/EffectComposer.js';
 import { ShaderPass } from './lib/ShaderPass.js';
 import { LuminosityShader } from './lib/LuminosityShader.js';
@@ -19,7 +20,6 @@ import { LuminosityShader } from './lib/LuminosityShader.js';
 
 
 var camera, renderer;
-
 
 var docWidth,docHeight;
 
@@ -38,10 +38,14 @@ var activeCanvas;
 var composer;
 
 var specterMaterial;
+var SCENE_IMPORT;
 
 
+function init(data,initialScene){
+    if(initialScene)
+        activeScene=initialScene;
 
-function init(){
+    SCENE_IMPORT=data;
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
     camera.position.z = 100; //400
     camera.position.y = -200; //-800
@@ -72,7 +76,7 @@ function init(){
 
     initCustomMaterial();
 
-    SceneManager.init();
+    sceneInit();
     activeCanvas=alphaCanvas;
 
 
@@ -86,7 +90,6 @@ function init(){
     
 
     animate();
-    window.camera=camera;
 
     
 }
@@ -109,13 +112,6 @@ function loadModel(model,callback,texture,color){
                 if (child instanceof THREE.Mesh) {
                     //if(child.name=="Cube"){
                         model=child;
-                        //create a global var to reference later when changing textures
-                        //apply texture
-                        
-
-                        //
-                        
-
                         if(!texture){
                             if(color)
                                 child.material = new THREE.MeshStandardMaterial({ color: color, metalness: 0, roughness: 1.0}); // 
@@ -134,10 +130,7 @@ function loadModel(model,callback,texture,color){
                 }
             });
             //gltf.scene.children[0].children[1].scale.set(20,20,20);
-
             //gltf.scene.children.pop();
-           
-
             //let mixer = new THREE.AnimationMixer( gltf.scene );
              //model=gltf.scene.children[0]
              let m2=gltf.scene.children[0];
@@ -178,21 +171,9 @@ function loadModel(model,callback,texture,color){
         },
     );
 }
-/*var toggle=false;
-function animationControl(ev){
-    if(action){
-        if(toggle){
-            action.reset().play();
-        }else{
-            action.halt(1000);
-        }
-        toggle=!toggle;
-    }
-}
-*/
 
 function resizer(){
-    docWidth=Math.floor(window.innerWidth*0.76);
+    docWidth=window.innerWidth;
     docHeight=window.innerHeight;
     camera.aspect=docWidth/docHeight;
     camera.updateProjectionMatrix();
@@ -202,21 +183,9 @@ function resizer(){
 }
 
 
-
 function animate(time) {
-    //let delta=time-prevTime;
-
-    //if(mixer)mixer.update(delta);
-    SceneManager.animate();
-    //
-    //prevTime=time;
-    //applyCursor();
-    //if(_grabImage == true){
-       // dumpImage(renderer.domElement.toDataURL());
-        //_grabImage = false;
-   // }
-   
-    renderer.render( SceneManager.getScene(), camera );
+   sceneAnimate();
+    renderer.render( getScene(), camera );
     //composer.render();
     requestAnimationFrame( animate );
 }
@@ -227,7 +196,7 @@ function dumpImage(img){
 }
 function bufferPrint(){
     //_grabImage=true;
-    renderer.render( SceneManager.getScene(), camera );
+    renderer.render( getScene(), camera );
     dumpImage(renderer.domElement.toDataURL());
 }
 
@@ -283,91 +252,6 @@ function roundEdge(x){
         }
     }
     return 0;
-}
-
-
-function preModel(){
-	/*cubeGeometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
-   	cubeMaterial = new THREE.MeshBasicMaterial( { color:0xff8833 } ); //map: texture
-    circleGeometry=new THREE.CircleGeometry( 5, 8 );
-    let pointerGeom = new THREE.CircleGeometry( 6, 16 );
-    pointerMat = new THREE.MeshBasicMaterial( { color:0x4AE13A } );
-    pointerMatOn = new THREE.MeshBasicMaterial( { color:0xEBEE00 } );
-    pointer = new THREE.Mesh(pointerGeom,pointerMat);
-    pointer.position.z=1;
-    mainScene.add(pointer);
-
-
-    var length = 12, width = 8;
-
-var shape = new THREE.Shape();
-
-let cir=200;
-shape.moveTo( 0,-cir );
-
-
-for(let i=0;i<45;i++){
-    let r=Math.PI*i/18.0;
-    let x=Math.cos(r)*cir;
-    let y=Math.sin(r)*cir;
-    x*=(1+Math.random()/2.0);
-    y*=(1+Math.random()/2.0);
-    shape.lineTo(x,y)
-}
-
-var extrudeSettings = {
-    steps: 2,
-    depth: 16,
-    bevelEnabled: true,
-    bevelThickness: 2,
-    bevelSize: 8,
-    bevelOffset: 2,
-    bevelSegments: 1
-};
-
-var geometry = new THREE.ExtrudeBufferGeometry( shape, extrudeSettings );
-var material = new THREE.MeshStandardMaterial( { color: 0xA1D100,roughness: 1.0,metalness: 0.0 } );
-var mesh = new THREE.Mesh( geometry, material ) ;
-
-mesh.position.z-=18;
-
-mesh.receiveShadow=true;
-currentScene.add( mesh );
-
-
-ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
-currentScene.add( ambientLight );
-
-//var directionalLight = new THREE.PointLight( 0xffffff, 1,100 );
-sunLight = new THREE.DirectionalLight( 0xffffff, 0.5 ); //DirectionalLight
-sunLight.position.set(0,160,200);
-sunLight.castShadow = true;
-currentScene.add( sunLight );
-
-sunLight.shadow.mapSize.width = SHADOW_SIZE;  // default
-sunLight.shadow.mapSize.height = SHADOW_SIZE; // default
-sunLight.shadow.camera.near = 10;    // default
-sunLight.shadow.camera.far = 500;     // default
-const d1 = 300;
-
-sunLight.shadow.camera.left = - d1;
-sunLight.shadow.camera.right = d1;
-sunLight.shadow.camera.top = d1;
-sunLight.shadow.camera.bottom = - d1;
-
-sunLight.shadow.radius = 2.2;
-
-sunLight2=sunLight.clone();
-sunLight2.shadow.mapSize.width = 256;  // default
-sunLight2.shadow.mapSize.height = 256; // default
-sunLight2.shadow.radius = 0;
-sunLight2.visible=false;
-currentScene.add(sunLight2);
-
-var helper = new THREE.CameraHelper( sunLight.shadow.camera );
-currentScene.add( helper );
-*/
-
 }
 
 function syncModel(index,obj){
@@ -649,6 +533,87 @@ void main() {
     });
 
 }
+/////SCENE///////
+
+var emptyScene;
+var scenes;
 
 
-export {init,getAlphaCanvas,getBetaCanvas,bufferPrint,loadModel,specterMaterial}
+
+function sceneInit() {
+    emptyScene = new THREE.Scene();
+    scenes = [];
+
+    let cubeGeometry = new THREE.BoxBufferGeometry(20, 20, 20);
+    let cubeMaterial = new THREE.MeshStandardMaterial({ color: 0xff8833 }); //map: texture
+
+    /*
+      var geometry = new THREE.SphereGeometry( 5, 32, 32 );
+      var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+      var sphere = new THREE.Mesh( geometry, material );
+
+      sphere.position.set(0,0,-30);
+      cubes.push(sphere);
+      scenes[2].add(sphere);
+      var geo = new THREE.OctahedronGeometry( 30, 1 );
+      var mat = new THREE.MeshBasicMaterial( {color: 0xC92DD1} ); 
+      var octa= new THREE.Mesh( geo, mat );
+      octa.position.set(0,0,20);
+      cubes.push(octa);
+      scenes[3].add(octa);*/
+}
+
+
+
+function sceneAnimate() {
+    if(activeModule){
+        activeModule.animate()
+    }
+}
+
+function flipScene(i) {
+    activeScene = i;
+}
+var activeScene = 0;
+var activeModule;
+
+function getScene() {
+    let index = activeScene;
+    let scene = scenes[index];
+    if(scene == undefined) {
+        scene = emptyScene
+        scenes[index] = 'pend';
+
+        //wow this is a conufsing mess but it's functional!
+         let importerFunction=SCENE_IMPORT[index];
+         if(importerFunction){
+            Main.pendApp(index)
+            importerFunction(module=>{
+                scenes[index]=[module.init('start the feller', THREE),module]
+                Main.clearPendApp(index)
+            });
+        }else{
+            scenes[index]=[emptyScene,undefined]
+        }
+
+        /*import(SCENE_DATA[index][0]).then(module => {
+            scenes[index] = module.init(SCENE_DATA[index][1], Render, THREE);
+        })*/
+    } else if(scene == 'pend') {
+        scene = emptyScene;
+    }else{
+        activeModule=scene[1]; //define the module that's currently active so we can run it's animate function in sceneAnimate()
+        scene=scene[0] //please forgive me, trust me it works
+    }
+
+    return scene;
+}
+
+///////////////
+
+
+
+
+
+
+export {init,getAlphaCanvas,getBetaCanvas,bufferPrint,loadModel,flipScene,specterMaterial}

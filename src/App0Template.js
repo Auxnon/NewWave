@@ -1,7 +1,6 @@
-import * as THREE from "./lib/three.module.js";
 import * as Render from "./Render.js";
 
-function init(name,Render,THREE) {
+function init(name,THREE) {
 
 }
 
