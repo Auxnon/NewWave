@@ -27,7 +27,7 @@ var loader;
 var mixer;
 
 var SHADOW_SIZE=2048;
-var SIZE_DIVIDER=2;
+var SIZE_DIVIDER=8;
 
 var alphaCanvas;
 var betaCanvas;
