@@ -1,7 +1,6 @@
-
 import * as THREE from "./lib/three.module.js";
 import * as Main from "./Main.js";
-import {GLTFLoader} from "./lib/GLTFLoader.js";
+import { GLTFLoader } from "./lib/GLTFLoader.js";
 
 
 import { EffectComposer } from './lib/EffectComposer.js';
@@ -21,13 +20,13 @@ import { LuminosityShader } from './lib/LuminosityShader.js';
 
 var camera, renderer;
 
-var docWidth,docHeight;
+var docWidth, docHeight;
 
 var loader;
 var mixer;
 
-var SHADOW_SIZE=2048;
-var SIZE_DIVIDER=8;
+var SHADOW_SIZE = 2048;
+var SIZE_DIVIDER = 8;
 
 var alphaCanvas;
 var betaCanvas;
@@ -41,90 +40,92 @@ var specterMaterial;
 var SCENE_IMPORT;
 
 
-function init(data,initialScene){
+function init(data, initialScene) {
     if(initialScene)
-        activeScene=initialScene;
+        activeScene = initialScene;
 
-    SCENE_IMPORT=data;
-    camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
+    SCENE_IMPORT = data;
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 5000);
     camera.position.z = 100; //400
     camera.position.y = -200; //-800
-    camera.up=new THREE.Vector3(0,0,1)
+    camera.up = new THREE.Vector3(0, 0, 1)
 
-    camera.lookAt(new THREE.Vector3( 0, 100, 0 ));
+    camera.lookAt(new THREE.Vector3(0, 100, 0));
 
-    
 
-    alphaCanvas=document.createElement('div');
-    betaCanvas=document.createElement('div');
+
+    alphaCanvas = document.createElement('div');
+    betaCanvas = document.createElement('div');
     alphaCanvas.classList.add('canvasHolder');
     betaCanvas.classList.add('canvasHolder');
-    betaCanvas.style.background='#fff5'
-    alphaCanvas.reserved=false;
-    betaCanvas.reserved=false;
+    betaCanvas.style.background = '#fff5'
+    alphaCanvas.reserved = false;
+    betaCanvas.reserved = false;
 
 
-    renderer = new THREE.WebGLRenderer({alpha: true, antialias:true});
+    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    renderer.setClearColor(0x000000, 0);//0xb0e9fd,1);//0xb0e9fd,1)
+    renderer.setClearColor(0x000000, 0); //0xb0e9fd,1);//0xb0e9fd,1)
 
-    alphaCanvas.appendChild( renderer.domElement );
+    alphaCanvas.appendChild(renderer.domElement);
 
     loader = new GLTFLoader();
 
     initCustomMaterial();
 
     sceneInit();
-    activeCanvas=alphaCanvas;
+    activeCanvas = alphaCanvas;
 
 
-    window.addEventListener('resize',resizer);
-    resizer();
+
+    resize();
 
 
-    composer = new EffectComposer( renderer );
-    var luminosityPass = new ShaderPass( LuminosityShader );
-    composer.addPass( luminosityPass );
-    
+    composer = new EffectComposer(renderer);
+    var luminosityPass = new ShaderPass(LuminosityShader);
+    composer.addPass(luminosityPass);
+
 
     animate();
 
-    
+
 }
-function getAlphaCanvas(){
+
+function getAlphaCanvas() {
     return alphaCanvas;
 }
-function getBetaCanvas(){
+
+function getBetaCanvas() {
     return betaCanvas;
 }
 
-function loadModel(model,callback,texture,color){
+function loadModel(model, callback, texture, color) {
     loader.load(
-        ('./'+model),//villager22.gltf',
-        ( gltf ) => {
+        ('./' + model), //villager22.gltf',
+        (gltf) => {
             // called when the resource is loaded
             //gltf.scene.scale.set(10,10,10);
-            let model;//=gltf.scene.children[0];
-            gltf.scene.rotation.x=Math.PI/2;
-            gltf.scene.traverse( function ( child ) {
-                if (child instanceof THREE.Mesh) {
+            let model; //=gltf.scene.children[0];
+            gltf.scene.rotation.x = Math.PI / 2;
+            gltf.scene.traverse(function(child) {
+                if(child instanceof THREE.Mesh) {
                     //if(child.name=="Cube"){
-                        model=child;
-                        if(!texture){
-                            if(color)
-                                child.material = new THREE.MeshStandardMaterial({ color: color, metalness: 0, roughness: 1.0}); // 
-                            else
-                                child.material = specterMaterial; //new THREE.MeshStandardMaterial({ vertexColors: THREE.VertexColors, metalness: 0, roughness: 1.0}); // 
-                          
-                            child.material.needsUpdate = true;
-                            //child.material.skinning=true;
-                        }
-                        //child.material.morphTargets=true;
+                    model = child;
+                    if(!texture) {
+                        if(color)
+                            child.material = new THREE.MeshStandardMaterial({ color: color, metalness: 0, roughness: 1.0 }); // 
+                        else
+                            child.material = specterMaterial; //new THREE.MeshStandardMaterial({ vertexColors: THREE.VertexColors, metalness: 0, roughness: 1.0}); // 
 
-                        //child.material.map.needsUpdate = true;
-                   // }else{
+                        child.material.needsUpdate = true;
+                        //child.material.skinning=true;
+                    }
+                    //child.material.morphTargets=true;
+
+                    //child.material.map.needsUpdate = true;
+                    // }else{
 
                     //}
                 }
@@ -132,15 +133,15 @@ function loadModel(model,callback,texture,color){
             //gltf.scene.children[0].children[1].scale.set(20,20,20);
             //gltf.scene.children.pop();
             //let mixer = new THREE.AnimationMixer( gltf.scene );
-             //model=gltf.scene.children[0]
-             let m2=gltf.scene.children[0];
-             if(model){
+            //model=gltf.scene.children[0]
+            let m2 = gltf.scene.children[0];
+            if(model) {
                 var animations = gltf.animations;
-                if ( animations && animations.length ) {
+                if(animations && animations.length) {
 
                     mixer = new THREE.AnimationMixer(model);
-                    for ( var i = 0; i < animations.length; i ++ ) {
-                        var animation = animations[ i ];
+                    for(var i = 0; i < animations.length; i++) {
+                        var animation = animations[i];
                         // There's .3333 seconds junk at the tail of the Monster animation that
                         // keeps it from looping cleanly. Clip it at 3 seconds
 
@@ -148,187 +149,200 @@ function loadModel(model,callback,texture,color){
                         //    animation.duration = sceneInfo.animationTime;
 
 
-                       // }
-                        action = mixer.clipAction( animation );
+                        // }
+                        action = mixer.clipAction(animation);
                         //action.setEffectiveTimeScale(200);
                         //action.timeScale=0.002;
-                        action.timeScale=0.002;
+                        action.timeScale = 0.002;
                         //if ( state.playAnimation ) 
-                            action.play();
+                        action.play();
                     }
                 }
-                 //mainScene.add( gltf.scene.children[0] );
-             }
+                //mainScene.add( gltf.scene.children[0] );
+            }
             callback(gltf.scene);
         },
-        ( xhr ) => {
+        (xhr) => {
             // called while loading is progressing
-            console.log( `${( xhr.loaded / xhr.total * 100 )}% loaded` );
+            console.log(`${( xhr.loaded / xhr.total * 100 )}% loaded`);
         },
-        ( error ) => {
+        (error) => {
             // called when loading has errors
-            console.error( 'An error happened', error );
+            console.error('An error happened', error);
         },
     );
 }
 
-function resizer(){
-    docWidth=window.innerWidth;
-    docHeight=window.innerHeight;
-    camera.aspect=docWidth/docHeight;
+function resize() {
+    Math.max(window.screen.width, window.innerWidth)
+    Math.max(window.screen.height, window.innerHeight)
+
+    docWidth =  Math.max(window.screen.width, window.innerWidth)
+    docHeight = Math.max(window.screen.height, window.innerHeight)//window.innerHeight;
+    camera.aspect = docWidth / docHeight;
     camera.updateProjectionMatrix();
-    
-    renderer.setPixelRatio( window.devicePixelRatio/SIZE_DIVIDER);
-    renderer.setSize( docWidth, docHeight);
+
+    renderer.setPixelRatio(window.devicePixelRatio / SIZE_DIVIDER);
+    renderer.setSize(docWidth, docHeight);
 }
 
 
 function animate(time) {
-   sceneAnimate();
-    renderer.render( getScene(), camera );
+    sceneAnimate();
+    renderer.render(getScene(), camera);
     //composer.render();
-    requestAnimationFrame( animate );
+    requestAnimationFrame(animate);
 }
-function dumpImage(img){
-    let dom=document.querySelector('#afterImage');
+
+function dumpImage(img) {
+    let dom = document.querySelector('#afterImage');
     if(dom)
-        dom.setAttribute('src',img);
+        dom.setAttribute('src', img);
 }
-function bufferPrint(){
+
+function bufferPrint() {
     //_grabImage=true;
-    renderer.render( getScene(), camera );
+    renderer.render(getScene(), camera);
     dumpImage(renderer.domElement.toDataURL());
 }
 
-var anchors=[];
-function addAnchor(host,bubble){
-    let anchor={
-        host:host,
-        bubble:bubble,
-        x:0,
-        y:0,
-        offset:0,
+var anchors = [];
+
+function addAnchor(host, bubble) {
+    let anchor = {
+        host: host,
+        bubble: bubble,
+        x: 0,
+        y: 0,
+        offset: 0,
     }
-    anchors.forEach(a=>{
-        if(a.host==host){
-            a.offset-=40;
+    anchors.forEach(a => {
+        if(a.host == host) {
+            a.offset -= 40;
         }
     })
     anchors.push(anchor);
-    console.log(anchors.length+' anchors');
-    updateAnchor(anchor,anchors.length-1);
+    console.log(anchors.length + ' anchors');
+    updateAnchor(anchor, anchors.length - 1);
     return anchor;
 }
-function updateAnchor(anchor,index){
-    if(!anchor.bubble){
-        anchors.splice(index,1);
+
+function updateAnchor(anchor, index) {
+    if(!anchor.bubble) {
+        anchors.splice(index, 1);
         return false;
     }
-    if(anchor.host){
-        let vector=projectVector(anchor.host);
-        anchor.bubble.style.left=-16+vector.x+'px';
-        anchor.bubble.style.top=(40+anchor.offset+vector.y)+'px';
-        anchor.x=vector.x;
-        anchor.y=vector.y;
+    if(anchor.host) {
+        let vector = projectVector(anchor.host);
+        anchor.bubble.style.left = -16 + vector.x + 'px';
+        anchor.bubble.style.top = (40 + anchor.offset + vector.y) + 'px';
+        anchor.x = vector.x;
+        anchor.y = vector.y;
     }
-    
+
 }
-function roundEdge(x){
-    x=x%(Math.PI)
-    if(x<0)
-        x+=Math.PI*2;
-    
-    if(x>Math.PI/4){
-        if(x>5*Math.PI/4){
-            if(x<7*Math.PI/4){
-                return Math.PI*3/2;
+
+function roundEdge(x) {
+    x = x % (Math.PI)
+    if(x < 0)
+        x += Math.PI * 2;
+
+    if(x > Math.PI / 4) {
+        if(x > 5 * Math.PI / 4) {
+            if(x < 7 * Math.PI / 4) {
+                return Math.PI * 3 / 2;
             }
-        }else{
-            if(x>3*Math.PI/4){
+        } else {
+            if(x > 3 * Math.PI / 4) {
                 return Math.PI;
-            }else{
-                return Math.PI/2;
+            } else {
+                return Math.PI / 2;
             }
         }
     }
     return 0;
 }
 
-function syncModel(index,obj){
-	let m=modelsIndexed[index];
-	m.position.x=obj.x;
-	m.position.y=obj.y;
-	m.position.z=obj.z;
+function syncModel(index, obj) {
+    let m = modelsIndexed[index];
+    m.position.x = obj.x;
+    m.position.y = obj.y;
+    m.position.z = obj.z;
 }
-function createModel(index){
-	let model = new THREE.Mesh( cubeGeometry, cubeMaterial );
-	modelsIndexed[index]=model;
-	return model;
+
+function createModel(index) {
+    let model = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    modelsIndexed[index] = model;
+    return model;
 }
 /*
 function cubit(w,h,d,x,y,z,color,layer){
-	let geom = new THREE.BoxBufferGeometry( w, h, d );
+    let geom = new THREE.BoxBufferGeometry( w, h, d );
     let mat;
     if(color)
         mat=new THREE.MeshStandardMaterial( { color: parseInt(color)} );
     
-	let model = new THREE.Mesh( geom,mat);
-	model.position.x=x;
-	model.position.y=y;
-	model.position.z=z;
+    let model = new THREE.Mesh( geom,mat);
+    model.position.x=x;
+    model.position.y=y;
+    model.position.z=z;
     model.castShadow=true;
     model.receiveShadow=true;
     if(layer!=undefined && scenes[layer]){
         scenes[layer].add(model);
     }else
-	   scenes[0].add(model);
+       scenes[0].add(model);
     return model;
 }*/
 function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = Math.random()>0.5?0x66B136:0x76610E;
-  return parseInt(color);
+    var letters = '0123456789ABCDEF';
+    var color = Math.random() > 0.5 ? 0x66B136 : 0x76610E;
+    return parseInt(color);
 }
 
-function applyCursor(){
-	if(Control.down()){
-        pointer.material=pointerMatOn;
-    }else
-        pointer.material=pointerMat;
-		var vector = new THREE.Vector3();     
-	    vector.set(( Control.screenX() / window.innerWidth ) * 2 - 1, - ( Control.screenY() / window.innerHeight ) * 2 + 1,0.5 );
-	    vector.unproject(camera)
-	    var dir = vector.sub( camera.position ).normalize();
-	    var distance = - camera.position.z / dir.z;
-	    var pos = camera.position.clone().add( dir.multiplyScalar( distance ) );
-	    
-	    pointer.position.x =pos.x;
-	    pointer.position.y =pos.y
-	    Control.setVector(pointer.position);
-	
+function applyCursor() {
+    if(Control.down()) {
+        pointer.material = pointerMatOn;
+    } else
+        pointer.material = pointerMat;
+    var vector = new THREE.Vector3();
+    vector.set((Control.screenX() / window.innerWidth) * 2 - 1, -(Control.screenY() / window.innerHeight) * 2 + 1, 0.5);
+    vector.unproject(camera)
+    var dir = vector.sub(camera.position).normalize();
+    var distance = -camera.position.z / dir.z;
+    var pos = camera.position.clone().add(dir.multiplyScalar(distance));
+
+    pointer.position.x = pos.x;
+    pointer.position.y = pos.y
+    Control.setVector(pointer.position);
+
 }
-function projectVector(object){
 
-    var width = docWidth, height = docHeight;
-    var widthHalf = width / 2, heightHalf = height / 2;
+function projectVector(object) {
 
-    let vector=object.position.clone();
-    vector.z+=30
+    var width = docWidth,
+        height = docHeight;
+    var widthHalf = width / 2,
+        heightHalf = height / 2;
+
+    let vector = object.position.clone();
+    vector.z += 30
     //vector.applyMatrix4(object.matrixWorld);
     vector.project(camera)
 
     //var projector = new THREE.Projector();
     //projector.projectVector( vector.setFromMatrixPosition( object.matrixWorld ), camera );
 
-    vector.x = ( vector.x * widthHalf ) + widthHalf;
-    vector.y = - ( vector.y * heightHalf ) + heightHalf;
+    vector.x = (vector.x * widthHalf) + widthHalf;
+    vector.y = -(vector.y * heightHalf) + heightHalf;
     return vector;
 
 }
 
 
 var specterMaterial
-function initCustomMaterial(){
+
+function initCustomMaterial() {
 
     var meshphysical_frag = `
     #define STANDARD
@@ -423,16 +437,16 @@ void main() {
     #include <dithering_fragment>
 }`
 
-//gl_FragColor = vec4( outgoingLight, diffuseColor.a );
+    //gl_FragColor = vec4( outgoingLight, diffuseColor.a );
 
 
-/*
-#ifdef USE_COLOR
-            if(vColor==vec3(0,0,1))
-                diffuseColor.rgb *= vec3(1,0,0);
-            else
-                diffuseColor.rgb *= vColor;
-    #endif*/
+    /*
+    #ifdef USE_COLOR
+                if(vColor==vec3(0,0,1))
+                    diffuseColor.rgb *= vec3(1,0,0);
+                else
+                    diffuseColor.rgb *= vColor;
+        #endif*/
 
     //    #include <color_vertex>
 
@@ -506,9 +520,9 @@ void main() {
 }`
 
     var uniforms = THREE.UniformsUtils.merge(
-       [THREE.ShaderLib.standard.uniforms,
-       //{shirt: {value:new THREE.Vector3(0,1,0)},
-        //wind: {value:new THREE.Vector3(0,0,0)}}
+        [THREE.ShaderLib.standard.uniforms,
+            //{shirt: {value:new THREE.Vector3(0,1,0)},
+            //wind: {value:new THREE.Vector3(0,0,0)}}
         ]
     );
 
@@ -519,7 +533,7 @@ void main() {
   })**/
 
 
-    specterMaterial=new THREE.ShaderMaterial( {
+    specterMaterial = new THREE.ShaderMaterial({
         uniforms: uniforms,
         derivatives: false,
         lights: true,
@@ -566,7 +580,7 @@ function sceneInit() {
 
 
 function sceneAnimate() {
-    if(activeModule){
+    if(activeModule) {
         activeModule.animate()
     }
 }
@@ -585,15 +599,15 @@ function getScene() {
         scenes[index] = 'pend';
 
         //wow this is a conufsing mess but it's functional!
-         let importerFunction=SCENE_IMPORT[index];
-         if(importerFunction){
+        let importerFunction = SCENE_IMPORT[index];
+        if(importerFunction) {
             Main.pendApp(index)
-            importerFunction(module=>{
-                scenes[index]=[module.init('start the feller', THREE),module]
+            importerFunction(module => {
+                scenes[index] = [module.init('start the feller', THREE), module]
                 Main.clearPendApp(index)
             });
-        }else{
-            scenes[index]=[emptyScene,undefined]
+        } else {
+            scenes[index] = [emptyScene, undefined]
         }
 
         /*import(SCENE_DATA[index][0]).then(module => {
@@ -601,9 +615,9 @@ function getScene() {
         })*/
     } else if(scene == 'pend') {
         scene = emptyScene;
-    }else{
-        activeModule=scene[1]; //define the module that's currently active so we can run it's animate function in sceneAnimate()
-        scene=scene[0] //please forgive me, trust me it works
+    } else {
+        activeModule = scene[1]; //define the module that's currently active so we can run it's animate function in sceneAnimate()
+        scene = scene[0] //please forgive me, trust me it works
     }
 
     return scene;
@@ -616,4 +630,4 @@ function getScene() {
 
 
 
-export {init,getAlphaCanvas,getBetaCanvas,bufferPrint,loadModel,flipScene,specterMaterial}
+export { init, getAlphaCanvas, getBetaCanvas, bufferPrint, loadModel, flipScene, specterMaterial, resize }

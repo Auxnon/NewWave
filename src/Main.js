@@ -1,3 +1,5 @@
+import * as UI from "./UI.js";
+
 var Render;
 
 //We could have technically done imports as a variable input to the Render class import statement
@@ -33,6 +35,8 @@ var mouseObj;
 var points;
 
 var pendingRenderId; //if not undefined, wait for Render to load and then apply the scene
+
+var resizeDebouncer;
 
 function init(argument) {
     let preApps = document.querySelectorAll('.app');
@@ -98,13 +102,14 @@ function init(argument) {
 
     import( /* webpackChunkName: "Render" */ './Render').then(module => {
         Render = module;
-        Render.init(SCENE_IMPORT,pendingRenderId); //if undefined it will just use 0, so we can directly input regardless
+        Render.init(SCENE_IMPORT, pendingRenderId); //if undefined it will just use 0, so we can directly input regardless
         console.log('3d Renderer loaded')
-        if(pendingRenderId!=undefined){
-        	openAppApplyRender(pendingRenderId,apps[pendingRenderId])
+        if(pendingRenderId != undefined) {
+            openAppApplyRender(pendingRenderId, apps[pendingRenderId])
         }
     });
 
+    UI.init(document.querySelector('#main'));
 
 }
 init();
@@ -116,15 +121,16 @@ function openApp(id) {
         app.focused = true;
         app.style.zIndex = 0;
         if(Render) {
-            openAppApplyRender(id,app)
-        }else{
-        	pendingRenderId=id;
+            openAppApplyRender(id, app)
+        } else {
+            pendingRenderId = id;
         }
         focused = app;
     }
 }
-function openAppApplyRender(id,app){
-	let d = Render.getAlphaCanvas();
+
+function openAppApplyRender(id, app) {
+    let d = Render.getAlphaCanvas();
     d.style.opacity = 1;
     d.remove();
 
@@ -164,10 +170,22 @@ function closeApp(disableFade) {
     }
 }
 
+
+
 function resize() {
-    svg.setAttribute('width', window.innerWidth + "px")
-    svg.setAttribute('height', window.innerHeight + "px")
-    barCalculate();
+
+    clearTimeout(resizeDebouncer);
+    resizeDebouncer = setTimeout(function() {
+        svg.setAttribute('width', window.innerWidth + "px")
+        svg.setAttribute('height', window.innerHeight + "px")
+        barAdjust();
+        if(Render) {
+            Render.resize();
+        }
+        UI.systemMessage('pixel'+window.devicePixelRatio+' w'+window.screen.width,'success')
+    }, 250);
+
+
 }
 
 function rand() {
@@ -449,46 +467,24 @@ function barMoveHandler(ev) {
         if(ar < 0.25) { //right
             if(barPos != 2) {
                 barPos = 2;
-
-                bar.style.left = window.innerWidth - 64 + 'px';
-                bar.style.top = '50%'; //window.innerHeight/2;
-                barCalculate();
-                barHandle.style.transform = 'translate(-200%,-50%)'
-                barHandle.style.width = '32px';
-                barHandle.style.height = '80%';
-                mainTitle.style.top = '28px';
+                barAdjust()
             }
         } else if(ar < 0.75) { //top or bottom
             if(r < 0) { //top
                 if(barPos != 3) {
                     barPos = 3;
-                    barHandle.style.transform = 'translate(-50%,100%)'
-                    bar.style.left = '50%';
-                    bar.style.top = '64px' //-196+window.innerWidth/2
-                    mainTitle.style.top = 'calc(100% - 128px)';
+                    barAdjust()
                 }
             } else { //botttom
                 if(barPos != 1) {
                     barPos = 1
-                    barHandle.style.transform = 'translate(-50%,-200%)'
-                    bar.style.left = '50%';
-                    bar.style.top = (window.innerHeight - 64) + 'px'; //-196+window.innerWidth/2
-                    mainTitle.style.top = '28px';
+                    barAdjust()
                 }
             }
-            barCalculate();
-            barHandle.style.height = '32px';
-            barHandle.style.width = '80%';
         } else { //left
             if(barPos != 0) {
                 barPos = 0;
-                barHandle.style.transform = 'translate(100%,-50%)'
-                bar.style.left = '64px';
-                bar.style.top = '50%'
-                barCalculate()
-                barHandle.style.width = '32px'
-                barHandle.style.height = '80%'
-                mainTitle.style.top = '28px';
+                barAdjust()
             }
         }
 
@@ -526,9 +522,42 @@ function barMoveHandler(ev) {
         						}
         					}
         				}*/
+    }
+}
 
-
-
+function barAdjust() {
+    if(barPos == 2) { //right
+        bar.style.left = window.innerWidth - 64 + 'px';
+        bar.style.top = '50%'; //window.innerHeight/2;
+        barCalculate();
+        barHandle.style.transform = 'translate(-200%,-50%)'
+        barHandle.style.width = '32px';
+        barHandle.style.height = '80%';
+        mainTitle.style.top = '28px';
+    } else if(barPos == 3) { //top
+        barHandle.style.transform = 'translate(-50%,100%)'
+        bar.style.left = '50%';
+        bar.style.top = '64px' //-196+window.innerWidth/2
+        mainTitle.style.top = 'calc(100% - 128px)';
+        barCalculate();
+        barHandle.style.height = '32px';
+        barHandle.style.width = '80%';
+    } else if(barPos == 1) { //bottom
+        barHandle.style.transform = 'translate(-50%,-200%)'
+        bar.style.left = '50%';
+        bar.style.top = (window.innerHeight - 64) + 'px'; //-196+window.innerWidth/2
+        mainTitle.style.top = '28px';
+        barCalculate();
+        barHandle.style.height = '32px';
+        barHandle.style.width = '80%';
+    } else { //left
+        barHandle.style.transform = 'translate(100%,-50%)'
+        bar.style.left = '64px';
+        bar.style.top = '50%'
+        barCalculate()
+        barHandle.style.width = '32px'
+        barHandle.style.height = '80%'
+        mainTitle.style.top = '28px';
     }
 }
 /*
@@ -663,16 +692,17 @@ function _moveEle(ele, x, y, bool) {
     ele.style.top = y + 'px'
 }
 
-function pendApp(id){
-	let app=apps[id]
-	let d=document.createElement('cube');
-	app.appendChild(d);
+function pendApp(id) {
+    let app = apps[id]
+    let d = document.createElement('cube');
+    app.appendChild(d);
 }
-function clearPendApp(id){
-	let app=apps[id]
-	let cube=app.querySelector('cube')
-	if(cube)
-		cube.remove()
+
+function clearPendApp(id) {
+    let app = apps[id]
+    let cube = app.querySelector('cube')
+    if(cube)
+        cube.remove()
 }
 
 
@@ -720,4 +750,4 @@ OlD curve code
 			}
 **/
 
-export {pendApp,clearPendApp}
+export { pendApp, clearPendApp }
