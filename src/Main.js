@@ -182,7 +182,7 @@ function resize() {
         if(Render) {
             Render.resize();
         }
-        UI.systemMessage('pixel'+window.devicePixelRatio+' w'+window.screen.width,'success')
+        UI.systemMessage('inner '+window.innerWidth+'; screen '+window.screen.width,'success')
     }, 250);
 
 

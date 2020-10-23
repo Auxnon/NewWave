@@ -174,11 +174,18 @@ function loadModel(model, callback, texture, color) {
 }
 
 function resize() {
-    Math.max(window.screen.width, window.innerWidth)
-    Math.max(window.screen.height, window.innerHeight)
+    //Math.max(window.screen.width, window.innerWidth)
+    //Math.max(window.screen.height, window.innerHeight)
+    if(window.screen.width> window.innerWidth){
+        docWidth =  window.innerWidth
+        docHeight = window.innerHeight
+    }else{
+        docWidth =  window.screen.width
+        docHeight = window.screen.height
+    }
 
-    docWidth =  Math.max(window.screen.width, window.innerWidth)
-    docHeight = Math.max(window.screen.height, window.innerHeight)//window.innerHeight;
+    //docWidth =  window.innerWidth //Math.max(window.screen.width, window.innerWidth)
+    //docHeight = window.innerHeight //Math.max(window.screen.height, window.innerHeight)//window.innerHeight;
     camera.aspect = docWidth / docHeight;
     camera.updateProjectionMatrix();
 
