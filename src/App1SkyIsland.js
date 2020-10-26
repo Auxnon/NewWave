@@ -1,8 +1,10 @@
+import * as THREE from "./lib/three.module.js";
 import * as Render from "./Render.js";
 
 let greenModel;
 
-function init(n,THREE) {
+function init(index,dom,complete) {
+  
 	let scene=new THREE.Scene();
 
     Render.loadModel('assets/island.glb',function(m){
@@ -10,6 +12,7 @@ function init(n,THREE) {
       greenModel.position.set(0,260,-40)
       greenModel.scale.set(10,10,10)
       scene.add(greenModel);
+      complete();
     })
 /*
     Render.loadModel('assets/tree.gltf',function(m){
@@ -31,7 +34,7 @@ function init(n,THREE) {
     }
 
 
-	console.log(n+' loaded')
+	console.log(index+' loaded')
 	return scene;
 }
 

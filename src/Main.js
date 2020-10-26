@@ -73,12 +73,12 @@ function init(argument) {
     brightness.addEventListener('click', ev => {
         if(brightness.classList.contains('brightnessDark')) {
             document.body.style.backgroundColor = 'black';
-            svg.style.stroke = 'white';
+            document.body.style.stroke = 'white';
             mainTitle.style.border = 'white 5px solid';
             mainTitle.style.stroke = 'white';
         } else {
             document.body.style.backgroundColor = 'white'
-            svg.style.stroke = 'black';
+            document.body.style.stroke = 'black';
             mainTitle.style.border = 'black 5px solid';
             mainTitle.style.stroke = 'black';
         }
@@ -124,6 +124,7 @@ function openApp(id) {
             openAppApplyRender(id, app)
         } else {
             pendingRenderId = id;
+            pendApp(id);
         }
         focused = app;
     }
@@ -182,7 +183,7 @@ function resize() {
         if(Render) {
             Render.resize();
         }
-        UI.systemMessage('inner '+window.innerWidth+'; screen '+window.screen.width,'success')
+        UI.systemMessage('inner ' + window.innerWidth + '; screen ' + window.screen.width, 'success')
     }, 250);
 
 
@@ -694,8 +695,11 @@ function _moveEle(ele, x, y, bool) {
 
 function pendApp(id) {
     let app = apps[id]
-    let d = document.createElement('cube');
-    app.appendChild(d);
+    let cube = app.querySelector('cube')
+    if(!cube) {
+        cube = document.createElement('cube');
+        app.appendChild(cube);
+    }
 }
 
 function clearPendApp(id) {
@@ -750,4 +754,4 @@ OlD curve code
 			}
 **/
 
-export { pendApp, clearPendApp }
+export { pendApp, clearPendApp,apps }

@@ -609,8 +609,8 @@ function getScene() {
         if(importerFunction) {
             Main.pendApp(index)
             importerFunction(module => {
-                scenes[index] = [module.init('start the feller', THREE), module]
-                Main.clearPendApp(index)
+                scenes[index] = [module.init(index,()=>{Main.clearPendApp(index)},Main.apps[index]), module]
+                
             });
         } else {
             scenes[index] = [emptyScene, undefined]

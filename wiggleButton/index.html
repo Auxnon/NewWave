@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Wiggle</title>
+	<style>
+		body{
+			stroke: red;
+		}
+		.lineButton{
+			animation: lineWiggle 4s linear infinite;
+			stroke-dasharray: 100 20;
+			stroke: inherit;
+		}
+		@keyframes lineWiggle
+		{
+			0%{
+				stroke-dashoffset: 0;
+				transform: scale(1,1)
+			}
+			50%{
+				transform: scale(1,0.8)
+			}
+			100%{
+				stroke-dashoffset: var(--offset);
+				transform: scale(1,1)
+			}
+		}
+	</style>
+</head>
+<body>
+	<svg class='lineButton' width='500' height='500' stroke-width='6' fill='none'>
+		<path d="M 0 0 L 100 100"/>
+	</svg>
+	
+</body>
+<script>
+	function makeLineButton(radius,wide) {
+		let path=document.createElement('path')
+		let st='M 0 0'
+		let count=12;
+		let px=0,py=0;
+		let f=12
+		function rand(n){ return Math.random()*n}
+		for(let i=0;i<=count;i++){
+			let r=i*Math.PI/(count/2)
+			let x=3+radius+Math.cos(r)*radius + rand(f);
+			let y=3+radius+Math.sin(r)*radius + rand(f); //Math.random()*12+
+			if(r<Math.PI/2 || r>3*Math.PI/2)
+				x+=wide
+			if(i==0){
+				st+='M'
+				st+=x+' '+y
+			}else{
+				st+='Q'
+				let fx=px+((x-px)/2)
+				let fy=py+((y-py)/2)
+				console.log(x,fx)
+				st+=px+' '+py+' '+fx+' '+fy
+			}
+			px=x;py=y;
+		}
+		st+='z'
+		path.setAttribute('d',st)
+		let length=path.getTotalLength()
+		let svg=document.querySelector('svg');
+		let mid=length/3 -30
+		svg.style.setProperty('stroke-dasharray',mid+' '+30+' '+mid+' '+10+' '+mid+' '+50)
+		svg.style.setProperty('--offset',length)
+		svg.setAttribute('height',f+6+radius*2)
+		svg.setAttribute('width',f+6+wide+radius*2)
+		console.log(path.getTotalLength())
+	}init()
+</script>
+</html>
