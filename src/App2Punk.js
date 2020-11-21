@@ -3,7 +3,8 @@ import * as Render from "./Render.js";
 
 var skull;
 var aniFactor = 0;
-var dir = 0.2;
+const speed=20
+var dir = speed;
 
 var group
 function init(index,dom, complete) {
@@ -49,14 +50,14 @@ function init(index,dom, complete) {
     return scene
 }
 
-function animate() {
+function animate(delta) {
     if(skull) {
-        aniFactor += dir;
+        aniFactor += dir*delta;
         if(aniFactor > 100) {
-            dir = -0.2
+            dir = -speed
             aniFactor = 100
         } else if(aniFactor < 0) {
-            dir = 0.2
+            dir = speed
             aniFactor = 0
         }
         skull.children[1].rotation.z=-0.6*(aniFactor%10)/10.0

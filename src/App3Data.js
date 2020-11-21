@@ -37,10 +37,10 @@ function init(index,dom, complete) {
     return scene;
 }
 
-function animate() {
+function animate(delta) {
     shapes.forEach(c => {
         c.rotation.x = Math.PI / 2
-        c.rotation.y += 0.02;
+        c.rotation.y += delta*2;
     })
 }
 
@@ -76,6 +76,15 @@ function barGraph(data, scene, offset) {
         cube.scale.set(1, 1, scale)
         scene.add(cube)
     }
+}
+
+function getHeat(){
+	fetch('/temp/', { headers: { "Content-Type": "application/json; charset=utf-8" }})
+    .then(res => res.json()) // parse response as JSON (can be res.text() for plain response)
+    .then(response => {
+        console.log(response.temps)
+        
+    })
 }
 
 export { init, animate, deinit }

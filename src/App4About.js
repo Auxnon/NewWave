@@ -9,7 +9,7 @@ function init(index,dom,complete) {
 
 }
 
-function animate(){
+function animate(delta){
 
 }
 

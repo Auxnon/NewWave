@@ -40,9 +40,9 @@ function init(index,dom,complete) {
 
 var value=0;
 var dir=1;
-function animate(){
+function animate(delta){
 	if(greenModel){
-      value+=0.0005*dir
+      value+=0.05*dir*delta
       if(value>1 || value<0){
         dir=-dir
       }

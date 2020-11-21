@@ -176,25 +176,32 @@ function loadModel(model, callback, texture, color) {
 function resize() {
     //Math.max(window.screen.width, window.innerWidth)
     //Math.max(window.screen.height, window.innerHeight)
+
+    /*
     if(window.screen.width> window.innerWidth){
         docWidth =  window.innerWidth
         docHeight = window.innerHeight
     }else{
         docWidth =  window.screen.width
         docHeight = window.screen.height
-    }
+    }*/
+    docWidth=document.documentElement.clientWidth
+    docHeight=document.documentElement.clientHeight
 
     //docWidth =  window.innerWidth //Math.max(window.screen.width, window.innerWidth)
     //docHeight = window.innerHeight //Math.max(window.screen.height, window.innerHeight)//window.innerHeight;
     camera.aspect = docWidth / docHeight;
     camera.updateProjectionMatrix();
 
-    renderer.setPixelRatio(0.5);//window.devicePixelRatio / SIZE_DIVIDER);
+    renderer.setPixelRatio(1);//window.devicePixelRatio / SIZE_DIVIDER);
     renderer.setSize(docWidth, docHeight);
 }
-
+var lastTime=0
 function animate(time) {
-    sceneAnimate();
+    let delta=time-lastTime;
+    delta/=1000.0
+    lastTime=time;
+    sceneAnimate(delta);
     renderer.render(getScene(), camera);
     //composer.render();
     requestAnimationFrame(animate);
@@ -585,9 +592,9 @@ function sceneInit() {
 
 
 
-function sceneAnimate() {
+function sceneAnimate(delta) {
     if(activeModule) {
-        activeModule.animate()
+        activeModule.animate(delta)
     }
 }
 
@@ -609,7 +616,7 @@ function getScene() {
         if(importerFunction) {
             Main.pendApp(index)
             importerFunction(module => {
-                scenes[index] = [module.init(index,()=>{Main.clearPendApp(index)},Main.apps[index]), module]
+                scenes[index] = [module.init(index,Main.apps[index],()=>{Main.clearPendApp(index)}), module]
                 
             });
         } else {
