@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		body{
+			margin: 0;
+			font-family: sans-serif;
+		}
+		#donate-bg{
+			position: absolute;
+			width:100%;
+			height: 100%;
+			background: red;
+			z-index: -1;
+			overflow: hidden;
+		}
+		.donate-text{
+			position: absolute;
+			font-size: 148px;
+			color: white;
+			transform: translate(100%) rotate(-45deg);
+			animation: textMove 10s linear;
+			left: 0;
+			top: 0;
+		}
+		@keyframes textMove{
+			0%{
+				transform: translate(1000px,-1400px) rotate(-45deg);
+			}
+			100%{
+				transform: translate(-500px,700px) rotate(-45deg);
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<div id="donate-bg"></div>
+<div id="donate-row"></div>
+
+<form action="https://www.paypal.com/donate" method="post" target="_top">
+<input type="hidden" name="hosted_button_id" value="35RQPUTXS9DJJ" />
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+</form>
+
+
+
+	
+</body>
+<script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>
+	kofiwidget2.init('Support Me on Ko-fi', '#72e028', 'Q5Q6WU6C');
+let dom=kofiwidget2.getHTML();
+console.log(dom)
+document.querySelector('#donate-row').innerHTML=dom
+</script> 
+<script>
+	let main;
+	function init(){
+		main=document.querySelector('#donate-bg')
+		setInterval(()=>{
+			let dom=makeText('hellow')
+			setTimeout(()=>{
+				dom.remove()
+			},10000)
+			
+		},2000)
+		
+	}init();
+
+	function makeText(s){
+		let text=document.createElement('div')
+		text.className='donate-text'
+		text.innerText=s
+		text.style.left=Math.random()*window.innerWidth+'px';
+		text.style.top=Math.random()*window.innerHeight+'px';
+		main.appendChild(text)
+		return text
+	}
+	
+</script>
+
+</html>
