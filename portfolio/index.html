@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		main{
+			position: absolute;
+			width: 100%;
+			height: 100%;
+		}
+		.portfolio-section-block{
+			display: block;
+			position: relative;
+			height: 80%;
+		}
+		.portfolio-overlay{
+			position: absolute;
+			height: 100%;
+			width:100%;
+		}
+		.portfolio-underlay{
+			position: absolute;
+			pointer-events: none;
+			height: 100%;
+			width:100%;
+		}
+		.portrait-back{
+			position: relative;
+			width: 256px;
+			height: 256px;
+			border-radius: 128px;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='cyan' %3E%3Cpath d='M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+			left: 50%;
+			transform: translate(-50%);
+			transition: transform;
+		}
+		.portrait-back:before{
+			content: '';
+			width: 256px;
+			height: 256px;
+			left: -12px;
+			top: -6px;
+			border-radius: 128px;
+			position: absolute;
+			z-index: -1;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='magenta' %3E%3Cpath d='M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+		}
+		.portrait{
+			position: absolute;
+			width: 240px;
+			height: 240px;
+			border-radius: 128px;
+			/*background: red;*/
+			left: 50%;
+			top: 50%;
+			transform:translate(-50%,-50%);
+		}
+
+		img,video{
+			position: relative;
+			transform: translate(-50%);
+			left: 50%;
+			background: #f0f5;
+			border-radius: 16px;
+			width: auto;
+			max-width: 512px;
+			height: 288px;
+			overflow: hidden;
+		}
+
+		section{
+			position: absolute;
+			display: inline-block;
+			max-width: 512px;
+			width: 100%;
+			height: 100%;
+			border-radius: 16px;
+			background: gray;
+			overflow: hidden;
+			transition: width 0.3s, height 0.3s,left 0.3s, top 0.3s;
+			box-shadow: 10px 10px 16px #0003, -10px -8px 20px #4444 ;
+			left: 50%;
+			transform: translate(-50%,-50%);
+
+		}
+		.section-holder{
+			width: 256px;
+			height: 144px;
+			border-radius: 16px;
+			display: inline-block;
+			position: relative;
+			border: dashed #0005 3px;
+			box-sizing: border-box;
+			margin: 16px;
+		}
+		.shrink{
+			width: 256px;
+			height: 144px;
+			transform: none;
+			left:0;
+			/*left:0;
+			height: 0;
+			transform: initial;*/
+		}
+		.shrink video,.shrink img{
+			width: 256px;
+			height: 144px;
+		}
+		article{
+			overflow-y: auto;
+			overflow-x: hidden;
+			margin: 16px;
+		}
+	</style>
+
+</head>
+<body>
+	<main>
+		<div class="portrait-back">
+			<div class="portrait"></div>
+		</div>
+		<div class="portfolio-section-block">
+		<div class="portfolio-underlay"></div>
+		<div class="portfolio-overlay">
+	<section>
+
+		<video src="./bottle1.mp4" autoplay muted loop></video>
+		<article>
+			<h2>ConnectReport</h2>
+			<p>ConnectReport was the first major project i worked on. This small company hired me on as technical support. However due to the small team, i was quickly upgraded to a quality asurance technician with some minor coding roles. Converted the griding system to SVG which accomidated for the abstract cell sizing, as well as optimizing some neighboring cell collision detection. Worked nodejs and Angularjs and a team oriented git environment. </p>
+		</article>
+		
+	</section>	
+	<section>
+		<video src="./bottle1.mp4" autoplay muted loop></video>
+		<article>
+			<h2>Makeavoy</h2>
+			<p>This site, makeavoy.com, utilizies all of my favorite techniques I've picked up over the years. It's a little experimentnal as It's exploring what's possible for a single page application, so don't be surprised if the source is a little bit sloppy! There's a lot going on under the hood so I'm going to break it down here...</p>
+
+			<h2>Backend</h2>
+			<p>I primarily use node.js for it's approachable nature front a front-end first approach.
+				Vhost and exoress takes care of the subdomain routing so i can easily incorporate multiple projects and easily seperate <abbr title="Progressive Web App">PWA</abbr> manifests. socket.io trivializes the websocket for chat communications and state updates. Although i also utilize a physics server for another expiermental project #SocialGame. There's also mariadb and asqlite3 databases for testing user authentication. After that the various projects are seperated by folders and sub modules to keep things organized. All rolled out on my locally hosted ubuntu server. It was Arch linux but I opted for something a little more mainstream for maintence reasons :)
+			</p>
+
+			<h2>FrontEnd</h2>
+			<p>
+				The main site utilizes a lot of 3d via Three.js. Due to the above average script sizes everything is lazy loaded on demand in order to reduce the Time to Interaction. The Rendering system is triggered to load at runtime, while each additional "app" is loaded upon clicking so as to only load the necessary content, at the cost of some load time. The intial payload hosts the basics such as the 3d css loading animation, and the app navigation system. The site loads in a self made vector title that 'draws' into place by a stroke-dashoffset. It also includes dynamic app button movement and placement ala an iPad, and a snazzy vector based drawing system to animate the navigation bar using perpendicular velocity offsets. The title accomidates for the bar as well. Finally each app when loaded in applies to canvas3d the scene contents and animation cycles. Upon swapping apps the buffer is dumped to an image raster and stealthily swapped in for a clean load out. This is because there can only be one canvas3d at any given time, so this was a nice hack.
+			</p>
+
+		</article>
+	</section>
+	<section>
+		<img src="" alt="">
+		<article>
+			<h2>Stompadon</h2>
+			<p>
+			Stompadon was my first ever web project over 10 years ago. I had made a number of flash games back in the day, but even then Flash was clearly dying. A friend wanted help supporting a kickstarte for a plush of a character she had designed. Since i knew flash was a no go, the next closest thing was html5, and the rest is history. The code is very rough, poorly defined variables and this was before i understood functions very well (pre ECMA6 after all). Even still it still runs to this day and is still one of my favorites! 
+			</p>
+		</article>
+	</section>
+	<section>
+		<img src="" alt="">
+		<article>
+			<h2>Get</h2>
+			<p>
+				Get is a simple file server hosted on the same site. It supports clipboard pasting as well as click and drag file support. It sends the FormData to a <a href="https://www.npmjs.com/package/multer">Multer</a> module that safely takes care of the file storage. It's not the cleanest system and it's certainly not available to public yet until i can properly secure everything. 
+			</p>
+		</article>
+	</section>
+	<section>
+		<img src="" alt="">
+		<article>
+			<h2>Staddy</h2>
+			<p>
+				This project is very very ugly, but it was a necessary step in order to organize my tech support job. I have a tendency that when something is lacking in my life i tend to try and make it before i settle with existing options. Along comes Staddy, what started as a joke became crucial for organizing my workflow. As we supported over 40 unqieu clients stacks and a couple hundred sub clients, the design was to help organzie all links and hints for credentials. As I couldnt safely store passwords it mostly directed towards which ones to use. As all clients can be added in manually and stored as a json obejct through localstorage, it was infinitely customizable. It stored unique notes for each client as well, and even stored background color preferences. There was a break system being incorporated via socket.io but ultimiately fell to the wayside for security reasons. I hope to clean up this logic for some sort of organizational app someday.
+			</p>
+		</article>
+	</section>
+	<section>
+		<img src="" alt="">
+		<article>
+			
+			<h2>Reserver</h2>
+			<p>This was another simple <abbr title="Progressive Web App">PWA</abbr> that evolved for work necessity. 12 members of our team were forced to use a single citrix portal in order to managemennt client incidents. Anytime someone used it, if someone else was working with it already they would get kicked out. We did our best to alert each other but sometimes we would miss messages. I created this app as a stopgap. It's a simple neomrophic button with gradient background opacity animations (since we still can't tween background gradients...) that sends a socket.io websocket message to the server reserving your status and alerting all connected clients of the state change. Non occupying clients can then "pend" the user sending them desktop notifications (if they opted in) and even posting in our discord chat via webhooks that they were waiting. Full <abbr title="Progressive Web App">PWA</abbr> manifest and desktop icons included for pinning to the taskbar!</p>
+		</article>
+	</section>
+	<section>
+		<img src="" alt="">
+		<article>
+			<h2>Book</h2>
+			<p>A very simple slideshow like social app that never quite took off. The idea was every post was a full screen block of text and you can slickly transition between posts through some animation technizues adpated from <a href=""></a>. Currently on the backburner but woiuld love to incorporate these animations elsewhere</p>
+		</article>
+	</section>
+	</div>
+	</div>
+	
+
+	</main>
+	
+</body>
+<script>
+	let main;
+	let overlay;
+	let resizeTimer;
+	function init(){
+		main=document.querySelector('main')
+		let underlay=main.querySelector('.portfolio-underlay')
+		overlay=main.querySelector('.portfolio-overlay')
+
+		main.querySelectorAll('section').forEach((section,i)=>{
+			let holder=document.createElement('div')
+			holder.className='section-holder'
+			holder.id='portfolio-section-holder'+i;
+			section.id='portfolio-section'+i;
+			underlay.appendChild(holder)
+			section.tabIndex=i
+			//holder.appendChild(section)
+			
+			section.className='shrink'
+			//section.remove();
+			
+			section.addEventListener("focus", ev=>{
+				selectSection(ev.target)
+			});
+
+			section.addEventListener('click',ev=>{
+				selectSection(section)
+				
+			})
+		})
+		setTimeout(function(){fit()},1); //make sure DOM is done
+		window.addEventListener('keydown',ev=>{
+			if(ev.which==32)
+				fit();
+			console.log(ev.which )
+			if(ev.which==27){
+				main.querySelectorAll('section').forEach(s=>{
+					if(s.className!='shrink'){
+						s.className='shrink'
+					}
+				})
+				fit();
+			}
+		})
+		window.addEventListener('resize',ev=>{
+			if(resizeTimer)
+				clearTimeout(resizeTimer)
+			resizeTimer=setTimeout(function(){
+				unhideOverlay();
+			},200)
+			hideOverlay();
+
+		})
+	}init();
+
+	function selectSection(section){
+		main.querySelectorAll('section').forEach(s=>{
+					if(s.className!='shrink'){
+						s.className='shrink'
+					}
+				})
+				
+				section.className=''
+				section.style.left='50%';
+				section.style.top='50%';
+				//section.style.zIndex=2;
+				fit();
+	}
+
+	function fit(){
+		let holders=main.querySelectorAll('.section-holder')
+		main.querySelectorAll('section').forEach((section,i)=>{
+			if(section.className=='shrink'){
+				let holder=holders[i]
+				section.style.left=holder.offsetLeft+'px';
+				section.style.top=holder.offsetTop+'px';
+				section.style.zIndex=0;
+			}else
+				section.style.zIndex=3;
+		});
+	}
+	function hideOverlay(){
+		overlay.style.opacity=0;
+
+	}
+	function unhideOverlay(){
+		fit();
+		overlay.style.opacity=1;
+	}
+</script>
+</html>

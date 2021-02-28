@@ -7,7 +7,8 @@ var Render;
 const SCENE_IMPORT = [
     i => { import( /* webpackChunkName: "App1SkyIsland" */ './App1SkyIsland').then(i) },
     i => { import( /* webpackChunkName: "App2Punk" */ './App2Punk').then(i) },
-    i => { import( /* webpackChunkName: "App3Data" */ './App3Data').then(i) }
+    i => { import( /* webpackChunkName: "App3Data" */ './App3Data').then(i) },
+    i => { import( /* webpackChunkName: "App4About" */ './App4About').then(i) }
 ]
 
 //doms
@@ -37,6 +38,7 @@ var points;
 var pendingRenderId; //if not undefined, wait for Render to load and then apply the scene
 
 var resizeDebouncer;
+let positionalData={x:0,y:0}
 
 function init(argument) {
     let preApps = document.querySelectorAll('.app');
@@ -420,6 +422,7 @@ function drawSimpleBarLine(one, two) {
 }
 
 function mousemove(ev) {
+    positionalData={x:ev.clientX/window.innerWidth,y:ev.clientY/window.innerHeight}
     barMoveHandler(ev);
     if(targetMove) {
         moveFactor++;
