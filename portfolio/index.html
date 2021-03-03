@@ -67,9 +67,10 @@
 
 
     .portfolio-section-block {
-        /*overflow: hidden;*/
+        overflow: auto;
         position: relative;
         height: calc(100% - 256px);
+
     }
 
     .portfolio-overlay,
@@ -133,6 +134,9 @@
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
+    }
+    .portrait-holder{
+    	height: 256px;
     }
 
     img,
@@ -226,8 +230,10 @@
 
 <body>
     <main>
+    	<div class="portrait-holder">
         <div class="portrait-back">
             <div class="portrait"></div>
+        </div>
         </div>
         <div class="portfolio-section-block">
             <div class="portfolio-underlay"></div>
@@ -391,6 +397,15 @@ function init() {
 
     })
     setTimeout(function() { fit() }, 1); //make sure DOM is done
+    let portraitHolder = main.querySelector('.portrait-holder')
+    let portfolioHolder=main.querySelector('.portfolio-section-block')
+    portfolioHolder.addEventListener('scroll',ev=>{
+    	if(ev.target.scrollTop>0){
+    		portraitHolder.style.height='128px';
+    		portraitHolder.style.transform='scale(0.5,0.5)'
+
+    	}
+    })
     window.addEventListener('keydown', ev => {
         /*if(ev.which==32)
         	fit();*/
@@ -437,8 +452,9 @@ function selectSection(section) {
 
         section.className = ''
         section.style.left = '50%';
-        section.style.top = '50%';
-        //section.style.zIndex=2;
+        let sHeight=section.parentElement.parentElement.scrollTop
+        let height=section.parentElement.parentElement.offsetHeight
+        section.style.top = ((height/2 +sHeight)) +'px';
         section.focus();
         fit();
         currentSection = section;
