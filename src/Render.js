@@ -442,7 +442,8 @@ void main() {
     #ifdef TRANSPARENCY
         diffuseColor.a *= saturate( 1. - transparency + linearToRelativeLuminance( reflectedLight.directSpecular + reflectedLight.indirectSpecular ) );
     #endif
-    gl_FragColor = vec4( outgoingLight,1.-(((0.2125 * outgoingLight.r) + (0.7154 * outgoingLight.g) + (0.0721 * outgoingLight.b)) ) );
+    float v=clamp(1.-((0.2125 * outgoingLight.r) + (0.7154 * outgoingLight.g) + (0.0721 * outgoingLight.b)),0.1,1.0);
+    gl_FragColor = vec4(outgoingLight,v);//vec4( outgoingLight,1.-(((0.2125 * outgoingLight.r) + (0.7154 * outgoingLight.g) + (0.0721 * outgoingLight.b)) ) );
     #include <tonemapping_fragment>
     #include <encodings_fragment>
     #include <fog_fragment>

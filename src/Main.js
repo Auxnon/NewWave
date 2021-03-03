@@ -75,14 +75,14 @@ function init(argument) {
     brightness.addEventListener('click', ev => {
         if(brightness.classList.contains('brightnessDark')) {
             document.body.style.backgroundColor = 'black';
-            document.body.style.stroke = 'white';
+            //document.body.style.stroke = 'white';
             mainTitle.style.border = 'white 5px solid';
-            mainTitle.style.stroke = 'white';
+            //mainTitle.style.stroke = 'white';
         } else {
             document.body.style.backgroundColor = 'white'
-            document.body.style.stroke = 'black';
+            //document.body.style.stroke = 'black';
             mainTitle.style.border = 'black 5px solid';
-            mainTitle.style.stroke = 'black';
+            //mainTitle.style.stroke = 'black';
         }
         brightness.classList.toggle('brightnessDark')
     })
@@ -712,6 +712,10 @@ function clearPendApp(id) {
         cube.remove()
 }
 
+function getPos(){
+    return positionalData
+}
+
 
 /**
 OlD curve code
@@ -757,4 +761,4 @@ OlD curve code
 			}
 **/
 
-export { pendApp, clearPendApp,apps }
+export { pendApp, clearPendApp,apps,getPos }
