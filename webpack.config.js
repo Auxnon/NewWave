@@ -17,6 +17,17 @@ return {
   	}),
   	new HtmlWebpackPlugin({template: './src/index.html'}),
   ],
+  module: {
+    rules: [
+      {
+        test: /\.out.html$/i,
+        loader: 'html-loader',
+        options: {
+          minimize: true,
+        },
+      },
+    ],
+  },
   output: {
 	    filename: '[name].[contenthash].js',
 	    path: path.resolve(__dirname, "public"), // string

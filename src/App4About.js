@@ -32,6 +32,10 @@ function init(index,dom,complete) {
 
         window.portrait=portrait
     })
+    // import( /* webpackChunkName: "App4About" */ './about.html').then(module=>{
+    // 	console.log('here')
+    // 	console.log(module)
+    // })
 
     return scene;
 }
