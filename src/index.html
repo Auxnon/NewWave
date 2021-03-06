@@ -15,6 +15,29 @@
 	
     <title>MakeAvoy</title>
     <style>
+
+        ::-webkit-scrollbar-track {
+        background-color: none;
+        /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+     #F5F5F5;*/
+    }
+    ::-webkit-scrollbar {
+        width: 18px;
+        /*background-color: #F5F5F5;*/
+        border-radius: 10px;
+        margin: 10px;
+        box-shadow: inset 0 0 10px 10px #6666;
+        border: solid 6px transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        border: solid 6px transparent;
+        -webkit-box-shadow: inset 0 0 12px black;
+        background-color: none;
+    }
+
     body {
         background-color: black;
         stroke: white;
@@ -277,6 +300,15 @@
         animation: backgroundMove 2s infinite linear;
 
     }
+    #app4 .canvasHolder{
+        height: 256px;
+        width: 256px;
+        border-radius: 128px;
+        left: 50%
+    }
+
+
+
 
     @keyframes backgroundMove {
         from {
@@ -412,7 +444,7 @@
         <div class="app" id="app1"><img id="afterImage" style="opacity:0"  /></div>
         <div class="app" id="app2"></div>
         <div class="app" id="app3"></div>
-        <div class="app" id="app4"></div>
+        <div class="app" id="app4"></div></div></div>
         <svg id='navLine' fill="none" stroke-width="6" stroke-linecap="round">
             <path d="M0 0 L 0 2" />
         </svg>

@@ -12,7 +12,7 @@ return {
   plugins:[
   	new CleanWebpackPlugin({ 
   		dry:false,
-  		cleanOnceBeforeBuildPatterns:['**/*','!styles','!styles/*','!assets','!assets/*'],
+  		cleanOnceBeforeBuildPatterns:['**/*','!styles','!styles/*','!assets','!assets/*','!partials','!partials/*'],
   		verbose: true
   	}),
   	new HtmlWebpackPlugin({template: './src/index.html'}),
@@ -20,7 +20,7 @@ return {
   module: {
     rules: [
       {
-        test: /\.out.html$/i,
+        test: /out.html$/i,
         loader: 'html-loader',
         options: {
           minimize: true,

@@ -601,6 +601,12 @@ function sceneAnimate(delta) {
 
 function flipScene(i) {
     activeScene = i;
+    //not proud of the setup but its better to isolate all the render logic out from the app opening mangement of Main
+    //literally just checking the scene has fully loaded and to call its app open function
+    let scene = scenes[i];
+    if(scene != undefined && scene != 'pend' && scene[1].open) 
+        scene[1].open();
+
 }
 var activeScene = 0;
 var activeModule;
