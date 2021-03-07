@@ -1,4 +1,4 @@
-//version 2
+//version 2.7 confetti added and fixed sizing on mobile
 
 
 let main;
@@ -18,7 +18,7 @@ function init(mainDom){
 
 
 	if(main){
-		sysTop=document.createElement('duv');
+		sysTop=document.createElement('div');
 		sysTop.className='uiHolderSysTop';
 		main.appendChild(sysTop);
 
@@ -39,7 +39,7 @@ function init(mainDom){
 		console.error('UI.js:: uh oh! no system dom element found')
 	}
 
-
+/*
 	//dev
 	window.addEventListener('keyup',function(ev){
 		if(ev.keyCode==32){
@@ -52,11 +52,13 @@ function init(mainDom){
 		}else if(ev.keyCode==27){
 			DEVVAR.remove();
 		}
-	})
+	})*/
 
 } 
 
-function systemMessage(m,type,persistant){
+function systemMessage(m,type,persistant,timeout){
+	if(!timeout)
+		timeout=3500
 	let dom=document.createElement('div');
 	dom.className='uiSysTop';
 
@@ -103,7 +105,7 @@ function systemMessage(m,type,persistant){
 					dom.style.animation='0.5s uiSysMax forwards';
 					setTimeout(function(){
 						dom.style.animation='0.5s uiSysMini forwards';
-					},3500)
+					},timeout)
 				})
 			}else{
 				dom.remove();
@@ -123,7 +125,7 @@ function systemMessage(m,type,persistant){
 
 	setTimeout(function(){
 		_endMessage();
-	},3500)
+	},timeout)
 
 	sysTop.appendChild(dom);
 	return dom;
@@ -166,13 +168,30 @@ function _copyText(dom){
 	
 }
 
+function addConfetti(x, y, angle) {
+    let mainDom = document.querySelector('#main')
+
+    let con = document.createElement('div');
+    con.classList.add('confetti');
+    con.innerHTML = '<svg viewbox="0 0 100 100" style="fill:none;stroke:lightgreen;stroke-linecap:round"><path d="M45 70L55 75M45 50L55 50M45 30L55 25" /></svg>';
+    con.style.left = x + 'px'
+    con.style.top = y + 'px',
+        con.style.transform = 'translate(-50%,-50%) rotate(' + (angle ? angle : 0) + 'deg)';
+    setTimeout(function() {
+        con.remove();
+    }, 500);
+    mainDom.appendChild(con)
+}
+
+
 function styleInit(){
 	var sheet = document.createElement('style')
 	sheet.innerHTML =`
-		.uiSysTop{
+	.uiSysTop{
 		display: flex;
 		align-items: flex-start;
 		position: relative;
+		width: 100vw;
 		max-width: 600px;
 		height: 64px;
 		border-radius: 32px;
@@ -180,7 +199,7 @@ function styleInit(){
 		box-shadow: 3px 3px 3px #0005;
 		left: 50%;
 		background: #E0F9D5;
-		margin: 12px;
+		margin: 12px 0;
 		animation: uiSysUnfold 1s;
 		overflow: hidden;
 		line-height: 16px;
@@ -353,8 +372,40 @@ function styleInit(){
 		}
 	}
 
+	.confetti{
+		pointer-events: none;
+		left:200px;
+		top:200px;
+		width:50px;
+		height:50px;
+		position: absolute;
+		stroke-width:40px;
+		/*background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewbox="0 0 100 100" style="fill:none;stroke:lightgray;stroke-linecap:round;"><path d="M45 65L75 75M45 50L75 50M45 35L75 25" /></svg>');
+		background-size: cover;
+		background-position: center;
+	  	background-repeat: no-repeat;*/
+	}
+	.confetti svg{
+		position: relative;
+		animation: dooter 0.5s forwards;
+		transform: translate(-50%,-50%);
+		width: 50px;
+		height: 50px;
+	}
+	@keyframes dooter{
+		from{
+			transform: translate(0%,0%) scale(0.1,0.1);
+			stroke-width:30;
+		}
+		to{
+			transform: translate(100%,0%) scale(3,3);
+			stroke-width:0;
+			filter:hue-rotate(270deg);
+		}
+	}
+
 	`
 	document.body.appendChild(sheet);
 }
 
-export {init,systemMessage,cursorMessage}
+export {init,systemMessage,cursorMessage,addConfetti}

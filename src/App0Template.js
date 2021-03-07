@@ -21,7 +21,9 @@ function deinit(){
 }
 
 //called when toggled to this app, on a page load with app ideally it would run init and immediately run open after
-function open(){
+//also passes in the canvas in case the app wants to do something wacky with it like resize it or place it somewhere else
+//return true if changes were made and it wont follow the default
+function open(canvas){
 
 }
 //called when app is closed out for another one
@@ -29,4 +31,4 @@ function close(){
 
 }
 
-export {init,animate,deinit}
+export {init,animate,deinit,open,close}

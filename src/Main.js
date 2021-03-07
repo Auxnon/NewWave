@@ -10,35 +10,38 @@ const SCENE_IMPORT = [
     i => { import( /* webpackChunkName: "App3Data" */ './App3Data').then(i) },
     i => { import( /* webpackChunkName: "App4About" */ './App4About').then(i) }
 ]
+const HASHES={"sky":0,"punk":1,"data":2,"portfolio":3}
 
 //doms
-var apps;
-var svg;
-var path;
-var bar;
-var barBox;
-var mainTitle;
+let apps;
+let svg;
+let path;
+let bar;
+let barBox;
+let mainTitle;
 
-var focused;
-var barMove = false;
-var barPos = 1;
-var appPoints;
-var moveFactor = 0;
+let focused;
+let barMove = false;
+let barPos = 1;
+let appPoints;
+let moveFactor = 0;
 
-var count = 0;
-var tick = false;
-var barLineFactor = 1;
+let count = 0;
+let tick = false;
+let barLineFactor = 1;
 
-var targetMove = undefined;
-var targetPoint = { x: 0, y: 0 }
+let targetMove = undefined;
+let targetPoint = { x: 0, y: 0 }
 
-var mouseObj;
-var points;
+let mouseObj;
+let points;
 
-var pendingRenderId; //if not undefined, wait for Render to load and then apply the scene
+let pendingRenderId; //if not undefined, wait for Render to load and then apply the scene
 
-var resizeDebouncer;
+let resizeDebouncer;
 let positionalData={x:0,y:0}
+
+let currentAppId=-1;
 
 function init(argument) {
     let preApps = document.querySelectorAll('.app');
@@ -65,6 +68,7 @@ function init(argument) {
     window.addEventListener('resize', resize);
     initLine();
     window.addEventListener('pointermove', mousemove)
+    window.addEventListener('pointerdown', mousemove)
 
     barInit();
 
@@ -76,23 +80,30 @@ function init(argument) {
         if(brightness.classList.contains('brightnessDark')) {
             document.body.style.backgroundColor = 'black';
             //document.body.style.stroke = 'white';
-            mainTitle.style.border = 'white 5px solid';
+            //mainTitle.style.border = 'white 5px solid';
             //mainTitle.style.stroke = 'white';
         } else {
             document.body.style.backgroundColor = 'white'
             //document.body.style.stroke = 'black';
-            mainTitle.style.border = 'black 5px solid';
+            //mainTitle.style.border = 'black 5px solid';
             //mainTitle.style.stroke = 'black';
         }
         brightness.classList.toggle('brightnessDark')
     })
 
+    /*//old query method
     if(window.location.search.length) {
         let params = new URLSearchParams(window.location.search);
         let id = params.get('id');
         if(id && id.length) {
             openApp(parseInt(id))
         }
+    }*/
+    if(window.location.hash.length){
+        let st=window.location.hash.substring(1)
+        let id=HASHES[st]
+        if(id!=undefined)
+            openApp(id)
     }
 
 
@@ -117,6 +128,7 @@ function init(argument) {
 init();
 
 function openApp(id) {
+    currentAppId=id;
     let app = apps[id];
     if(app) {
         app.classList.add('appMax')
@@ -133,16 +145,16 @@ function openApp(id) {
 }
 
 function openAppApplyRender(id, app) {
-    let d = Render.getAlphaCanvas();
-    d.style.opacity = 1;
-    d.remove();
+    //let d = Render.getAlphaCanvas();
+    //d.style.opacity = 1;
+    //d.remove();
 
     let afterImage = document.querySelector('#afterImage');
 
     afterImage.remove();
 
 
-    app.appendChild(d);
+    //app.appendChild(d);
 
     if(focused) {
         focused.appendChild(afterImage);
@@ -156,7 +168,7 @@ function openAppApplyRender(id, app) {
             apps[0].appendChild(afterImage);
     }
     Render.bufferPrint();
-    Render.flipScene(id)
+    Render.flipScene(id,app)
 }
 
 function closeApp(disableFade) {
@@ -165,12 +177,17 @@ function closeApp(disableFade) {
         focused.style.zIndex = 2;
         focused.focused = undefined; //wow why did i name this like this
         window.history.pushState({}, '', '/');
-        if(!disableFade && Render) {
-            let d = Render.getAlphaCanvas();
-            setTimeout(() => { d.style.opacity = 0; }, 1);
-            d.style.opacity = 1;
+        if(Render){
+            Render.closeModule(); //the loaded script is loaded in the Render class, yucky but it handles all the lazy loading for models so it worked out
+            
+            if(!disableFade) {
+                let d = Render.getAlphaCanvas();
+                setTimeout(() => { d.style.opacity = 0; }, 1);
+                d.style.opacity = 1;
+            }
         }
     }
+    currentAppId=1;
 }
 
 
@@ -185,7 +202,7 @@ function resize() {
         if(Render) {
             Render.resize();
         }
-        UI.systemMessage('inner ' + window.innerWidth + '; screen ' + window.screen.width, 'success')
+        //UI.systemMessage('inner ' + window.innerWidth + '; screen ' + window.screen.width, 'success')
     }, 250);
 
 
@@ -645,8 +662,11 @@ function winMouseUp(ev) {
                 closeApp(true);
 
                 openApp(targetMove.appId);
-
-                window.history.pushState({ appId: targetMove.appId }, targetMove.name, '?id=' + targetMove.appId + '&app=' + targetMove.id);
+                let ar=Object.keys(HASHES)
+                let hashString=ar[targetMove.appId]
+                if(hashString)
+                    window.location.hash='#'+hashString
+                //window.history.pushState({ appId: targetMove.appId }, targetMove.name, '?id=' + targetMove.appId + '&app=' + targetMove.id);
             }
         } else {
             barCalculate();
@@ -705,15 +725,21 @@ function pendApp(id) {
     }
 }
 
-function clearPendApp(id) {
+function clearPendApp(id,canvas) {
     let app = apps[id]
     let cube = app.querySelector('cube')
     if(cube)
         cube.remove()
+
+    if(canvas)
+        app.appendChild(canvas); //FIX clearly we goofed soemthing in the loading process, this only happens with with portfolio?
 }
 
 function getPos(){
     return positionalData
+}
+function getCurrentAppId(){
+    return currentAppId;
 }
 
 
@@ -761,4 +787,4 @@ OlD curve code
 			}
 **/
 
-export { pendApp, clearPendApp,apps,getPos }
+export { pendApp, clearPendApp,apps,getPos,getCurrentAppId }

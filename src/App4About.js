@@ -1,6 +1,7 @@
 import * as THREE from "./lib/three.module.js";
 import * as Render from "./Render.js";
 import * as Main from "./Main.js";
+import * as UI from "./UI.js";
 
 //pass in name, and a pointer to a complete function which dictates everything has loaded, 
 //we keep track inside the mini class by counting  resources and incrementing till count is complete then, complte()
@@ -29,21 +30,22 @@ function init(index,dom,complete) {
         		eye=c;
         })
         complete();
-
-        window.portrait=portrait
-    })
+    },true)
      //import( /* webpackChunkName: "App4About" */ './about.html').then(module=>{
     // 	console.log('here')
     // 	console.log(module)
    // })
     //require('html-loader!./about.html');
 
-    fetch('/about').then(function (response) {
+    fetch('/partials/about').then(function (response) {
 		return response.text();
 	}).then(function (html) {
 		// This is the HTML from our response as a text string
 		
-		dom.innerHTML+=html
+		dom.insertAdjacentHTML('beforeend',html)
+        dom.addEventListener("DOMContentLoaded", function(){
+            console.log('TEST7') //FIX
+        })
 		initAbout(dom)
 		//console.log(html);
 	}).catch(function (err) {
@@ -83,25 +85,39 @@ function deinit(){
 
 }
 
-function open(){
-	console.log('opened')
+function open(canvas){
+    //main.querySelector()
+    
+
+	//console.log('opened')
+    //UI.systemMessage('test ' + window.innerWidth + '; screen ' + window.screen.width, 'success')
+    setTimeout(function(){
+        main.style.display='initial'
+        fit();
+        void main.offsetWidth;
+        main.style.opacity=1;
+    },1000)
+
+    return true;
+    
 }
 function close(){
-
+    main.style.opacity=0;
+    setTimeout(function(){
+        main.style.display='none'
+    },200);
 }
 
+///==========non 3d page logic===========
 
-
-
-
-let mainDom
 let main;
 let overlay;
 let resizeTimer;
-let px = 0;
-let moveTarget;
+//let px = 0;
+//let moveTarget;
 let currentSection
 let clickerOverlay;
+
 
 function initAbout(dom) {
     main = dom.querySelector('main')
@@ -179,12 +195,12 @@ function initAbout(dom) {
     portfolioHolder.addEventListener('scroll',ev=>{
     	if(ev.target.scrollTop>0){
     		portraitHolder.style.height='128px';
-    		portraitHolder.style.transform='scale(0.5,0.5)'
-            portfolioHolder.style.height='calc(100% - 128px)'
+    		portraitHolder.style.transform='translate(-50%) scale(0.5,0.5)'
+            //portfolioHolder.style.height='calc(100% - 128px)'
     	}else{
             portraitHolder.style.height=''
             portraitHolder.style.transform=''
-            portfolioHolder.style.height=''
+            //portfolioHolder.style.height=''
         }
     })
     window.addEventListener('keydown', ev => {
@@ -294,4 +310,4 @@ function unhideOverlay() {
 
 
 
-export {init,animate,deinit}
+export {init,animate,deinit,open,close}
