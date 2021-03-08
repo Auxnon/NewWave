@@ -185,16 +185,22 @@ function resize() {
         docWidth =  window.screen.width
         docHeight = window.screen.height
     }*/
-    docWidth=document.documentElement.clientWidth
-    docHeight=document.documentElement.clientHeight
-
+    if(alphaCanvas.custom){
+        docWidth=alphaCanvas.custom;
+        docHeight=alphaCanvas.custom
+    }else{
+        docWidth=document.documentElement.clientWidth
+        docHeight=document.documentElement.clientHeight
+    }
     //docWidth =  window.innerWidth //Math.max(window.screen.width, window.innerWidth)
-    //docHeight = window.innerHeight //Math.max(window.screen.height, window.innerHeight)//window.innerHeight;
-    camera.aspect = docWidth / docHeight;
-    camera.updateProjectionMatrix();
+        //docHeight = window.innerHeight //Math.max(window.screen.height, window.innerHeight)//window.innerHeight;
 
-    renderer.setPixelRatio(1);//window.devicePixelRatio / SIZE_DIVIDER);
-    renderer.setSize(docWidth, docHeight);
+        camera.aspect = docWidth / docHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setPixelRatio(1);//window.devicePixelRatio / SIZE_DIVIDER);
+        renderer.setSize(docWidth, docHeight);
+    
 }
 var lastTime=0
 function animate(time) {
@@ -625,7 +631,7 @@ function flipScene(i,appDom) {
 }
 
 
-var activeScene = 0;
+var activeScene = -1;
 var activeModule;
 
 function getScene() {

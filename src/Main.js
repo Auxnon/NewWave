@@ -62,13 +62,17 @@ function init(argument) {
     window.addEventListener('pointerup', winMouseUp)
     path = document.querySelector('path')
     svg = document.querySelector('svg')
-    mainTitle = document.querySelector('#mainTitle');
+    mainTitle = document.querySelector('#main-title');
     mouseObj = { x: window.innerWidth / 2, y: -200 }
 
     window.addEventListener('resize', resize);
     initLine();
     window.addEventListener('pointermove', mousemove)
     window.addEventListener('pointerdown', mousemove)
+
+    mainTitle.addEventListener('click',ev=>{
+        closeApp();
+    })
 
     barInit();
 
@@ -78,12 +82,12 @@ function init(argument) {
     let brightness = document.querySelector('#brightness');
     brightness.addEventListener('click', ev => {
         if(brightness.classList.contains('brightnessDark')) {
-            document.body.style.backgroundColor = 'black';
+            document.body.classList.add('dark-mode')
             //document.body.style.stroke = 'white';
             //mainTitle.style.border = 'white 5px solid';
             //mainTitle.style.stroke = 'white';
         } else {
-            document.body.style.backgroundColor = 'white'
+            document.body.classList.remove('dark-mode')
             //document.body.style.stroke = 'black';
             //mainTitle.style.border = 'black 5px solid';
             //mainTitle.style.stroke = 'black';
@@ -122,7 +126,7 @@ function init(argument) {
         }
     });
 
-    UI.init(document.querySelector('#main'));
+    UI.init(document.body);
 
 }
 init();
@@ -187,6 +191,8 @@ function closeApp(disableFade) {
             }
         }
     }
+    mainTitle.classList.remove('shrink')
+
     currentAppId=1;
 }
 
@@ -741,6 +747,9 @@ function getPos(){
 function getCurrentAppId(){
     return currentAppId;
 }
+function shrinkTitle(){
+    mainTitle.classList.add('shrink')
+}
 
 
 /**
@@ -787,4 +796,4 @@ OlD curve code
 			}
 **/
 
-export { pendApp, clearPendApp,apps,getPos,getCurrentAppId }
+export { pendApp, clearPendApp,apps,getPos,getCurrentAppId,shrinkTitle }

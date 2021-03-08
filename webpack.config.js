@@ -16,6 +16,10 @@ return {
   		verbose: true
   	}),
   	new HtmlWebpackPlugin({template: './src/index.html'}),
+  	new HtmlWebpackPlugin({ 
+      filename: 'partials/about.html',
+      template: './src/about.html'
+    })
   ],
   /*module: {
     rules: [

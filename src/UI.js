@@ -191,8 +191,7 @@ function styleInit(){
 		display: flex;
 		align-items: flex-start;
 		position: relative;
-		width: 100vw;
-		max-width: 600px;
+		width: 100%;
 		height: 64px;
 		border-radius: 32px;
 		transform: translate(-50%);
@@ -275,7 +274,8 @@ function styleInit(){
 	}
 
 	.uiHolderSysTop{
-		width: 600px;
+		width: 100vw;
+		max-width: 600px;
 		position: absolute;
 		top: 0;
 		left: 50%;

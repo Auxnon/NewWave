@@ -1,5 +1,6 @@
 import * as THREE from "./lib/three.module.js";
 import * as Render from "./Render.js";
+import * as Main from "./Main.js";
 
 let greenModel;
 
@@ -48,7 +49,8 @@ function animate(delta){
       }
       greenModel.rotation.y=5.4+value*0.6//5.2 - 6
       //m.position.set(0,260,-40)
-      greenModel.position.set(30-30*value,-80 +340*value,20 -60*value)
+      let pos=Main.getPos();
+      greenModel.position.set(30-30*value +(pos.x-0.2)*30,-80 +340*value,20 -60*value +(pos.y-0.5)*30)
      // x: 30, y: -80, z: 20
       //console.log(greenModel.rotation.y)
     }

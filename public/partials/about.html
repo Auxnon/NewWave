@@ -1,27 +1,39 @@
-
-    <style>
-    
-
-    a{
-    	background-color: #FAD961;
+<style>a{
+        background-color: #FAD961;
         background-image: linear-gradient(150deg, #FAD961 0%, #F76B1C 100%);
         color: white;
         padding: 2px;
         border-radius: 4px;
+        text-decoration: none;
     }
-    a.site-link,a.code-link{
-    	display: inline-block;
-    	font-size: 1.6em;
-    	font-weight: bold;
-    	padding: 6px;
-    	width: 100px;
-    	height: 100px;
+    a.site-link,a.code-link,a.mail-link{
+        display: inline-block;
+        font-size: 1.6em;
+        font-weight: bold;
+        padding: 6px;
+        width: 100px;
+        text-align: center;
     }
-    .site-link:after{
-    	content: 'Link';
+    a.site-link,a.mail-link{
+        background-color: #5AFC67;
+        background-image: linear-gradient(150deg, #5AFC67 0%, #0095ED 100%);
     }
-    .code-link{
-    	content: 'Code';
+    a.code-link{
+        float: right;
+        background-color: #4C3DFF;
+        background-image: linear-gradient(150deg, #1816D0 0%, #7400F0 100%);
+    }
+    a.mail-link{
+        position: relative;
+        display: block;
+        left: 50%;
+        transform: translate(-50%);
+    }
+    a.site-link:after{
+        content: 'Site';
+    }
+    a.code-link:after{
+        content: 'Code';
     }
     
     main {
@@ -61,6 +73,7 @@
         display: flex;
         flex-flow: row wrap;
         justify-content: space-evenly;
+        align-content: flex-start;
         margin-bottom: 320px;
 
     }
@@ -82,7 +95,7 @@
         width: 256px;
         height: 256px;
         border-radius: 128px;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='cyan' %3E%3Cpath d='M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 12 12'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='cyan' %3E%3Cpath d='M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         left: 50%;
         top: 50%;
         transform: translate(-50%,-50%);
@@ -98,7 +111,7 @@
         border-radius: 128px;
         position: absolute;
         z-index: -1;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='magenta' %3E%3Cpath d='M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 12 12'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='magenta' %3E%3Cpath d='M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
 
     .portrait {
@@ -113,7 +126,7 @@
     }
     .portrait-holder{
         position: absolute;
-    	height: 256px;
+        height: 256px;
         margin:16px 0;
         top: 0;
         left: 50%;
@@ -129,7 +142,6 @@
         background: #f0f5;
         border-radius: 16px;
         width: auto;
-        max-width: 512px;
         height: 288px;
         overflow: hidden;
     }
@@ -138,10 +150,10 @@
         position: absolute;
         display: inline-block;
         max-width: 512px;
-        max-height: calc(100% - 128px);
+        height: calc(100vh - 128px);
+        max-height: 600px;
         width: 100%;
         border-radius: 16px;
-        
         overflow-x: hidden;
         overflow-y: auto;
         transition: left 0.3s, top 0.3s,transform 0.6s;
@@ -151,21 +163,21 @@
         background: #000c;
     }
     section::before{
-    	content: '';
-    	position: absolute;
-    	top: 0;
-    	z-index: -1;
-    	width: 100%;
-    	height: 100%;
+        content: '';
+        position: absolute;
+        top: 0;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
 
     }
     section p{
-    	margin: 16px;
+        margin: 16px;
     }
     section h2{
-    	margin: 16px;
-    	text-align: center;
-    	letter-spacing: 4px;
+        margin: 16px;
+        text-align: center;
+        letter-spacing: 4px;
     }
 
     section:focus {
@@ -174,7 +186,7 @@
 
     .section-holder {
 
-    	flex: 0 0 auto;
+        flex: 0 0 auto;
         width: 256px;
         height: 144px;
         border-radius: 16px;
@@ -185,6 +197,9 @@
         margin: 16px;
     }
 
+    .section-holder:last-child{
+        margin-bottom: 256px;
+    }
     .shrink {
         width: 256px;
         height: 144px;
@@ -192,8 +207,8 @@
         left: 0;
         overflow: hidden;
         /*left:0;
-			height: 0;
-			transform: initial;*/
+            height: 0;
+            transform: initial;*/
     }
 
     .shrink video,
@@ -207,99 +222,10 @@
         overflow-x: hidden;
         margin: 16px;
     }
-    </style>
-
-
-
-    <main style='display:none'>
-    	<div class="portrait-holder">
-        <div class="portrait-back">
-            <div class="portrait"></div>
-        </div>
-        </div>
-        <div class="portfolio-section-block">
-            <div class="portfolio-underlay"></div>
-            <div class="portfolio-overlay">
-                <div class="portfolio-clicker"></div>
-                <section>
-                    <video src="./assets/bottle1.mp4" autoplay muted loop></video>
-                    <article>
-                        <h2>ConnectReport</h2>
-                        <p>ConnectReport was the first major project i worked on. This small company hired me on as technical support. However due to the small team, i was quickly upgraded to a quality asurance technician with some minor coding roles. Converted the griding system to SVG which accomidated for the abstract cell sizing, as well as optimizing some neighboring cell collision detection. Worked nodejs and Angularjs and a team oriented git environment. </p>
-                    </article>
-                </section>
-                <section>
-                    <video src="./assets/bottle1.mp4" autoplay muted loop></video>
-                    <article>
-                        <h2>Makeavoy</h2>
-                        <p>This site, makeavoy.com, utilizies all of my favorite techniques I've picked up over the years. It's a little experimentnal as It's exploring what's possible for a single page application, so don't be surprised if the source is a little bit sloppy! There's a lot going on under the hood so I'm going to break it down here...</p>
-                        <h2>Backend</h2>
-                        <p>I primarily use node.js for it's approachable nature front a front-end first approach.
-                            Vhost and exoress takes care of the subdomain routing so i can easily incorporate multiple projects and easily seperate <abbr title="Progressive Web App">PWA</abbr> manifests. socket.io trivializes the websocket for chat communications and state updates. Although i also utilize a physics server for another expiermental project #SocialGame. There's also mariadb and asqlite3 databases for testing user authentication. After that the various projects are seperated by folders and sub modules to keep things organized. All rolled out on my locally hosted ubuntu server. It was Arch linux but I opted for something a little more mainstream for maintence reasons :)
-                        </p>
-                        <h2>FrontEnd</h2>
-                        <p>
-                            The main site utilizes a lot of 3d via Three.js. Due to the above average script sizes everything is lazy loaded on demand in order to reduce the Time to Interaction. The Rendering system is triggered to load at runtime, while each additional "app" is loaded upon clicking so as to only load the necessary content, at the cost of some load time. The intial payload hosts the basics such as the 3d css loading animation, and the app navigation system. The site loads in a self made vector title that 'draws' into place by a stroke-dashoffset. It also includes dynamic app button movement and placement ala an iPad, and a snazzy vector based drawing system to animate the navigation bar using perpendicular velocity offsets. The title accomidates for the bar as well. Finally each app when loaded in applies to canvas3d the scene contents and animation cycles. Upon swapping apps the buffer is dumped to an image raster and stealthily swapped in for a clean load out. This is because there can only be one canvas3d at any given time, so this was a nice hack.
-                        </p>
-                    </article>
-                </section>
-                <section>
-                    <video src="./assets/bottle1.mp4" autoplay muted loop></video>
-                    <article>
-                	<h2>Desk.js</h2>
-                	<p>This interface is intended for touchscreens. It utilizes all of your fingers for a multi touch interface, and for what seemed like the first time, allows different objects to be moved and scaled simultaneously. It's not perfect but you can use both hands or even seperate fingers on the same hand like a mad man to move and stretch. You can drag an image file to it from the desktop to paste in images, or double tap a square to paste text. You can select multiple elements with one finger by overlapping them, just like if you had pieces of paper ontop of each other. Context menu (long prress or right click) the desktop brings up a radial menu. The entire project is a bit rough and really needs an update to iron out the bugs, including some lag only on iOS. </p>
-                	<a href="https://makeavoy.com/desk/" class="site-link"></a>
-                	<a href="https://github.com/Auxnon/Desk.js/" class="code-link"></a>
-                    </article>
-                </section>
-                <section>
-                    <video src="./assets/bottle1.mp4" autoplay muted loop></video>
-                    <article>
-                        <h2>Stompadon</h2>
-                        <p>
-                            Stompadon was my first ever web project over 10 years ago. I had made a number of flash games back in the day, but even then Flash was clearly dying. A friend wanted help supporting a kickstarte for a plush of a character she had designed. Since i knew flash was a no go, the next closest thing was html5, and the rest is history. The code is very rough, poorly defined variables and this was before i understood functions very well (pre ECMA6 after all). Even still it still runs to this day and is still one of my favorites!
-                        </p>
-                    </article>
-                </section>
-                <section>
-                    <video src="./assets/bottle1.mp4" autoplay muted loop></video>
-                    <article>
-                        <h2>Get</h2>
-                        <p>
-                            Get is a simple file server hosted on the same site. It supports clipboard pasting as well as click and drag file support. It sends the FormData to a <a href="https://www.npmjs.com/package/multer">Multer</a> module that safely takes care of the file storage. It's not the cleanest system and it's certainly not available to public yet until i can properly secure everything.
-                        </p>
-                    </article>
-                </section>
-                <section>
-                    <video src="./assets/bottle1.mp4" autoplay muted loop></video>
-                    <article>
-                        <h2>Staddy</h2>
-                        <p>
-                            This project is very very ugly, but it was a necessary step in order to organize my tech support job. I have a tendency that when something is lacking in my life i tend to try and make it before i settle with existing options. Along comes Staddy, what started as a joke became crucial for organizing my workflow. As we supported over 40 unqieu clients stacks and a couple hundred sub clients, the design was to help organzie all links and hints for credentials. As I couldnt safely store passwords it mostly directed towards which ones to use. As all clients can be added in manually and stored as a json obejct through localstorage, it was infinitely customizable. It stored unique notes for each client as well, and even stored background color preferences. There was a break system being incorporated via socket.io but ultimiately fell to the wayside for security reasons. I hope to clean up this logic for some sort of organizational app someday.
-                        </p>
-                    </article>
-                </section>
-                <section>
-                    <video src="./assets/reserver.mp4" autoplay muted loop></video>
-                    <article>
-                        <h2>Reserver</h2>
-                        <p>This was another simple <abbr title="Progressive Web App">PWA</abbr> that evolved for work necessity. 12 members of our team were forced to use a single citrix portal in order to managemennt client incidents. Anytime someone used it, if someone else was working with it already they would get kicked out. We did our best to alert each other but sometimes we would miss messages. I created this app as a stopgap. It's a simple neomrophic button with gradient background opacity animations (since we still can't tween background gradients...) that sends a socket.io websocket message to the server reserving your status and alerting all connected clients of the state change. Non occupying clients can then "pend" the user sending them desktop notifications (if they opted in) and even posting in our discord chat via webhooks that they were waiting. Full <abbr title="Progressive Web App">PWA</abbr> manifest and desktop icons included for pinning to the taskbar!</p>
-                    </article>
-                </section>
-                <section>
-                    <video src="./assets/bottle1.mp4" autoplay muted loop></video>
-                    <article>
-                        <h2>Book</h2>
-                        <p>A very simple slideshow like social app that never quite took off. The idea was every post was a full screen block of text and you can slickly transition between posts through some animation technizues adpated from <a href=""></a>. Currently on the backburner but woiuld love to incorporate these animations elsewhere</p>
-                    </article>
-                </section>
-                <section>
-                	<video src="./assets/bottle1.mp4" autoplay muted loop></video>
-                    <article>
-                	<h2>WASM</h2>
-                	<p>Still working on incorporating rust compiled <abbr title="Web Assembly">WASM</abbr> binaries into various projects. Nothing worth showing yet but you can check out the progress <a href="https://makeavoy/wasm">Here</a> utilizing the <a href="https://docs.rs/macroquad/">Macroquad</a> rust library!</p>
-                    </article>
-                </section>
-            </div>
-        </div>
-    </main>
+    .contact-panel{
+        margin-top: 32px;
+        width: 100%;
+        flex: 0 0 auto;
+        height: 256px;
+        pointer-events: auto;
+    }</style><main style="display:none"><div class="portrait-holder"><div class="portrait-back"><div class="portrait"></div></div></div><div class="portfolio-section-block"><div class="portfolio-underlay"><div class="contact-panel"><a href="mailto:makeavoy@gmail.com" class="mail-link">Email</a></div></div><div class="portfolio-overlay"><div class="portfolio-clicker"></div><section><video src="./assets/bottle1.mp4" muted loop></video><article><h2>ConnectReport</h2><p>ConnectReport was the first major project i worked on. This small company hired me on as technical support. However due to the small team, i was quickly upgraded to a quality asurance technician with some minor coding roles. Converted the griding system to SVG which accomidated for the abstract cell sizing, as well as optimizing some neighboring cell collision detection. Worked nodejs and Angularjs and a team oriented git environment.</p><a href="https://connectreport.com/" class="site-link"></a></article></section><section><video src="./assets/bottle1.mp4" muted loop></video><article><h2>Makeavoy</h2><p>This site, makeavoy.com, utilizies all of my favorite techniques I've picked up over the years. It's a little experimentnal as It's exploring what's possible for a single page application, so don't be surprised if the source is a little bit sloppy! There's a lot going on under the hood so I'm going to break it down here...</p><h2>Backend</h2><p>I primarily use node.js for it's approachable nature front a front-end first approach. Vhost and exoress takes care of the subdomain routing so i can easily incorporate multiple projects and easily seperate <abbr title="Progressive Web App">PWA</abbr> manifests. socket.io trivializes the websocket for chat communications and state updates. Although i also utilize a physics server for another expiermental project #SocialGame. There's also mariadb and asqlite3 databases for testing user authentication. After that the various projects are seperated by folders and sub modules to keep things organized. All rolled out on my locally hosted ubuntu server. It was Arch linux but I opted for something a little more mainstream for maintence reasons :)</p><h2>FrontEnd</h2><p>The main site utilizes a lot of 3d via Three.js. Due to the above average script sizes everything is lazy loaded on demand in order to reduce the Time to Interaction. The Rendering system is triggered to load at runtime, while each additional "app" is loaded upon clicking so as to only load the necessary content, at the cost of some load time. The intial payload hosts the basics such as the 3d css loading animation, and the app navigation system. The site loads in a self made vector title that 'draws' into place by a stroke-dashoffset. It also includes dynamic app button movement and placement ala an iPad, and a snazzy vector based drawing system to animate the navigation bar using perpendicular velocity offsets. The title accomidates for the bar as well. Finally each app when loaded in applies to canvas3d the scene contents and animation cycles. Upon swapping apps the buffer is dumped to an image raster and stealthily swapped in for a clean load out. This is because there can only be one canvas3d at any given time, so this was a nice hack.</p><a href="https://github.com/Auxnon/NewWave" class="code-link"></a></article></section><section><video src="./assets/bottle1.mp4" muted loop></video><article><h2>Desk.js</h2><p>This interface is intended for touchscreens. It utilizes all of your fingers for a multi touch interface, and for what seemed like the first time, allows different objects to be moved and scaled simultaneously. It's not perfect but you can use both hands or even seperate fingers on the same hand like a mad man to move and stretch. You can drag an image file to it from the desktop to paste in images, or double tap a square to paste text. You can select multiple elements with one finger by overlapping them, just like if you had pieces of paper ontop of each other. Context menu (long prress or right click) the desktop brings up a radial menu. The entire project is a bit rough and really needs an update to iron out the bugs, including some lag only on iOS.</p><a href="https://makeavoy.com/desk/" class="site-link"></a> <a href="https://github.com/Auxnon/Desk.js/" class="code-link"></a></article></section><section><video src="./assets/bottle1.mp4" muted loop></video><article><h2>Stompadon</h2><p>Stompadon was my first ever web project over 10 years ago. I had made a number of flash games back in the day, but even then Flash was clearly dying. A friend wanted help supporting a kickstarte for a plush of a character she had designed. Since i knew flash was a no go, the next closest thing was html5, and the rest is history. The code is very rough, poorly defined variables and this was before i understood functions very well (pre ECMA6 after all). Even still it still runs to this day and is still one of my favorites!</p><a href="https://makeavoy.com/stomp/" class="site-link"></a></article></section><section><video src="./assets/bottle1.mp4" muted loop></video><article><h2>Get</h2><p>Get is a simple file server hosted on the same site. It supports clipboard pasting as well as click and drag file support. It sends the FormData to a <a href="https://www.npmjs.com/package/multer">Multer</a> module that safely takes care of the file storage. It's not the cleanest system and it's certainly not available to public yet until i can properly secure everything.</p></article></section><section><video src="./assets/reserver.mp4" muted loop></video><article><h2>Reserver</h2><p>This was another simple <abbr title="Progressive Web App">PWA</abbr> that evolved for work necessity. 12 members of our team were forced to use a single citrix portal in order to managemennt client incidents. Anytime someone used it, if someone else was working with it already they would get kicked out. We did our best to alert each other but sometimes we would miss messages. I created this app as a stopgap. It's a simple neomrophic button with gradient background opacity animations (since we still can't tween background gradients...) that sends a socket.io websocket message to the server reserving your status and alerting all connected clients of the state change. Non occupying clients can then "pend" the user sending them desktop notifications (if they opted in) and even posting in our discord chat via webhooks that they were waiting. Full <abbr title="Progressive Web App">PWA</abbr> manifest and desktop icons included for pinning to the taskbar!</p></article></section><section><video src="./assets/bottle1.mp4" muted loop></video><article><h2>Staddy</h2><p>This project is very very ugly, but it was a necessary step in order to organize my tech support job. I have a tendency that when something is lacking in my life i tend to try and make it before i settle with existing options. Along comes Staddy, what started as a joke became crucial for organizing my workflow. As we supported over 40 unqieu clients stacks and a couple hundred sub clients, the design was to help organzie all links and hints for credentials. As I couldnt safely store passwords it mostly directed towards which ones to use. As all clients can be added in manually and stored as a json obejct through localstorage, it was infinitely customizable. It stored unique notes for each client as well, and even stored background color preferences. There was a break system being incorporated via socket.io but ultimiately fell to the wayside for security reasons. I hope to clean up this logic for some sort of organizational app someday.</p></article></section><section><video src="./assets/bottle1.mp4" muted loop></video><article><h2>Book</h2><p>A very simple slideshow like social app that never quite took off. The idea was every post was a full screen block of text and you can slickly transition between posts through some animation technizues adpated from <a href=""></a>. Currently on the backburner but woiuld love to incorporate these animations elsewhere</p><a href="https://book.makeavoy.com/" class="site-link"></a></article></section><section><video src="./assets/bottle1.mp4" muted loop></video><article><h2>WASM</h2><p>Still working on incorporating rust compiled <abbr title="Web Assembly">WASM</abbr> binaries into various projects. Nothing worth showing yet but you can check out the progress <a href="https://makeavoy/wasm">Here</a> utilizing the <a href="https://docs.rs/macroquad/">Macroquad</a> rust library!</p><a href="https://makeavoy.com/wasm/" class="site-link"></a> <a href="https://github.com/Auxnon/rust-game" class="code-link"></a></article></section></div></div></main><script src="../runtime.1860ce4a5dd4d5b09332.js"></script><script src="../main.f9ed1d363d7eee86ef7b.js"></script>
