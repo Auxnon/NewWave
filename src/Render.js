@@ -185,16 +185,22 @@ function resize() {
         docWidth =  window.screen.width
         docHeight = window.screen.height
     }*/
-    docWidth=document.documentElement.clientWidth
-    docHeight=document.documentElement.clientHeight
-
+    if(alphaCanvas.custom){
+        docWidth=alphaCanvas.custom;
+        docHeight=alphaCanvas.custom
+    }else{
+        docWidth=document.documentElement.clientWidth
+        docHeight=document.documentElement.clientHeight
+    }
     //docWidth =  window.innerWidth //Math.max(window.screen.width, window.innerWidth)
-    //docHeight = window.innerHeight //Math.max(window.screen.height, window.innerHeight)//window.innerHeight;
-    camera.aspect = docWidth / docHeight;
-    camera.updateProjectionMatrix();
+        //docHeight = window.innerHeight //Math.max(window.screen.height, window.innerHeight)//window.innerHeight;
 
-    renderer.setPixelRatio(1);//window.devicePixelRatio / SIZE_DIVIDER);
-    renderer.setSize(docWidth, docHeight);
+        camera.aspect = docWidth / docHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setPixelRatio(1);//window.devicePixelRatio / SIZE_DIVIDER);
+        renderer.setSize(docWidth, docHeight);
+    
 }
 var lastTime=0
 function animate(time) {
@@ -599,23 +605,40 @@ function sceneAnimate(delta) {
     }
 }
 
-function flipScene(i) {
+function closeModule(){
+    if(activeModule && activeModule.close)
+        activeModule.close();
+}
+function flipScene(i,appDom) {
+    //this method contains some duplicate logic compared to getScene when loading is complete
+
+    let canvas=getAlphaCanvas();
+    canvas.remove();
     activeScene = i;
+    canvas.style.opacity=1;
+
     //not proud of the setup but its better to isolate all the render logic out from the app opening mangement of Main
     //literally just checking the scene has fully loaded and to call its app open function
     let scene = scenes[i];
-    if(scene != undefined && scene != 'pend' && scene[1].open) 
-        scene[1].open();
+    if(scene != undefined && scene != 'pend' && scene[1].open){
+        if(!scene[1].open(canvas)){
+            appDom.appendChild(canvas)
+        }
+    }else
+        appDom.appendChild(canvas)
+
 
 }
-var activeScene = 0;
+
+
+var activeScene = -1;
 var activeModule;
 
 function getScene() {
     let index = activeScene;
-    let scene = scenes[index];
-    if(scene == undefined) {
-        scene = emptyScene
+    let outgoingScene = scenes[index];
+    if(outgoingScene == undefined) {
+        outgoingScene = emptyScene
         scenes[index] = 'pend';
 
         //wow this is a conufsing mess but it's functional!
@@ -623,7 +646,22 @@ function getScene() {
         if(importerFunction) {
             Main.pendApp(index)
             importerFunction(module => {
-                scenes[index] = [module.init(index,Main.apps[index],()=>{Main.clearPendApp(index)}), module]
+                //set the scene index to our now loaded script, but due to some likely additional resources loadding in we're still pending
+                //when the resources are ALL loaded, per the loaded script's requirements, it calls the complete function that was passed it below
+                //This complete function should wrap up any remainder logic, such as removing hte loading animation, allowing hte scene to render, and calling the "open app" function
+                scenes[index] = [module.init(index,Main.apps[index],()=>{
+                    
+                    let canvas=getAlphaCanvas();
+                    canvas.remove();
+                    canvas.style.opacity=1;
+                    if(module.open && Main.getCurrentAppId()==index){
+                        if(module.open(canvas)){
+                            Main.clearPendApp(index);
+                        }else
+                            Main.clearPendApp(index,canvas);
+                    }else
+                        Main.clearPendApp(index,canvas);
+                }), module];
                 
             });
         } else {
@@ -633,14 +671,14 @@ function getScene() {
         /*import(SCENE_DATA[index][0]).then(module => {
             scenes[index] = module.init(SCENE_DATA[index][1], Render, THREE);
         })*/
-    } else if(scene == 'pend') {
-        scene = emptyScene;
+    } else if(outgoingScene == 'pend') {
+        outgoingScene = emptyScene;
     } else {
-        activeModule = scene[1]; //define the module that's currently active so we can run it's animate function in sceneAnimate()
-        scene = scene[0] //please forgive me, trust me it works
+        activeModule = outgoingScene[1]; //define the module that's currently active so we can run it's animate function in sceneAnimate()
+        outgoingScene = outgoingScene[0] //please forgive me, trust me it works
     }
 
-    return scene;
+    return outgoingScene;
 }
 
 ///////////////
@@ -650,4 +688,4 @@ function getScene() {
 
 
 
-export { init, getAlphaCanvas, getBetaCanvas, bufferPrint, loadModel, flipScene, specterMaterial, resize }
+export { init, getAlphaCanvas, getBetaCanvas, bufferPrint, loadModel, flipScene, specterMaterial, resize, closeModule }

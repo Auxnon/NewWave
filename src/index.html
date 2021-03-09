@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 	<link rel="manifest" href="/site.webmanifest">
-	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">-->
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
 	<meta name="msapplication-TileColor" content="#da532c">
 	<meta name="theme-color" content="#ffffff">
 
@@ -39,8 +39,13 @@
     }
 
     body {
-        background-color: black;
+        background-color: white;
         stroke: white;
+        
+    }
+
+    body.dark-mode{
+        background-color:black;
     }
 
     #main {
@@ -52,6 +57,13 @@
         top: 0;
         overflow: hidden;
         touch-action: none;
+        background-repeat: no-repeat;
+        background-position: left bottom;
+        background-size: 70vmax 70vmax;
+        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 16.93 16.93"><g fill-rule="evenodd"><path d="M14.27 8.79c.46 1.5-2.08 2.48-2.31 4.02-.23 1.5 1.9 3.21 1.02 4.45-.9 1.27-3.28-.1-4.65.65-1.33.74-1.32 3.43-2.85 3.5-1.58.08-2.02-2.6-3.49-3.2-1.43-.58-3.55 1.07-4.59-.08-1.06-1.17.78-3.14.3-4.65-.45-1.46-3.1-2.1-2.86-3.6.25-1.54 2.98-1.32 3.87-2.6.87-1.24-.32-3.68 1.02-4.4 1.37-.75 2.93 1.5 4.51 1.4 1.54-.08 2.7-2.49 4.13-1.9 1.47.62.7 3.2 1.77 4.37 1.05 1.13 3.7.57 4.13 2.04z" fill="rgb(181, 247, 242)"/><path d="M11.9 9.8c.35 1.2-1.59 1.98-1.77 3.2-.18 1.2 1.46 2.56.79 3.54-.7 1-2.52-.08-3.57.52-1.02.59-1.01 2.73-2.19 2.78-1.2.06-1.54-2.07-2.67-2.54-1.1-.47-2.72.85-3.52-.07-.82-.93.6-2.5.23-3.7-.34-1.16-2.38-1.66-2.2-2.86.2-1.22 2.29-1.04 2.97-2.06.67-.99-.25-2.93.78-3.5C1.81 4.5 3 6.3 4.21 6.22 5.4 6.16 6.3 4.25 7.38 4.72c1.13.49.53 2.54 1.35 3.46.8.9 2.84.46 3.17 1.63z" fill="rgb(0, 221, 255)"/></g></svg>');
+    }
+    .dark-mode #main{
+        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 16.93 16.93"><g fill-rule="evenodd"><path d="M14.27 8.79c.46 1.5-2.08 2.48-2.31 4.02-.23 1.5 1.9 3.21 1.02 4.45-.9 1.27-3.28-.1-4.65.65-1.33.74-1.32 3.43-2.85 3.5-1.58.08-2.02-2.6-3.49-3.2-1.43-.58-3.55 1.07-4.59-.08-1.06-1.17.78-3.14.3-4.65-.45-1.46-3.1-2.1-2.86-3.6.25-1.54 2.98-1.32 3.87-2.6.87-1.24-.32-3.68 1.02-4.4 1.37-.75 2.93 1.5 4.51 1.4 1.54-.08 2.7-2.49 4.13-1.9 1.47.62.7 3.2 1.77 4.37 1.05 1.13 3.7.57 4.13 2.04z" fill="rgb(70, 21, 74)"/><path d="M11.9 9.8c.35 1.2-1.59 1.98-1.77 3.2-.18 1.2 1.46 2.56.79 3.54-.7 1-2.52-.08-3.57.52-1.02.59-1.01 2.73-2.19 2.78-1.2.06-1.54-2.07-2.67-2.54-1.1-.47-2.72.85-3.52-.07-.82-.93.6-2.5.23-3.7-.34-1.16-2.38-1.66-2.2-2.86.2-1.22 2.29-1.04 2.97-2.06.67-.99-.25-2.93.78-3.5C1.81 4.5 3 6.3 4.21 6.22 5.4 6.16 6.3 4.25 7.38 4.72c1.13.49.53 2.54 1.35 3.46.8.9 2.84.46 3.17 1.63z" fill="rgb(30, 5, 47)"/></g></svg>');
     }
 
     .app {
@@ -66,6 +78,7 @@
         transition: 0.8s;
         z-index: 1;
         overflow: hidden;
+        box-sizing: border-box;
     }
 
     .appMove {
@@ -130,7 +143,7 @@
     }
 
 
-    #mainTitle {
+    #main-title {
         border-radius: 32px;
         position: fixed;
         left: 50%;
@@ -141,11 +154,16 @@
         stroke: white;
         stroke-width: 5;
         stroke-linejoin: bevel;
-        pointer-events: none;
         transition: top 0.3s;
+        /*z-index: 99; /*I'm really sorry about this*/
     }
 
-    #mainTitle * {
+    #main-title.shrink{
+        left: 0;
+        transform: translate(-90px,-80px) scale(.25,.25);
+    }
+
+    #main-title * {
         animation: pulse 1.2s backwards;
     }
 
@@ -211,13 +229,15 @@
     .canvasHolder {
         width: 100%;
         height: 100%;
-        position: relative;
+        position: absolute;
         opacity: 0;
         transition: opacity 1s;
         margin: 0;
         top: 0;
         overflow: hidden;
         touch-action: none;
+
+        
     }
 
     .canvasHolder * {
@@ -239,18 +259,6 @@
         touch-action: none;
     }
 
-    #seg1 {
-        background-color: #8dd1ee;
-        /*background-image: linear-gradient(160deg, #8dd1ee 0%, #ffffff 100%);*/
-        /*background: linear-gradient(350deg, #f25526, #91DBFF);*/
-
-
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='540' height='450' viewBox='0 0 1080 900'%3E%3Cg fill-opacity='.1'%3E%3Cpolygon fill='%23444' points='90 150 0 300 180 300'/%3E%3Cpolygon points='90 150 180 0 0 0'/%3E%3Cpolygon fill='%23AAA' points='270 150 360 0 180 0'/%3E%3Cpolygon fill='%23DDD' points='450 150 360 300 540 300'/%3E%3Cpolygon fill='%23999' points='450 150 540 0 360 0'/%3E%3Cpolygon points='630 150 540 300 720 300'/%3E%3Cpolygon fill='%23DDD' points='630 150 720 0 540 0'/%3E%3Cpolygon fill='%23444' points='810 150 720 300 900 300'/%3E%3Cpolygon fill='%23FFF' points='810 150 900 0 720 0'/%3E%3Cpolygon fill='%23DDD' points='990 150 900 300 1080 300'/%3E%3Cpolygon fill='%23444' points='990 150 1080 0 900 0'/%3E%3Cpolygon fill='%23DDD' points='90 450 0 600 180 600'/%3E%3Cpolygon points='90 450 180 300 0 300'/%3E%3Cpolygon fill='%23666' points='270 450 180 600 360 600'/%3E%3Cpolygon fill='%23AAA' points='270 450 360 300 180 300'/%3E%3Cpolygon fill='%23DDD' points='450 450 360 600 540 600'/%3E%3Cpolygon fill='%23999' points='450 450 540 300 360 300'/%3E%3Cpolygon fill='%23999' points='630 450 540 600 720 600'/%3E%3Cpolygon fill='%23FFF' points='630 450 720 300 540 300'/%3E%3Cpolygon points='810 450 720 600 900 600'/%3E%3Cpolygon fill='%23DDD' points='810 450 900 300 720 300'/%3E%3Cpolygon fill='%23AAA' points='990 450 900 600 1080 600'/%3E%3Cpolygon fill='%23444' points='990 450 1080 300 900 300'/%3E%3Cpolygon fill='%23222' points='90 750 0 900 180 900'/%3E%3Cpolygon points='270 750 180 900 360 900'/%3E%3Cpolygon fill='%23DDD' points='270 750 360 600 180 600'/%3E%3Cpolygon points='450 750 540 600 360 600'/%3E%3Cpolygon points='630 750 540 900 720 900'/%3E%3Cpolygon fill='%23444' points='630 750 720 600 540 600'/%3E%3Cpolygon fill='%23AAA' points='810 750 720 900 900 900'/%3E%3Cpolygon fill='%23666' points='810 750 900 600 720 600'/%3E%3Cpolygon fill='%23999' points='990 750 900 900 1080 900'/%3E%3Cpolygon fill='%23999' points='180 0 90 150 270 150'/%3E%3Cpolygon fill='%23444' points='360 0 270 150 450 150'/%3E%3Cpolygon fill='%23FFF' points='540 0 450 150 630 150'/%3E%3Cpolygon points='900 0 810 150 990 150'/%3E%3Cpolygon fill='%23222' points='0 300 -90 450 90 450'/%3E%3Cpolygon fill='%23FFF' points='0 300 90 150 -90 150'/%3E%3Cpolygon fill='%23FFF' points='180 300 90 450 270 450'/%3E%3Cpolygon fill='%23666' points='180 300 270 150 90 150'/%3E%3Cpolygon fill='%23222' points='360 300 270 450 450 450'/%3E%3Cpolygon fill='%23FFF' points='360 300 450 150 270 150'/%3E%3Cpolygon fill='%23444' points='540 300 450 450 630 450'/%3E%3Cpolygon fill='%23222' points='540 300 630 150 450 150'/%3E%3Cpolygon fill='%23AAA' points='720 300 630 450 810 450'/%3E%3Cpolygon fill='%23666' points='720 300 810 150 630 150'/%3E%3Cpolygon fill='%23FFF' points='900 300 810 450 990 450'/%3E%3Cpolygon fill='%23999' points='900 300 990 150 810 150'/%3E%3Cpolygon points='0 600 -90 750 90 750'/%3E%3Cpolygon fill='%23666' points='0 600 90 450 -90 450'/%3E%3Cpolygon fill='%23AAA' points='180 600 90 750 270 750'/%3E%3Cpolygon fill='%23444' points='180 600 270 450 90 450'/%3E%3Cpolygon fill='%23444' points='360 600 270 750 450 750'/%3E%3Cpolygon fill='%23999' points='360 600 450 450 270 450'/%3E%3Cpolygon fill='%23666' points='540 600 630 450 450 450'/%3E%3Cpolygon fill='%23222' points='720 600 630 750 810 750'/%3E%3Cpolygon fill='%23FFF' points='900 600 810 750 990 750'/%3E%3Cpolygon fill='%23222' points='900 600 990 450 810 450'/%3E%3Cpolygon fill='%23DDD' points='0 900 90 750 -90 750'/%3E%3Cpolygon fill='%23444' points='180 900 270 750 90 750'/%3E%3Cpolygon fill='%23FFF' points='360 900 450 750 270 750'/%3E%3Cpolygon fill='%23AAA' points='540 900 630 750 450 750'/%3E%3Cpolygon fill='%23FFF' points='720 900 810 750 630 750'/%3E%3Cpolygon fill='%23222' points='900 900 990 750 810 750'/%3E%3Cpolygon fill='%23222' points='1080 300 990 450 1170 450'/%3E%3Cpolygon fill='%23FFF' points='1080 300 1170 150 990 150'/%3E%3Cpolygon points='1080 600 990 750 1170 750'/%3E%3Cpolygon fill='%23666' points='1080 600 1170 450 990 450'/%3E%3Cpolygon fill='%23DDD' points='1080 900 1170 750 990 750'/%3E%3C/g%3E%3C/svg%3E");
-
-
-
-
-    }
 
     @keyframes sunset {
         0% {
@@ -266,49 +274,64 @@
         }
     }
 
-    #seg2 {
-        background-color: #8016B9;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='540' height='450' viewBox='0 0 1080 900'%3E%3Cg fill-opacity='.1'%3E%3Cpolygon fill='%23444' points='90 150 0 300 180 300'/%3E%3Cpolygon points='90 150 180 0 0 0'/%3E%3Cpolygon fill='%23AAA' points='270 150 360 0 180 0'/%3E%3Cpolygon fill='%23DDD' points='450 150 360 300 540 300'/%3E%3Cpolygon fill='%23999' points='450 150 540 0 360 0'/%3E%3Cpolygon points='630 150 540 300 720 300'/%3E%3Cpolygon fill='%23DDD' points='630 150 720 0 540 0'/%3E%3Cpolygon fill='%23444' points='810 150 720 300 900 300'/%3E%3Cpolygon fill='%23FFF' points='810 150 900 0 720 0'/%3E%3Cpolygon fill='%23DDD' points='990 150 900 300 1080 300'/%3E%3Cpolygon fill='%23444' points='990 150 1080 0 900 0'/%3E%3Cpolygon fill='%23DDD' points='90 450 0 600 180 600'/%3E%3Cpolygon points='90 450 180 300 0 300'/%3E%3Cpolygon fill='%23666' points='270 450 180 600 360 600'/%3E%3Cpolygon fill='%23AAA' points='270 450 360 300 180 300'/%3E%3Cpolygon fill='%23DDD' points='450 450 360 600 540 600'/%3E%3Cpolygon fill='%23999' points='450 450 540 300 360 300'/%3E%3Cpolygon fill='%23999' points='630 450 540 600 720 600'/%3E%3Cpolygon fill='%23FFF' points='630 450 720 300 540 300'/%3E%3Cpolygon points='810 450 720 600 900 600'/%3E%3Cpolygon fill='%23DDD' points='810 450 900 300 720 300'/%3E%3Cpolygon fill='%23AAA' points='990 450 900 600 1080 600'/%3E%3Cpolygon fill='%23444' points='990 450 1080 300 900 300'/%3E%3Cpolygon fill='%23222' points='90 750 0 900 180 900'/%3E%3Cpolygon points='270 750 180 900 360 900'/%3E%3Cpolygon fill='%23DDD' points='270 750 360 600 180 600'/%3E%3Cpolygon points='450 750 540 600 360 600'/%3E%3Cpolygon points='630 750 540 900 720 900'/%3E%3Cpolygon fill='%23444' points='630 750 720 600 540 600'/%3E%3Cpolygon fill='%23AAA' points='810 750 720 900 900 900'/%3E%3Cpolygon fill='%23666' points='810 750 900 600 720 600'/%3E%3Cpolygon fill='%23999' points='990 750 900 900 1080 900'/%3E%3Cpolygon fill='%23999' points='180 0 90 150 270 150'/%3E%3Cpolygon fill='%23444' points='360 0 270 150 450 150'/%3E%3Cpolygon fill='%23FFF' points='540 0 450 150 630 150'/%3E%3Cpolygon points='900 0 810 150 990 150'/%3E%3Cpolygon fill='%23222' points='0 300 -90 450 90 450'/%3E%3Cpolygon fill='%23FFF' points='0 300 90 150 -90 150'/%3E%3Cpolygon fill='%23FFF' points='180 300 90 450 270 450'/%3E%3Cpolygon fill='%23666' points='180 300 270 150 90 150'/%3E%3Cpolygon fill='%23222' points='360 300 270 450 450 450'/%3E%3Cpolygon fill='%23FFF' points='360 300 450 150 270 150'/%3E%3Cpolygon fill='%23444' points='540 300 450 450 630 450'/%3E%3Cpolygon fill='%23222' points='540 300 630 150 450 150'/%3E%3Cpolygon fill='%23AAA' points='720 300 630 450 810 450'/%3E%3Cpolygon fill='%23666' points='720 300 810 150 630 150'/%3E%3Cpolygon fill='%23FFF' points='900 300 810 450 990 450'/%3E%3Cpolygon fill='%23999' points='900 300 990 150 810 150'/%3E%3Cpolygon points='0 600 -90 750 90 750'/%3E%3Cpolygon fill='%23666' points='0 600 90 450 -90 450'/%3E%3Cpolygon fill='%23AAA' points='180 600 90 750 270 750'/%3E%3Cpolygon fill='%23444' points='180 600 270 450 90 450'/%3E%3Cpolygon fill='%23444' points='360 600 270 750 450 750'/%3E%3Cpolygon fill='%23999' points='360 600 450 450 270 450'/%3E%3Cpolygon fill='%23666' points='540 600 630 450 450 450'/%3E%3Cpolygon fill='%23222' points='720 600 630 750 810 750'/%3E%3Cpolygon fill='%23FFF' points='900 600 810 750 990 750'/%3E%3Cpolygon fill='%23222' points='900 600 990 450 810 450'/%3E%3Cpolygon fill='%23DDD' points='0 900 90 750 -90 750'/%3E%3Cpolygon fill='%23444' points='180 900 270 750 90 750'/%3E%3Cpolygon fill='%23FFF' points='360 900 450 750 270 750'/%3E%3Cpolygon fill='%23AAA' points='540 900 630 750 450 750'/%3E%3Cpolygon fill='%23FFF' points='720 900 810 750 630 750'/%3E%3Cpolygon fill='%23222' points='900 900 990 750 810 750'/%3E%3Cpolygon fill='%23222' points='1080 300 990 450 1170 450'/%3E%3Cpolygon fill='%23FFF' points='1080 300 1170 150 990 150'/%3E%3Cpolygon points='1080 600 990 750 1170 750'/%3E%3Cpolygon fill='%23666' points='1080 600 1170 450 990 450'/%3E%3Cpolygon fill='%23DDD' points='1080 900 1170 750 990 750'/%3E%3C/g%3E%3C/svg%3E");
-    }
 
     #app1 {
         background-color: #FAD961;
         background-image: linear-gradient(150deg, #FAD961 0%, #F76B1C 100%);
+    }
+    .dark-mode #app1{
+        background-color: #C61B12;
+        background-image: linear-gradient(150deg, #C61B12 0%, #38053B 100%);
+        border: solid 4px #FAD961;
     }
 
     #app3 {
         background-color: #4158D0;
         background-image: linear-gradient(156deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
     }
-    #app4 {
+    .dark-mode #app3{
+        border: #C850C0 4px solid;
+        background-color: #0C0F1D;
+        background-image: linear-gradient(156deg, #0C0F1D 30%, #B84AB2 46%, #5D0B11 80%);
+    }
+
+    #app4{
+        background-color: white;
+        background-image: linear-gradient(200deg, white 60%, #E7A3F0 100%);
+    }
+    .dark-mode #app4{
+        background-color: black;
+        background-image: linear-gradient(200deg, black 60%, #561C53 100%);
+        border: solid 4px white;
+    }
+    #app5 {
         background-color: #85FFBD;
         background-image: linear-gradient(180deg, #85FFBD 0%, #FFFB7D 100%);
     }
 
     #app2 {
         background-color: #17145D;
+        border: solid 4px rgb(250,1,200);
         /*background-image: linear-gradient(45deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%);*/
-
-
-
-        /*background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='#000000' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E") !important;*/
-
-        /*background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'><path stroke='#000000' stroke-width='3' fill-opacity='1.0' d='M1 0L0 3'></path></svg>");*/
-
-
         background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 0 24 24" width="48"  ><path stroke-width="4" stroke="rgb(150,000,250)" d="M1 1h24v24H1V1z" fill="none"/><path stroke-width="2" stroke="rgb(250,1,200)" d="M0 0h24v24H0V0z" fill="none"/></svg>');
         animation: backgroundMove 2s infinite linear;
+
+    }
+    .dark-mode #app2 {
+        background-color: black;
+        /*background-image: linear-gradient(45deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%);*/
+        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 0 24 24" width="48"  ><path stroke-width="4" stroke="rgb(0, 11, 125)" d="M1 1h24v24H1V1z" fill="none"/><path stroke-width="2" stroke="rgb(59, 0, 0)" d="M0 0h24v24H0V0z" fill="none"/></svg>');
+        
 
     }
     #app4 .canvasHolder{
         height: 256px;
         width: 256px;
         border-radius: 128px;
-        left: 50%
+        transform: translate(-50%,-50%);
+        left: 50%;
+        top: 50%;
     }
-
-
-
 
     @keyframes backgroundMove {
         from {
@@ -448,7 +471,7 @@
         <svg id='navLine' fill="none" stroke-width="6" stroke-linecap="round">
             <path d="M0 0 L 0 2" />
         </svg>
-        <svg id="mainTitle" style="top: 28px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-10 0 320 100" width="300" height="100">
+        <svg id="main-title" style="top: 28px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-10 0 320 100" width="300" height="100">
             <path d="M20.8 75V28.5L42 56.1l21.4-27.6V75" class="M" />
             <path d="M98 58.3c0 6.3-5.4 11.4-12 11.4-6.5 0-11.8-5.1-11.8-11.4 0-6.3 5.3-11.4 11.8-11.4 6.6 0 12 5 12 11.4z" class="a" />
             <path d="M106.1 70c-4 .4-6.4-3.7-7.6-12.1-3-21.7-10.7-26.4-23.3-14.1" class="a2" />
@@ -462,28 +485,7 @@
             <path d="M283.3 46.8l-27.8 43.9" class="y" />
             <path d="M258.3 49.2l13.3 17.3" class="y2" />
         </svg>
-        <div id="brightness"></div>
-        <!--
-	<div class="column" id="seg1"><div class="vertText"><div>Test 1</div></div></div>
-	<div class="column" id="seg2"><div class="vertText"><div>Potatoes are alright</div></div></div>
-	<div class="column openedColumn" id="seg3"><div class="vertText"><div>This is the middle</div></div></div>
-	<div class="column" id="seg4"><div class="vertText"><div>Yuppers</div></div></div>
-	<div class="column" id="seg5"><div class="vertText"><div>Thanks</div></div><img id="afterImage" style="opacity:0" src=""/></div>
-	</div>
-	<svg id="mainTitle" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-10 0 320 100" width="300" height="100">
-	    <path d="M20.8 75V28.5L42 56.1l21.4-27.6V75" class="M"/>
-	    <path d="M98 58.3c0 6.3-5.4 11.4-12 11.4-6.5 0-11.8-5.1-11.8-11.4 0-6.3 5.3-11.4 11.8-11.4 6.6 0 12 5 12 11.4z" class="a"/>
-	    <path d="M106.1 70c-4 .4-6.4-3.7-7.6-12.1-3-21.7-10.7-26.4-23.3-14.1" class="a2"/>
-	    <path d="M113.4 28.5V70" class="k"/>
-	    <path d="M131.2 45.8l-17.8 6.9L131.2 63" class="k2"/>
-	    <path d="M139 56.1c-.3.2 7.7.2 23.9 0-2.7-7-6.6-10.5-11.8-10.3-7.8.3-10.5 3-12 10.3-1.6 7.3 4 14.2 11.7 13.8a23 23 0 0012-3.5" class="e"/>
-	    <path d="M170.4 70l14.2-41.5L199 70" class="A"/>
-	    <path d="M176 52.7h20" class="A2"/>
-	    <path d="M202.4 45.8l10 24.2L223 45.8" class="v"/>
-	    <path d="M227.4 57.9c0 6.6 5.5 12 12.3 12 6.9 0 12.4-5.4 12.4-12 0-6.7-5.5-12.1-12.4-12.1-6.8 0-12.3 5.4-12.3 12z" class="o"/>
-	    <path d="M283.3 46.8l-27.8 43.9" class="y"/>
-	    <path d="M258.3 49.2l13.3 17.3" class="y2"/>
-	</svg>-->
+        <div id="brightness" class='brightnessDark'></div>
     </div>
 </body>
 

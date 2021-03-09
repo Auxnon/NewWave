@@ -23,7 +23,7 @@ function init(index,dom, complete) {
 
     let cubeO = new THREE.Mesh(cubeGeometry, cubeMaterial);
     cubeO.position.set(-40, 0, 0);
-    shapes.push(cubeO)
+    shapes.push(cubeO);
     scene.add(cubeO);
     Render.specterMaterial.color = 0xD53229;
     var pyramid = new THREE.Mesh(new THREE.ConeGeometry(20, 20, 4), new THREE.MeshStandardMaterial({ color: 0xD53229 }));

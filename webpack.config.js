@@ -16,8 +16,12 @@ return {
   		verbose: true
   	}),
   	new HtmlWebpackPlugin({template: './src/index.html'}),
+  	new HtmlWebpackPlugin({ 
+      filename: 'partials/about.html',
+      template: './src/about.html'
+    })
   ],
-  module: {
+  /*module: {
     rules: [
       {
         test: /out.html$/i,
@@ -27,7 +31,7 @@ return {
         },
       },
     ],
-  },
+  },*/
   output: {
 	    filename: '[name].[contenthash].js',
 	    path: path.resolve(__dirname, "public"), // string

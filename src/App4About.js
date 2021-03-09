@@ -1,6 +1,7 @@
 import * as THREE from "./lib/three.module.js";
 import * as Render from "./Render.js";
 import * as Main from "./Main.js";
+import * as UI from "./UI.js";
 
 //pass in name, and a pointer to a complete function which dictates everything has loaded, 
 //we keep track inside the mini class by counting  resources and incrementing till count is complete then, complte()
@@ -9,6 +10,7 @@ import * as Main from "./Main.js";
 let portrait;
 let eye
 let eyeTimer=0;
+
 
 function init(index,dom,complete) {
 	let scene=new THREE.Scene();
@@ -19,8 +21,11 @@ function init(index,dom,complete) {
     scene.add(sunLight);
 	Render.loadModel('assets/portrait.glb', function(m) {
         portrait = m;
-        m.position.set(0, 0, 0)
-        m.scale.set(20, 20, 20)
+        m.position.set(0, 0,-170)
+        m.scale.set(60, 60, 60)
+        window.portrait=portrait
+        window.Render=Render;
+        window.Main=Main
 
         //m.rotation.y = -Math.PI / 2 //pi2 to pi
         scene.add(m);
@@ -28,23 +33,25 @@ function init(index,dom,complete) {
         	if(c.name=="Eye")
         		eye=c;
         })
-        complete();
-
-        window.portrait=portrait
-    })
+        checkDone(complete)
+    },true)
      //import( /* webpackChunkName: "App4About" */ './about.html').then(module=>{
     // 	console.log('here')
     // 	console.log(module)
    // })
     //require('html-loader!./about.html');
 
-    fetch('/about').then(function (response) {
+    fetch('./partials/about.html').then(function (response) {
 		return response.text();
 	}).then(function (html) {
 		// This is the HTML from our response as a text string
 		
-		dom.innerHTML+=html
+		dom.insertAdjacentHTML('beforeend',html)
+        /*dom.addEventListener("DOMContentLoaded", function(){
+            console.log('TEST7') //FIX
+        })*/
 		initAbout(dom)
+        checkDone(complete)
 		//console.log(html);
 	}).catch(function (err) {
 		// There was an error
@@ -54,12 +61,13 @@ function init(index,dom,complete) {
     return scene;
 }
 
+
 function animate(delta){
 	
 	if(portrait){
 		let pos=Main.getPos()
 		portrait.rotation.y=(-.25+pos.x/2.0)*Math.PI
-		portrait.rotation.x=(.375+pos.y/4.0)*Math.PI
+		portrait.rotation.x=(.375+pos.y/6.0)*Math.PI
 		if(eye){
 			eyeTimer++;
 			if(eyeTimer>400 && eyeTimer<420){
@@ -83,25 +91,62 @@ function deinit(){
 
 }
 
-function open(){
-	console.log('opened')
+function open(canvas){
+    //main.querySelector()
+    Main.shrinkTitle();
+
+	//console.log('opened')
+    //UI.systemMessage('test ' + window.innerWidth + '; screen ' + window.screen.width, 'success')
+    if(main){
+        let holder=main.querySelector('.portrait-holder')
+        canvas.custom=256;
+        holder.appendChild(canvas)
+        Render.resize();
+    }
+   
+
+    setTimeout(function(){
+        if(main){
+            main.style.display='initial'
+            fit();
+            void main.offsetWidth;
+            main.style.opacity=1;
+        }
+    },1000)
+
+    return true;
 }
+
+function checkDone(complete){
+    if(main && portrait)
+        complete();
+}
+
 function close(){
-
+    if(main){
+        main.style.opacity=0;
+        setTimeout(function(){
+            main.style.display='none'
+        },200);
+        let canvas=Render.getAlphaCanvas();
+        delete canvas.custom
+        Render.resize();
+        closeAll();
+    }
+   
 }
 
+///==========non 3d page logic===========
 
-
-
-
-let mainDom
 let main;
 let overlay;
 let resizeTimer;
-let px = 0;
-let moveTarget;
+//let px = 0;
+//let moveTarget;
 let currentSection
 let clickerOverlay;
+
+
 
 function initAbout(dom) {
     main = dom.querySelector('main')
@@ -114,7 +159,7 @@ function initAbout(dom) {
         holder.className = 'section-holder'
         holder.id = 'portfolio-section-holder' + i;
         section.id = 'portfolio-section' + i;
-        underlay.appendChild(holder)
+        underlay.insertBefore(holder,underlay.firstElementChild)
         section.tabIndex = i
         //holder.appendChild(section)
 
@@ -179,12 +224,12 @@ function initAbout(dom) {
     portfolioHolder.addEventListener('scroll',ev=>{
     	if(ev.target.scrollTop>0){
     		portraitHolder.style.height='128px';
-    		portraitHolder.style.transform='scale(0.5,0.5)'
-            portfolioHolder.style.height='calc(100% - 128px)'
+    		portraitHolder.style.transform='translate(-50%) scale(0.5,0.5)'
+            //portfolioHolder.style.height='calc(100% - 128px)'
     	}else{
             portraitHolder.style.height=''
             portraitHolder.style.transform=''
-            portfolioHolder.style.height=''
+            //portfolioHolder.style.height=''
         }
     })
     window.addEventListener('keydown', ev => {
@@ -224,17 +269,18 @@ function initAbout(dom) {
 
 function selectSection(section) {
     if (section) {
-        main.querySelectorAll('section').forEach(s => {
-            if (s.className != 'shrink') {
-                s.className = 'shrink'
-            }
-        })
+        shrinkAll();
+        
+        let vid=section.querySelector('video')
+        if(vid)
+            vid.play();
 
         section.className = ''
         section.style.left = '50%';
         let sHeight=section.parentElement.parentElement.scrollTop
-        let height=section.parentElement.parentElement.offsetHeight
-        section.style.top = ((height/2 +sHeight)) +'px';
+        let height=window.innerHeight;//section.parentElement.parentElement.offsetHeight
+        //UI.systemMessage('sheight'+sHeight+' height '+height,'warn')
+        section.style.top = ((height/2 +sHeight)-section.parentElement.offsetTop-64) +'px';
         section.focus();
         fit();
         currentSection = section;
@@ -259,12 +305,19 @@ function fit() {
     clickerOverlay.style.zIndex = 2;
 }
 
-function closeAll() {
+function shrinkAll(){
     main.querySelectorAll('section').forEach(s => {
-        if (s.className != 'shrink') {
-            s.className = 'shrink'
-        }
-    })
+            if (s.className != 'shrink') {
+                s.className = 'shrink'
+                let vid=s.querySelector('video')
+                if(vid)
+                    vid.pause();
+            }
+        })
+}
+
+function closeAll() {
+    shrinkAll()
     fit();
     currentSection = null;
     clickerOverlay.classList.remove('clicker-active');
@@ -294,4 +347,4 @@ function unhideOverlay() {
 
 
 
-export {init,animate,deinit}
+export {init,animate,deinit,open,close}
