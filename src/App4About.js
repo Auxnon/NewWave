@@ -70,16 +70,16 @@ function animate(delta){
 		portrait.rotation.x=(.375+pos.y/6.0)*Math.PI
 		if(eye){
 			eyeTimer++;
-			if(eyeTimer>400 && eyeTimer<420){
+			if(eyeTimer>200 && eyeTimer<220){
 
 				let v
-				if(eyeTimer>410)
-					v=(eyeTimer-410)/10
+				if(eyeTimer>210)
+					v=(eyeTimer-210)/10
 				else
-					v=(1-(eyeTimer-400)/10)
+					v=(1-(eyeTimer-200)/10)
 				eye.scale.set(1,v,1)
 
-			}else if(eyeTimer>=420)
+			}else if(eyeTimer>=220)
 				eyeTimer=0;
 		}
 	}
