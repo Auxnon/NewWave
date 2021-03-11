@@ -135,9 +135,9 @@ function openApp(id) {
     currentAppId=id;
     let app = apps[id];
     if(app) {
-        app.classList.add('appMax')
+        app.classList.add('app-max')
         app.focused = true;
-        app.style.zIndex = 0;
+        app.style.zIndex = 1;
         if(Render) {
             openAppApplyRender(id, app)
         } else {
@@ -177,8 +177,11 @@ function openAppApplyRender(id, app) {
 
 function closeApp(disableFade) {
     if(focused) {
-        focused.classList.remove('appMax')
-        focused.style.zIndex = 2;
+        focused.classList.remove('app-max')
+        if (focused.spot==-1)
+            focused.style.zIndex=0;
+        else
+            focused.style.zIndex = 3;
         focused.focused = undefined; //wow why did i name this like this
         window.history.pushState({}, '', '/');
         if(Render){
@@ -658,10 +661,10 @@ function winMouseUp(ev) {
         console.log(moveFactor)
         if(moveFactor < 10) {
             if(focused && focused == targetMove) {
-                targetMove.classList.remove('appMax')
+                targetMove.classList.remove('app-max')
                 targetMove.focused = undefined;
                 focused = undefined;
-                targetMove.style.zIndex = 2;
+                targetMove.style.zIndex = 3;
                 window.history.pushState({}, '', '/');
 
             } else {
