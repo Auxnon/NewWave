@@ -1,4 +1,4 @@
-const path = require('path');
+ const path = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -21,17 +21,14 @@ return {
       template: './src/about.html'
     })
   ],
-  /*module: {
-    rules: [
-      {
-        test: /out.html$/i,
-        loader: 'html-loader',
-        options: {
-          minimize: true,
-        },
-      },
-    ],
-  },*/
+  module: {
+	  rules: [
+	    {
+	      test: /\.css$/,
+	      use: ['style-loader', 'css-loader']
+	    }
+	  ]
+	},
   output: {
 	    filename: '[name].[contenthash].js',
 	    path: path.resolve(__dirname, "public"), // string

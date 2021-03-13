@@ -1,0 +1,231 @@
+.chat-button {
+    width: 56px;
+    height: 56px;
+    border-radius: 28px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    pointer-events: auto;
+
+    background-repeat: no-repeat;
+    background-size: 48px;
+    background-position: center center;
+
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" ><path d="M0 0h24v24H0V0z" fill="none" /><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 14H6l-2 2V5c0-.55.45-1 1-1h14c.55 0 1 .45 1 1v10c0 .55-.45 1-1 1z" fill="white"/></svg>')
+}
+
+.chat-block {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+
+    left: 0%;
+    transition: left 0.2s;
+    pointer-events: auto;
+}
+
+.chat-pane {
+    width: 100vw;
+    max-width: 720px;
+    height: calc(100vh - 100px);
+    background-color: #fff6;
+    position: absolute;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    transform: translate(-50%);
+    top: 0;
+    left: 50%;
+    border-radius: 16px;
+    /*margin-top: 32px*/
+}
+
+.chat-pane div {
+    display: block;
+    /*
+    position: relative;
+    width: 100%;*/
+}
+
+.chat-pane>div:last-child {
+    margin-bottom: 5em;
+}
+
+.chat-bubble {
+    position: relative;
+    top: 0;
+    border-radius: 16px;
+    display: inline-block;
+    font-size: 16px;
+    width: auto;
+    padding: 0.1em;
+    color: black;
+    text-shadow: 1px 1px 3px white;
+    font-family: arial;
+    /*border: yellow 6px solid;*/
+    margin: 0.5em;
+    margin-left: 1em;
+    padding: 8px;
+    pointer-events: auto;
+    animation: chatBubbleIntro 1s backwards;
+}
+
+.chat-row {
+    /*position: absolute;
+    /*height: 45px;*/
+}
+
+.chat-right {
+    text-align: right;
+}
+
+.chat-bubble-header {
+    border-radius: 16px 16px 16px 6px;
+    margin-bottom: 0px;
+}
+
+.chat-right .chat-bubble-header {
+    border-radius: 16px 16px 6px 16px;
+}
+
+.chat-bubble-footer {
+    border-radius: 6px 16px 16px 16px;
+    margin-top: -6px;
+}
+
+.chat-right .chat-bubble-footer {
+    border-radius: 16px 6px 16px 16px;
+}
+
+.chat-bubble-body {
+    border-radius: 6px 16px 16px 6px;
+    margin-top: -6px;
+    margin-bottom: 0px;
+}
+
+.chat-right .chat-bubble-body {
+    border-radius: 16px 6px 6px 16px;
+}
+
+
+.chat-bubble span {
+    animation: letterDive 1s backwards;
+    display: inline-block;
+    position: relative;
+}
+
+.chat-nametag {
+    /*background: white;
+    border-radius: 16px;
+    */
+    position: relative;
+    display: inline-block;
+
+    font-size: 16px;
+    text-shadow: 1px 1px 1px white;
+    margin: -10px 10px -10px 10px;
+    top: 6px;
+    /*padding: 5px;*/
+}
+
+@keyframes letterDive {
+    0% {
+        transform: translate(3.6em, 4.5em) rotate(270deg);
+        opacity: 0;
+    }
+
+    25% {
+        transform: translate(2.5em, 0) rotate(180deg);
+    }
+
+    50% {
+        transform: translate(-0.2em, -1.50em) rotate(70deg);
+    }
+
+    75% {
+        transform: translate(0.2em, 1em) rotate(-20deg);
+    }
+
+    100% {}
+}
+
+@keyframes chatBubbleIntro {
+    0% {
+        transform: scale(0.5, 0.5);
+    }
+
+    30% {
+        transform: scale(1.2, 1.2);
+    }
+
+    60% {
+        transform: scale(0.8, 0.8);
+    }
+}
+
+@keyframes chatBubbleIntro2 {
+    0% {
+        transform: translate(-50%, 0%) scale(0.5, 0.5);
+    }
+
+    30% {
+        transform: translate(-50%, -100%) scale(1.2, 1.2);
+    }
+
+    60% {
+        transform: translate(-50%, -200%) scale(0.8, 0.8);
+    }
+}
+
+.chat-bottom {
+    display: block;
+    bottom: 0px;
+    position: absolute;
+    width: 360px;
+    transform: translate(-50%, 0);
+    left: 50%;
+}
+
+.chat-bottom input {
+    position: absolute;
+    padding: 0.5em;
+    font-size: 20px;
+    border-radius: 16px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    bottom: 0;
+    margin: 0 16px 0 16px;
+}
+
+.chat-bottom input:focus {
+    outline: none;
+}
+
+.chat-send-button {
+    width: 48px;
+    height: 48px;
+    border-radius: 24px !important;
+    background-color: white;
+    position: absolute;
+    right: -32px;
+    display: inline-block;
+    background-size: 32px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M3.4 20.4l17.45-7.48c.81-.35.81-1.49 0-1.84L3.4 3.6c-.66-.29-1.39.2-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z"/></svg>');
+}
+
+
+.chat-pane input {
+    position: absolute;
+    border-radius: 6px;
+    border: 3px solid green;
+    position: relative;
+    display: block;
+}
+
+.chat-divider {
+    border-top: white dashed 3px;
+    text-align: center;
+    margin: 32px;
+    font-size: 22px;
+}

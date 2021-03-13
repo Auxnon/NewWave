@@ -3,7 +3,7 @@ import * as Render from "./Render.js";
 
 var shapes;
 
-function init(index,dom, complete) {
+function init(index, dom, complete) {
 
     let scene = new THREE.Scene();
     var ambientLight = new THREE.AmbientLight(0xffffff); // soft white light
@@ -31,7 +31,7 @@ function init(index,dom, complete) {
     shapes.push(pyramid)
     scene.add(pyramid);
 
-    barGraph([70.114, 69.14, 69.14, 68.653, 68.653, 69.14, 68.653, 69.627, 69.627, 68.653, 69.627, 69.14, 69.14, 68.653, 70.114, 69.14, 69.14, 69.14, 68.653, 69.14], scene,new THREE.Vector3(0,0,30));
+    barGraph([70.114, 69.14, 69.14, 68.653, 68.653, 69.14, 68.653, 69.627, 69.627, 68.653, 69.627, 69.14, 69.14, 68.653, 70.114, 69.14, 69.14, 69.14, 68.653, 69.14], scene, new THREE.Vector3(0, 0, 30));
     //barGraph([Math.log(2),Math.log(4),Math.log(6),Math.log(8),Math.log(10),Math.log(12),Math.log(14)],scene,new THREE.Vector3(0,40,0))
     complete();
     return scene;
@@ -40,7 +40,7 @@ function init(index,dom, complete) {
 function animate(delta) {
     shapes.forEach(c => {
         c.rotation.x = Math.PI / 2
-        c.rotation.y += delta*2;
+        c.rotation.y += delta * 2;
     })
 }
 
@@ -55,8 +55,8 @@ function barGraph(data, scene, offset) {
          shapesTwo.push(cubeO)
          scenes[1].add(cubeO);
          Render.specterMaterial.color=0xD53229;*/
-         if(!offset)
-         	offset=new THREE.Vector3(0,0,0)
+    if (!offset)
+        offset = new THREE.Vector3(0, 0, 0)
 
     let factor = 80 / data.length
     let geo = new THREE.BoxBufferGeometry(factor / 2, 10, 15)
@@ -65,26 +65,26 @@ function barGraph(data, scene, offset) {
 
 
 
-    for(let i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
         let val = data[i]
         let scale = (72 - val) / 3
         let color = ((e - s) * scale) + s
         console.log(scale)
 
         let cube = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: color }));
-        cube.position.set(-40 + i * factor+offset.x, offset.y, scale*4 +offset.z+10)
+        cube.position.set(-40 + i * factor + offset.x, offset.y, scale * 4 + offset.z + 10)
         cube.scale.set(1, 1, scale)
         scene.add(cube)
     }
 }
 
-function getHeat(){
-	fetch('/temp/', { headers: { "Content-Type": "application/json; charset=utf-8" }})
-    .then(res => res.json()) // parse response as JSON (can be res.text() for plain response)
-    .then(response => {
-        console.log(response.temps)
-        
-    })
+function getHeat() {
+    fetch('/temp/', { headers: { "Content-Type": "application/json; charset=utf-8" } })
+        .then(res => res.json()) // parse response as JSON (can be res.text() for plain response)
+        .then(response => {
+            console.log(response.temps)
+
+        })
 }
 
 export { init, animate, deinit }

@@ -1,4 +1,5 @@
 import * as UI from "./UI.js";
+import './mainStyle.css';
 
 var Render;
 
@@ -8,9 +9,10 @@ const SCENE_IMPORT = [
     i => { import( /* webpackChunkName: "App1SkyIsland" */ './App1SkyIsland').then(i) },
     i => { import( /* webpackChunkName: "App2Punk" */ './App2Punk').then(i) },
     i => { import( /* webpackChunkName: "App3Data" */ './App3Data').then(i) },
-    i => { import( /* webpackChunkName: "App4About" */ './App4About').then(i) }
+    i => { import( /* webpackChunkName: "App4About" */ './App4About').then(i) },
+    i => { import( /* webpackChunkName: "App5Chat" */ './App5Chat').then(i) }
 ]
-const HASHES={"sky":0,"punk":1,"data":2,"portfolio":3}
+const HASHES = { "sky": 0, "punk": 1, "data": 2, "portfolio": 3, "chat": 4 }
 
 //doms
 let apps;
@@ -39,9 +41,9 @@ let points;
 let pendingRenderId; //if not undefined, wait for Render to load and then apply the scene
 
 let resizeDebouncer;
-let positionalData={x:0,y:0}
+let positionalData = { x: 0, y: 0 }
 
-let currentAppId=-1;
+let currentAppId = -1;
 
 function init(argument) {
     let preApps = document.querySelectorAll('.app');
@@ -70,7 +72,7 @@ function init(argument) {
     window.addEventListener('pointermove', mousemove)
     window.addEventListener('pointerdown', mousemove)
 
-    mainTitle.addEventListener('click',ev=>{
+    mainTitle.addEventListener('click', ev => {
         closeApp();
     })
 
@@ -81,7 +83,7 @@ function init(argument) {
     setInterval(() => { boundaryCheck() }, 3000)
     let brightness = document.querySelector('#brightness');
     brightness.addEventListener('click', ev => {
-        if(brightness.classList.contains('brightnessDark')) {
+        if (brightness.classList.contains('brightnessDark')) {
             document.body.classList.add('dark-mode')
             //document.body.style.stroke = 'white';
             //mainTitle.style.border = 'white 5px solid';
@@ -103,10 +105,10 @@ function init(argument) {
             openApp(parseInt(id))
         }
     }*/
-    if(window.location.hash.length){
-        let st=window.location.hash.substring(1)
-        let id=HASHES[st]
-        if(id!=undefined)
+    if (window.location.hash.length) {
+        let st = window.location.hash.substring(1)
+        let id = HASHES[st]
+        if (id != undefined)
             openApp(id)
     }
 
@@ -121,7 +123,7 @@ function init(argument) {
         Render = module;
         Render.init(SCENE_IMPORT, pendingRenderId); //if undefined it will just use 0, so we can directly input regardless
         console.log('3d Renderer loaded')
-        if(pendingRenderId != undefined) {
+        if (pendingRenderId != undefined) {
             openAppApplyRender(pendingRenderId, apps[pendingRenderId])
         }
     });
@@ -132,13 +134,13 @@ function init(argument) {
 init();
 
 function openApp(id) {
-    currentAppId=id;
+    currentAppId = id;
     let app = apps[id];
-    if(app) {
+    if (app) {
         app.classList.add('app-max')
         app.focused = true;
         app.style.zIndex = 1;
-        if(Render) {
+        if (Render) {
             openAppApplyRender(id, app)
         } else {
             pendingRenderId = id;
@@ -160,34 +162,34 @@ function openAppApplyRender(id, app) {
 
     //app.appendChild(d);
 
-    if(focused) {
+    if (focused) {
         focused.appendChild(afterImage);
         afterImage.style.opacity = 1;
         setTimeout(() => { afterImage.style.opacity = 0; }, 1);
     } else { //silly I know but it's just easier to keep the afterImage within the dom, even if in this logical case it's not used
         afterImage.style.opacity = 0;
-        if(app == 0)
+        if (app == 0)
             apps[1].appendChild(afterImage);
         else
             apps[0].appendChild(afterImage);
     }
     Render.bufferPrint();
-    Render.flipScene(id,app)
+    Render.flipScene(id, app)
 }
 
 function closeApp(disableFade) {
-    if(focused) {
+    if (focused) {
         focused.classList.remove('app-max')
-        if (focused.spot==-1)
-            focused.style.zIndex=0;
+        if (focused.spot == -1)
+            focused.style.zIndex = 0;
         else
             focused.style.zIndex = 3;
         focused.focused = undefined; //wow why did i name this like this
         window.history.pushState({}, '', '/');
-        if(Render){
+        if (Render) {
             Render.closeModule(); //the loaded script is loaded in the Render class, yucky but it handles all the lazy loading for models so it worked out
-            
-            if(!disableFade) {
+
+            if (!disableFade) {
                 let d = Render.getAlphaCanvas();
                 setTimeout(() => { d.style.opacity = 0; }, 1);
                 d.style.opacity = 1;
@@ -196,7 +198,7 @@ function closeApp(disableFade) {
     }
     mainTitle.classList.remove('shrink')
 
-    currentAppId=1;
+    currentAppId = 1;
 }
 
 
@@ -208,7 +210,7 @@ function resize() {
         svg.setAttribute('width', window.innerWidth + "px")
         svg.setAttribute('height', window.innerHeight + "px")
         barAdjust();
-        if(Render) {
+        if (Render) {
             Render.resize();
         }
         //UI.systemMessage('inner ' + window.innerWidth + '; screen ' + window.screen.width, 'success')
@@ -223,7 +225,7 @@ function rand() {
 
 function initLine() {
     points = [];
-    for(let i = 0; i < 10; i++) {
+    for (let i = 0; i < 10; i++) {
         points.push({ x: mouseObj.x, y: mouseObj.y });
     }
 }
@@ -239,7 +241,7 @@ function barInit() {
 
         barMove = true; //{x:ev.clientX-xx,y:ev.clientY-yy};
 
-        if(points.length < 10) { //rebuild are point array
+        if (points.length < 10) { //rebuild are point array
             let startPoint = points[0];
             let array = Array(7).fill(startPoint);
             points = array.concat(points)
@@ -249,7 +251,7 @@ function barInit() {
     })
     barHandle.addEventListener('dragstart', ev => { ev.preventDefault() })
     /*barHandle.addEventListener('pointerup',ev=>{
-    	barMove=false;
+        barMove=false;
     })*/
 
     appPoints = [];
@@ -268,9 +270,9 @@ function barCalculate(notate) {
     let appsInRow = [];
     let sideWays = barPos == 0 || barPos == 2;
 
-    if(!notate) {
+    if (!notate) {
         apps.forEach(app => {
-            if(app.spot != -1) {
+            if (app.spot != -1) {
                 appsInRow.push(app)
                 count++;
             }
@@ -279,7 +281,7 @@ function barCalculate(notate) {
         count = apps.length;
         appsInRow = apps;
     }
-    if(sideWays) {
+    if (sideWays) {
         bar.style.height = (count > 0 ? count : 1) * 64 + 'px'
         bar.style.width = '64px'
     } else {
@@ -296,13 +298,13 @@ function barCalculate(notate) {
     let height = rect.height;
 
     let ratio;
-    if(sideWays)
+    if (sideWays)
         ratio = height / (count);
     else
         ratio = width / (count);
 
-    if(!notate) {
-        if(sideWays)
+    if (!notate) {
+        if (sideWays)
             appsInRow.sort(function(a, b) {
                 return parseInt(a.style.top) - parseInt(b.style.top);
             });
@@ -313,25 +315,25 @@ function barCalculate(notate) {
     }
 
 
-    for(let i = 0; i < count; i++) {
-        if(sideWays)
+    for (let i = 0; i < count; i++) {
+        if (sideWays)
             appPoints[i] = { x: rect.left + width / 2, y: 32 + rect.top + (i) * ratio };
         else
             appPoints[i] = { x: 32 + rect.left + (i) * ratio, y: rect.top + height / 2 };
 
 
-        if(targetMove && targetMove == appsInRow[i])
+        if (targetMove && targetMove == appsInRow[i])
             targetPoint = appPoints[i]
 
-        if(notate) {
+        if (notate) {
             apps[i].spot = i;
             appPoints[i].app = appsInRow[i]
         }
         _moveEle(appsInRow[i], appPoints[i].x, appPoints[i].y)
     }
-    if(barLineFactor == -1) {
+    if (barLineFactor == -1) {
         let handle = barHandle.getBoundingClientRect();
-        if(sideWays) {
+        if (sideWays) {
             let xx = handle.left + handle.width / 2
             drawSimpleBarLine({ x: xx, y: handle.top }, { x: xx, y: handle.bottom })
         } else {
@@ -343,14 +345,14 @@ function barCalculate(notate) {
 }
 
 function animate() {
-    if(barLineFactor > -1) {
-        if(barLineFactor < 4) {
-            if(barLineFactor) {
+    if (barLineFactor > -1) {
+        if (barLineFactor < 4) {
+            if (barLineFactor) {
                 let target = {};
                 let rect = barHandle.getBoundingClientRect();
                 let mid = { x: rect.width / 2, y: rect.height / 2 }
 
-                if(barPos == 0 || barPos == 2) {
+                if (barPos == 0 || barPos == 2) {
                     switch (barLineFactor) {
                         case 3:
                             target = { x: rect.left + mid.x, y: rect.top };
@@ -379,7 +381,7 @@ function animate() {
                 let dr = Math.sqrt(dx * dx + dy * dy)
                 mouseObj.x -= dx / 2
                 mouseObj.y -= dy / 2
-                if(dr < 1 && barLineFactor < 4)
+                if (dr < 1 && barLineFactor < 4)
                     barLineFactor++;
             }
 
@@ -387,9 +389,9 @@ function animate() {
             let diff = { x: mouseObj.x - points[0].x, y: mouseObj.y - points[0].y }
             let dr = Math.sqrt(diff.x * diff.x + diff.y * diff.y)
 
-            if(dr > 40) {
+            if (dr > 40) {
                 let nextVector;
-                if(barLineFactor > 1) { //straight to next point
+                if (barLineFactor > 1) { //straight to next point
                     nextVector = { x: mouseObj.x, y: mouseObj.y };
                 } else { //wiggle the line
                     nextVector = { x: mouseObj.x - (tick ? 1 : -1) * 20 * diff.y / dr, y: mouseObj.y + (tick ? 1 : -1) * 20 * diff.x / dr };
@@ -402,11 +404,11 @@ function animate() {
                 drawBarLine(nextVector);
             }
         } else {
-            if(barLineFactor % 5 == 1) {
+            if (barLineFactor % 5 == 1) {
 
                 let target = points.shift();
-                console.log('chop off points ' + points.length)
-                if(points.length <= 3) {
+                //console.log('chop off points ' + points.length)
+                if (points.length <= 3) {
                     barLineFactor = -1;
                     barCalculate();
                 } else {
@@ -414,13 +416,13 @@ function animate() {
                 }
 
             }
-            if(barLineFactor != -1)
+            if (barLineFactor != -1)
                 barLineFactor++;
 
         }
     }
     /*if(targetMove)
-    	moveFactor++;*/
+        moveFactor++;*/
 
     requestAnimationFrame(animate);
 }
@@ -428,7 +430,7 @@ function animate() {
 function drawBarLine(nextVector) {
     let st = "M" + mouseObj.x + " " + mouseObj.y;
     let last = { x: nextVector.x, y: nextVector.y };
-    for(let i = 0; i < points.length; i++) {
+    for (let i = 0; i < points.length; i++) {
         let halfy = (points[i].y - last.y) / 2
         let halfx = (points[i].x - last.x) / 2
         let midx = last.x + halfx;
@@ -448,24 +450,24 @@ function drawSimpleBarLine(one, two) {
 }
 
 function mousemove(ev) {
-    positionalData={x:ev.clientX/window.innerWidth,y:ev.clientY/window.innerHeight}
+    positionalData = { x: ev.clientX / window.innerWidth, y: ev.clientY / window.innerHeight }
     barMoveHandler(ev);
-    if(targetMove) {
+    if (targetMove) {
         moveFactor++;
         targetMove.pos = { x: ev.clientX + targetMove.offset.x, y: ev.clientY + targetMove.offset.y }
 
-        if(ev.clientY > barBox.top && ev.clientY < barBox.bottom && ev.clientX > barBox.left && ev.clientX < barBox.right) {
+        if (ev.clientY > barBox.top && ev.clientY < barBox.bottom && ev.clientX > barBox.left && ev.clientX < barBox.right) {
             let point = targetPoint;
             let d = { x: point.x - targetMove.pos.x, y: point.y - targetMove.pos.y }
             targetMove.pos = { x: point.x - d.x / 3, y: point.y - d.y / 3 }
-            if(targetMove.moving) { //called once per state change
+            if (targetMove.moving) { //called once per state change
                 targetMove.moving = undefined;
                 targetMove.spot = 0;
                 barCalculate();
             }
 
         } else {
-            if(!targetMove.moving) { //called once per state change
+            if (!targetMove.moving) { //called once per state change
                 targetMove.moving = true;
                 targetMove.spot = -1;
 
@@ -476,8 +478,8 @@ function mousemove(ev) {
 
         targetMove.style.left = targetMove.pos.x + 'px'
         targetMove.style.top = targetMove.pos.y + 'px'
-    } else if(barLineFactor == 0) {
-        if(count > 2) {
+    } else if (barLineFactor == 0) {
+        if (count > 2) {
             count = 0;
             mouseObj = { x: ev.clientX, y: ev.clientY }
         }
@@ -486,7 +488,7 @@ function mousemove(ev) {
 }
 
 function barMoveHandler(ev) {
-    if(barMove) {
+    if (barMove) {
         moveFactor++;
         let xx = ev.clientX;
         let yy = ev.clientY;
@@ -494,69 +496,69 @@ function barMoveHandler(ev) {
         let dy = yy - window.innerHeight / 2;
         let r = Math.atan2(dy, dx) / Math.PI;
         let ar = Math.abs(r)
-        if(ar < 0.25) { //right
-            if(barPos != 2) {
+        if (ar < 0.25) { //right
+            if (barPos != 2) {
                 barPos = 2;
                 barAdjust()
             }
-        } else if(ar < 0.75) { //top or bottom
-            if(r < 0) { //top
-                if(barPos != 3) {
+        } else if (ar < 0.75) { //top or bottom
+            if (r < 0) { //top
+                if (barPos != 3) {
                     barPos = 3;
                     barAdjust()
                 }
             } else { //botttom
-                if(barPos != 1) {
+                if (barPos != 1) {
                     barPos = 1
                     barAdjust()
                 }
             }
         } else { //left
-            if(barPos != 0) {
+            if (barPos != 0) {
                 barPos = 0;
                 barAdjust()
             }
         }
 
         /*
-        				if(window.innerWidth>window.innerHeight){ //landscape
-        					let half=(window.innerWidth - window.innerHeight)/2
-        					if(xx<half){ //left
-        						bar.style.transform='rotate(90deg)'
-        						barHandle.style.transform='translate(-50%,-200%)'
-        					}else if(xx>window.innerWidth-half){ //right
-        						bar.style.transform='rotate(90deg)'
-        						barHandle.style.transform='translate(-50%,100%)'
-        					}else{
-        						bar.style.transform='rotate(0deg)'
-        						if(yy>window.innerHeight/2){
-        							barHandle.style.transform='translate(-50%,-200%)'
-        						}else{
-        							barHandle.style.transform='translate(-50%,100%)'
-        						}
-        					}
-        				}else{ //portrait
-        					let half=(window.innerHeight - window.innerWidth)/2
-        					if(yy<half){ //top
-        						bar.style.transform='rotate(0deg)'
-        						barHandle.style.transform='translate(-50%,-200%)'
-        					}else if(yy>window.innerHeight-half){ //bottom
-        						bar.style.transform='rotate(0deg)'
-        						barHandle.style.transform='translate(-50%,100%)'
-        					}else{
-        						bar.style.transform='rotate(90deg)'
-        						if(xx>window.innerWidth/2){
-        							barHandle.style.transform='translate(-50%,-200%)'
-        						}else{
-        							barHandle.style.transform='translate(-50%,100%)'
-        						}
-        					}
-        				}*/
+                        if(window.innerWidth>window.innerHeight){ //landscape
+                            let half=(window.innerWidth - window.innerHeight)/2
+                            if(xx<half){ //left
+                                bar.style.transform='rotate(90deg)'
+                                barHandle.style.transform='translate(-50%,-200%)'
+                            }else if(xx>window.innerWidth-half){ //right
+                                bar.style.transform='rotate(90deg)'
+                                barHandle.style.transform='translate(-50%,100%)'
+                            }else{
+                                bar.style.transform='rotate(0deg)'
+                                if(yy>window.innerHeight/2){
+                                    barHandle.style.transform='translate(-50%,-200%)'
+                                }else{
+                                    barHandle.style.transform='translate(-50%,100%)'
+                                }
+                            }
+                        }else{ //portrait
+                            let half=(window.innerHeight - window.innerWidth)/2
+                            if(yy<half){ //top
+                                bar.style.transform='rotate(0deg)'
+                                barHandle.style.transform='translate(-50%,-200%)'
+                            }else if(yy>window.innerHeight-half){ //bottom
+                                bar.style.transform='rotate(0deg)'
+                                barHandle.style.transform='translate(-50%,100%)'
+                            }else{
+                                bar.style.transform='rotate(90deg)'
+                                if(xx>window.innerWidth/2){
+                                    barHandle.style.transform='translate(-50%,-200%)'
+                                }else{
+                                    barHandle.style.transform='translate(-50%,100%)'
+                                }
+                            }
+                        }*/
     }
 }
 
 function barAdjust() {
-    if(barPos == 2) { //right
+    if (barPos == 2) { //right
         bar.style.left = window.innerWidth - 64 + 'px';
         bar.style.top = '50%'; //window.innerHeight/2;
         barCalculate();
@@ -564,7 +566,7 @@ function barAdjust() {
         barHandle.style.width = '32px';
         barHandle.style.height = '80%';
         mainTitle.style.top = '28px';
-    } else if(barPos == 3) { //top
+    } else if (barPos == 3) { //top
         barHandle.style.transform = 'translate(-50%,100%)'
         bar.style.left = '50%';
         bar.style.top = '64px' //-196+window.innerWidth/2
@@ -572,7 +574,7 @@ function barAdjust() {
         barCalculate();
         barHandle.style.height = '32px';
         barHandle.style.width = '80%';
-    } else if(barPos == 1) { //bottom
+    } else if (barPos == 1) { //bottom
         barHandle.style.transform = 'translate(-50%,-200%)'
         bar.style.left = '50%';
         bar.style.top = (window.innerHeight - 64) + 'px'; //-196+window.innerWidth/2
@@ -592,48 +594,48 @@ function barAdjust() {
 }
 /*
 function pointCheck(point,index){
-	let d={x:point.x-targetMove.pos.x,y:point.y-targetMove.pos.y}
-			let dr=Math.sqrt(d.x*d.x +d.y*d.y);
+    let d={x:point.x-targetMove.pos.x,y:point.y-targetMove.pos.y}
+            let dr=Math.sqrt(d.x*d.x +d.y*d.y);
 
 
-			if(dr<40){
-				targetMove.pos={x:point.x-d.x/3,y:point.y-d.y/3}
-				if(targetMove.moving){ //called once per state change
-					targetMove.moving=undefined
-					//targetMove.classList.remove('appMove')
-				}
-				if(point.app==targetMove){
+            if(dr<40){
+                targetMove.pos={x:point.x-d.x/3,y:point.y-d.y/3}
+                if(targetMove.moving){ //called once per state change
+                    targetMove.moving=undefined
+                    //targetMove.classList.remove('appMove')
+                }
+                if(point.app==targetMove){
 
-				}else{ //switcheroo the app icons
-					//let oldPoint=appPoints[targetMove.spot];
-					let swapApp=point.app;
-					targetMove.spot=index;
-					apps.forEach(app=>{
-						if(app==targetMove){
+                }else{ //switcheroo the app icons
+                    //let oldPoint=appPoints[targetMove.spot];
+                    let swapApp=point.app;
+                    targetMove.spot=index;
+                    apps.forEach(app=>{
+                        if(app==targetMove){
 
-						}else{
-							if(app.pos.x>targetMove.pos.x){
-								_moveEle(app,64+app.pos.x,app.pos.y,true)
-							}else{
-								_moveEle(app,-64+app.pos.x,app.pos.y,true)
-							}
-						}
+                        }else{
+                            if(app.pos.x>targetMove.pos.x){
+                                _moveEle(app,64+app.pos.x,app.pos.y,true)
+                            }else{
+                                _moveEle(app,-64+app.pos.x,app.pos.y,true)
+                            }
+                        }
 
-					})
+                    })
 
 
-				}
-			}else{
-				if(!targetMove.moving){ //called once per state change
-					targetMove.moving=true;
-					//targetMove.classList.add('appMove')
+                }
+            }else{
+                if(!targetMove.moving){ //called once per state change
+                    targetMove.moving=true;
+                    //targetMove.classList.add('appMove')
 
-				}
-			}
+                }
+            }
 }*/
 
 function appSelect(app, ev) {
-    if(!app.focused) {
+    if (!app.focused) {
         targetMove = app;
 
         app.pos = { x: parseInt(app.style.left), y: parseInt(app.style.top) }
@@ -647,20 +649,20 @@ function appSelect(app, ev) {
 }
 
 function winMouseUp(ev) {
-    if(barMove) {
+    if (barMove) {
         barMove = false;
         barLineFactor = 1;
         console.log(moveFactor)
-        if(moveFactor < 10) {
+        if (moveFactor < 10) {
             closeApp();
         }
     }
 
-    if(targetMove) {
+    if (targetMove) {
         targetMove.classList.remove('appMove')
         console.log(moveFactor)
-        if(moveFactor < 10) {
-            if(focused && focused == targetMove) {
+        if (moveFactor < 10) {
+            if (focused && focused == targetMove) {
                 targetMove.classList.remove('app-max')
                 targetMove.focused = undefined;
                 focused = undefined;
@@ -671,10 +673,10 @@ function winMouseUp(ev) {
                 closeApp(true);
 
                 openApp(targetMove.appId);
-                let ar=Object.keys(HASHES)
-                let hashString=ar[targetMove.appId]
-                if(hashString)
-                    window.location.hash='#'+hashString
+                let ar = Object.keys(HASHES)
+                let hashString = ar[targetMove.appId]
+                if (hashString)
+                    window.location.hash = '#' + hashString
                 //window.history.pushState({ appId: targetMove.appId }, targetMove.name, '?id=' + targetMove.appId + '&app=' + targetMove.id);
             }
         } else {
@@ -694,7 +696,7 @@ function winMouseUp(ev) {
 
 function boundaryCheck() {
     apps.forEach(app => {
-        if(!app.focused) {
+        if (!app.focused) {
             let rect = app.getBoundingClientRect();
 
             let x = rect.left;
@@ -702,14 +704,14 @@ function boundaryCheck() {
             let w2 = (rect.right - rect.left) / 2;
             let h2 = (rect.bottom - rect.top) / 2
 
-            if(x < 0) {
+            if (x < 0) {
                 app.style.left = w2 + 'px'
-            } else if(x > window.innerWidth - w2 * 2) {
+            } else if (x > window.innerWidth - w2 * 2) {
                 app.style.left = window.innerWidth - w2 + 'px'
             }
-            if(y < 0) {
+            if (y < 0) {
                 app.style.top = h2 + 'px'
-            } else if(y > window.innerHeight - h2 * 2) {
+            } else if (y > window.innerHeight - h2 * 2) {
                 app.style.top = window.innerHeight - h2 + 'px'
             }
 
@@ -719,7 +721,7 @@ function boundaryCheck() {
 }
 
 function _moveEle(ele, x, y, bool) {
-    if(!bool)
+    if (!bool)
         ele.pos = { x: x, y: y }
     ele.style.left = x + 'px'
     ele.style.top = y + 'px'
@@ -728,75 +730,77 @@ function _moveEle(ele, x, y, bool) {
 function pendApp(id) {
     let app = apps[id]
     let cube = app.querySelector('cube')
-    if(!cube) {
+    if (!cube) {
         cube = document.createElement('cube');
         app.appendChild(cube);
     }
 }
 
-function clearPendApp(id,canvas) {
+function clearPendApp(id, canvas) {
     let app = apps[id]
     let cube = app.querySelector('cube')
-    if(cube)
+    if (cube)
         cube.remove()
 
-    if(canvas)
+    if (canvas)
         app.appendChild(canvas); //FIX clearly we goofed soemthing in the loading process, this only happens with with portfolio?
 }
 
-function getPos(){
+function getPos() {
     return positionalData
 }
-function getCurrentAppId(){
+
+function getCurrentAppId() {
     return currentAppId;
 }
-function shrinkTitle(){
+
+function shrinkTitle() {
     mainTitle.classList.add('shrink')
 }
 
 
 /**
 OlD curve code
-			let last={x:mouseObj.x,y:mouseObj.y,dir:dir,pos:pos};
-			let lastMode=-1;
-			for(let i=0;i<points.length;i++){
-				//st+="M"+last.x+" "+last.y
-				let halfy=(points[i].y-last.y)/2
-				let halfx=(points[i].x-last.x)/2
-				if(lastMode==-1){
-					lastMode=(Math.abs(halfx)<Math.abs(halfy))?1:0
-				}
-				if(points[i].dir==last.dir){
-					if(!last.dir){ //up down dir //points[i].dir
-						st+="Q"+last.x+" "+(last.y+halfy)+" "+(last.x+halfx)+" "+(last.y+halfy);
-						st+="Q"+points[i].x+" "+(last.y+halfy)+" "+points[i].x+" "+points[i].y;
-					}else{ //left right dir
-						st+="Q"+(last.x+halfx)+" "+last.y+" "+(last.x+halfx)+" "+(last.y+halfy);
-						st+="Q"+(last.x+halfx)+" "+points[i].y+" "+points[i].x+" "+points[i].y;
-						
-					}
-				}else{ //curve in then
-					if(last.dir){ // true is x left right
-						if((halfy>0)!=last.pos){
-							st+="C"+(last.x)+" "+(last.y-halfy)+" "+(last.x+halfx)+" "+(last.y-halfy)+" "+(last.x+halfx)+" "+(last.y+halfy);
+            let last={x:mouseObj.x,y:mouseObj.y,dir:dir,pos:pos};
+            let lastMode=-1;
+            for(let i=0;i<points.length;i++){
+                //st+="M"+last.x+" "+last.y
+                let halfy=(points[i].y-last.y)/2
+                let halfx=(points[i].x-last.x)/2
+                if(lastMode==-1){
+                    lastMode=(Math.abs(halfx)<Math.abs(halfy))?1:0
+                }
+                if(points[i].dir==last.dir){
+                    if(!last.dir){ //up down dir //points[i].dir
+                        st+="Q"+last.x+" "+(last.y+halfy)+" "+(last.x+halfx)+" "+(last.y+halfy);
+                        st+="Q"+points[i].x+" "+(last.y+halfy)+" "+points[i].x+" "+points[i].y;
+                    }else{ //left right dir
+                        st+="Q"+(last.x+halfx)+" "+last.y+" "+(last.x+halfx)+" "+(last.y+halfy);
+                        st+="Q"+(last.x+halfx)+" "+points[i].y+" "+points[i].x+" "+points[i].y;
+                        
+                    }
+                }else{ //curve in then
+                    if(last.dir){ // true is x left right
+                        if((halfy>0)!=last.pos){
+                            st+="C"+(last.x)+" "+(last.y-halfy)+" "+(last.x+halfx)+" "+(last.y-halfy)+" "+(last.x+halfx)+" "+(last.y+halfy);
 
-							st+="Q"+(last.x+halfx)+" "+(last.y+halfy)+" "+points[i].x+" "+points[i].y;
-													console.log('special')
+                            st+="Q"+(last.x+halfx)+" "+(last.y+halfy)+" "+points[i].x+" "+points[i].y;
+                                                    console.log('special')
 
 
-						}else{
-							st+="Q"+(points[i].x)+" "+last.y+" "+points[i].x+" "+points[i].y;
-						}
-						
-					}else{
-						st+="Q"+(last.x)+" "+points[i].y+" "+points[i].x+" "+points[i].y;
-					}
-				}
+                        }else{
+                            st+="Q"+(points[i].x)+" "+last.y+" "+points[i].x+" "+points[i].y;
+                        }
+                        
+                    }else{
+                        st+="Q"+(last.x)+" "+points[i].y+" "+points[i].x+" "+points[i].y;
+                    }
+                }
 
-				let prev={x:points[i].x,y:points[i].y,dir:points[i].dir,pos:points[i].pos};
-				points[i]={x:last.x,y:last.y,dir:last.dir,pos:last.pos};
-				last=prev;
-			}
+                let prev={x:points[i].x,y:points[i].y,dir:points[i].dir,pos:points[i].pos};
+                points[i]={x:last.x,y:last.y,dir:last.dir,pos:last.pos};
+                last=prev;
+            }
 **/
 
-export { pendApp, clearPendApp,apps,getPos,getCurrentAppId,shrinkTitle }
+export { pendApp, clearPendApp, apps, getPos, getCurrentAppId, shrinkTitle }

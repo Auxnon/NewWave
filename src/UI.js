@@ -5,167 +5,186 @@ let main;
 let sysTop;
 let textDump;
 
-function init(mainDom){
+function init(mainDom) {
 
-	styleInit();
-	if(mainDom){
-		main=mainDom
-	}else{
-		main=document.querySelector("#main")
-		if(!main)
-			main=document.body
-	}
-
-
-	if(main){
-		sysTop=document.createElement('div');
-		sysTop.className='uiHolderSysTop';
-		main.appendChild(sysTop);
-
-		//systemMessage(_spam('this is a test'))
-		
-
-		textDump=document.createElement('input')
-		textDump.type='text'
-		textDump.style.position='fixed'
-
-		textDump.taxindex='-1'			
-		textDump.style.display='none'
-		textDump.style.pointerEvents= 'none';
-
-		main.appendChild(textDump)
-
-	}else{
-		console.error('UI.js:: uh oh! no system dom element found')
-	}
-
-/*
-	//dev
-	window.addEventListener('keyup',function(ev){
-		if(ev.keyCode==32){
-			let v=Math.random();
-			let type=v>0.2?v>0.4?v>0.6?'warn':'error':'person':'time';
-			
-			systemMessage(_spam('this is a test '),type)
-		}else if(ev.keyCode==90){
-			DEVVAR=systemMessage('No network connection oh darrrrrrn \n We\'ll keep tryna connect in the background ;)','net',true)
-		}else if(ev.keyCode==27){
-			DEVVAR.remove();
-		}
-	})*/
-
-} 
-
-function systemMessage(m,type,persistant,timeout){
-	if(!timeout)
-		timeout=3500
-	let dom=document.createElement('div');
-	dom.className='uiSysTop';
-
-	let icon=document.createElement('div');
-	let extra=' ';
-
-	if(typeof type === 'object' && type !== null){
-		if(type.type)
-			extra+=type.type
-		if(type.color)
-			dom.style.backgroundColor=type.color
-	}else{
-		switch(type){
-			case 'warn': extra+='uiIconWarning'; dom.style.backgroundColor='#EFEF79';break;
-			case 'error': extra+='uiIconError'; dom.style.backgroundColor='#D25E5E';break;
-			case 'net': extra+='uiIconNet'; dom.style.backgroundColor='#FFC65E';break;
-			case 'person': extra+='uiIconPerson'; dom.style.backgroundColor='#D257FF';break;
-			case 'time': extra+='uiIconTime'; dom.style.backgroundColor='#5094D9';break;
-			case 'success': extra+='uiIconSuccess'; dom.style.backgroundColor='#95F17F';break;
-		}
-	}
-
-	
-	icon.className='uiIcon'+extra;
-	let span=document.createElement('span');
-	span.innerText=m;
-
-	span.addEventListener('click',function(ev){
-		_copyText(span)
-		cursorMessage(ev.clientX,ev.clientY,'Copied');
-	})
-
-	dom.appendChild(icon);
-	dom.appendChild(span);
+    styleInit();
+    if (mainDom) {
+        main = mainDom
+    } else {
+        main = document.querySelector("#main")
+        if (!main)
+            main = document.body
+    }
 
 
-	function _endMessage() {
-		dom.style.animation=persistant?'0.5s uiSysMini forwards':'0.5s uiSysFold forwards';
-		setTimeout(function(){
-			if(persistant){
-				dom.style.position='absolute'
-				dom.style.left='-64px'
-				dom.addEventListener('click',function(ev) {
-					dom.style.animation='0.5s uiSysMax forwards';
-					setTimeout(function(){
-						dom.style.animation='0.5s uiSysMini forwards';
-					},timeout)
-				})
-			}else{
-				dom.remove();
-			}
+    if (main) {
+        sysTop = document.createElement('div');
+        sysTop.className = 'uiHolderSysTop';
+        main.appendChild(sysTop);
 
-		},500);
-	}
-	if(!persistant){
-		let closeButton=document.createElement('div');
-		closeButton.className='uiCloseButton';
-		dom.appendChild(closeButton);
+        //systemMessage(_spam('this is a test'))
 
-		closeButton.addEventListener('click',function(ev){
-			_endMessage();
-		})
-	}
 
-	setTimeout(function(){
-		_endMessage();
-	},timeout)
+        textDump = document.createElement('input')
+        textDump.type = 'text'
+        textDump.style.position = 'fixed'
 
-	sysTop.appendChild(dom);
-	return dom;
+        textDump.taxindex = '-1'
+        textDump.style.display = 'none'
+        textDump.style.pointerEvents = 'none';
+
+        main.appendChild(textDump)
+
+    } else {
+        console.error('UI.js:: uh oh! no system dom element found')
+    }
+
+    /*
+    	//dev
+    	window.addEventListener('keyup',function(ev){
+    		if(ev.keyCode==32){
+    			let v=Math.random();
+    			let type=v>0.2?v>0.4?v>0.6?'warn':'error':'person':'time';
+    			
+    			systemMessage(_spam('this is a test '),type)
+    		}else if(ev.keyCode==90){
+    			DEVVAR=systemMessage('No network connection oh darrrrrrn \n We\'ll keep tryna connect in the background ;)','net',true)
+    		}else if(ev.keyCode==27){
+    			DEVVAR.remove();
+    		}
+    	})*/
+
 }
 
-function cursorMessage(x,y,message){
-	let dom=document.createElement('div');
-	dom.className='uiCursorMessage';
-	dom.style.left=x+'px'
-	dom.style.top=y+'px'
-	dom.innerText=message;
-	main.appendChild(dom);
-	setTimeout(function(){
-		dom.style.animation='1s uiFade forwards'
-		setTimeout(function(){
-			dom.remove();
-		},1000)
-	},1500)
+function systemMessage(m, type, persistant, timeout) {
+    if (!timeout)
+        timeout = 3500
+    let dom = document.createElement('div');
+    dom.className = 'uiSysTop';
+
+    let icon = document.createElement('div');
+    let extra = ' ';
+
+    if (typeof type === 'object' && type !== null) {
+        if (type.type)
+            extra += type.type
+        if (type.color)
+            dom.style.backgroundColor = type.color
+    } else {
+        switch (type) {
+            case 'warn':
+                extra += 'uiIconWarning';
+                dom.style.backgroundColor = '#EFEF79';
+                break;
+            case 'error':
+                extra += 'uiIconError';
+                dom.style.backgroundColor = '#D25E5E';
+                break;
+            case 'net':
+                extra += 'uiIconNet';
+                dom.style.backgroundColor = '#FFC65E';
+                break;
+            case 'person':
+                extra += 'uiIconPerson';
+                dom.style.backgroundColor = '#D257FF';
+                break;
+            case 'time':
+                extra += 'uiIconTime';
+                dom.style.backgroundColor = '#5094D9';
+                break;
+            case 'success':
+                extra += 'uiIconSuccess';
+                dom.style.backgroundColor = '#95F17F';
+                break;
+        }
+    }
+
+
+    icon.className = 'uiIcon' + extra;
+    let span = document.createElement('span');
+    span.innerText = m;
+
+    span.addEventListener('click', function(ev) {
+        _copyText(span)
+        cursorMessage(ev.clientX, ev.clientY, 'Copied');
+    })
+
+    dom.appendChild(icon);
+    dom.appendChild(span);
+
+
+    function _endMessage() {
+        dom.style.animation = persistant ? '0.5s uiSysMini forwards' : '0.5s uiSysFold forwards';
+        setTimeout(function() {
+            if (persistant) {
+                dom.style.position = 'absolute'
+                dom.style.left = '-64px'
+                dom.addEventListener('click', function(ev) {
+                    dom.style.animation = '0.5s uiSysMax forwards';
+                    setTimeout(function() {
+                        dom.style.animation = '0.5s uiSysMini forwards';
+                    }, timeout)
+                })
+            } else {
+                dom.remove();
+            }
+
+        }, 500);
+    }
+    if (!persistant) {
+        let closeButton = document.createElement('div');
+        closeButton.className = 'uiCloseButton';
+        dom.appendChild(closeButton);
+
+        closeButton.addEventListener('click', function(ev) {
+            _endMessage();
+        })
+    }
+
+    setTimeout(function() {
+        _endMessage();
+    }, timeout)
+
+    sysTop.appendChild(dom);
+    return dom;
+}
+
+function cursorMessage(x, y, message) {
+    let dom = document.createElement('div');
+    dom.className = 'uiCursorMessage';
+    dom.style.left = x + 'px'
+    dom.style.top = y + 'px'
+    dom.innerText = message;
+    main.appendChild(dom);
+    setTimeout(function() {
+        dom.style.animation = '1s uiFade forwards'
+        setTimeout(function() {
+            dom.remove();
+        }, 1000)
+    }, 1500)
 }
 
 
 
-function _spam(m){
-	let st='';
-	let max=Math.random()*20
-	for(let i=0;i<max;i++){
-		st+=m;
-	}
-	return st;
+function _spam(m) {
+    let st = '';
+    let max = Math.random() * 20
+    for (let i = 0; i < max; i++) {
+        st += m;
+    }
+    return st;
 }
-function _copyText(dom){
-	textDump.value=dom.innerText;
-	textDump.style.display='block'
-	textDump.select();
-		//_copyText.setSelectionRange(0, 99999); /*For mobile devices*/
 
-	document.execCommand("copy");
-	textDump.blur();
-	textDump.style.display='none'
-	
+function _copyText(dom) {
+    textDump.value = dom.innerText;
+    textDump.style.display = 'block'
+    textDump.select();
+    //_copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+    document.execCommand("copy");
+    textDump.blur();
+    textDump.style.display = 'none'
+
 }
 
 function addConfetti(x, y, angle) {
@@ -184,9 +203,9 @@ function addConfetti(x, y, angle) {
 }
 
 
-function styleInit(){
-	var sheet = document.createElement('style')
-	sheet.innerHTML =`
+function styleInit() {
+    var sheet = document.createElement('style')
+    sheet.innerHTML = `
 	.uiSysTop{
 		display: flex;
 		align-items: flex-start;
@@ -405,7 +424,7 @@ function styleInit(){
 	}
 
 	`
-	document.body.appendChild(sheet);
+    document.body.appendChild(sheet);
 }
 
-export {init,systemMessage,cursorMessage,addConfetti}
+export { init, systemMessage, cursorMessage, addConfetti }

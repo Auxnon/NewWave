@@ -5,485 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-	<link rel="manifest" href="/site.webmanifest">
-	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-	<meta name="msapplication-TileColor" content="#da532c">
-	<meta name="theme-color" content="#ffffff">
-
-	
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
     <title>MakeAvoy</title>
-    <style>
-
-        ::-webkit-scrollbar-track {
-        background-color: none;
-        /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    border-radius: 10px;
-     #F5F5F5;*/
-    }
-    ::-webkit-scrollbar {
-        width: 18px;
-        /*background-color: #F5F5F5;*/
-        border-radius: 10px;
-        margin: 10px;
-        box-shadow: inset 0 0 10px 10px #6666;
-        border: solid 6px transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        border-radius: 10px;
-        border: solid 6px transparent;
-        -webkit-box-shadow: inset 0 0 12px black;
-        background-color: none;
-    }
-
-    body {
-        background-color: white;
-        stroke: white;
-        
-    }
-
-    body.dark-mode{
-        background-color:black;
-    }
-
-    #main {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        margin: 0;
-        left: 0;
-        top: 0;
-        overflow: hidden;
-        touch-action: none;
-        background-repeat: no-repeat;
-        background-position: left bottom;
-        background-size: 70vmax 70vmax;
-        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 16.93 16.93"><g fill-rule="evenodd"><path d="M14.27 8.79c.46 1.5-2.08 2.48-2.31 4.02-.23 1.5 1.9 3.21 1.02 4.45-.9 1.27-3.28-.1-4.65.65-1.33.74-1.32 3.43-2.85 3.5-1.58.08-2.02-2.6-3.49-3.2-1.43-.58-3.55 1.07-4.59-.08-1.06-1.17.78-3.14.3-4.65-.45-1.46-3.1-2.1-2.86-3.6.25-1.54 2.98-1.32 3.87-2.6.87-1.24-.32-3.68 1.02-4.4 1.37-.75 2.93 1.5 4.51 1.4 1.54-.08 2.7-2.49 4.13-1.9 1.47.62.7 3.2 1.77 4.37 1.05 1.13 3.7.57 4.13 2.04z" fill="rgb(181, 247, 242)"/><path d="M11.9 9.8c.35 1.2-1.59 1.98-1.77 3.2-.18 1.2 1.46 2.56.79 3.54-.7 1-2.52-.08-3.57.52-1.02.59-1.01 2.73-2.19 2.78-1.2.06-1.54-2.07-2.67-2.54-1.1-.47-2.72.85-3.52-.07-.82-.93.6-2.5.23-3.7-.34-1.16-2.38-1.66-2.2-2.86.2-1.22 2.29-1.04 2.97-2.06.67-.99-.25-2.93.78-3.5C1.81 4.5 3 6.3 4.21 6.22 5.4 6.16 6.3 4.25 7.38 4.72c1.13.49.53 2.54 1.35 3.46.8.9 2.84.46 3.17 1.63z" fill="rgb(0, 221, 255)"/></g></svg>');
-    }
-    .dark-mode #main{
-        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 16.93 16.93"><g fill-rule="evenodd"><path d="M14.27 8.79c.46 1.5-2.08 2.48-2.31 4.02-.23 1.5 1.9 3.21 1.02 4.45-.9 1.27-3.28-.1-4.65.65-1.33.74-1.32 3.43-2.85 3.5-1.58.08-2.02-2.6-3.49-3.2-1.43-.58-3.55 1.07-4.59-.08-1.06-1.17.78-3.14.3-4.65-.45-1.46-3.1-2.1-2.86-3.6.25-1.54 2.98-1.32 3.87-2.6.87-1.24-.32-3.68 1.02-4.4 1.37-.75 2.93 1.5 4.51 1.4 1.54-.08 2.7-2.49 4.13-1.9 1.47.62.7 3.2 1.77 4.37 1.05 1.13 3.7.57 4.13 2.04z" fill="rgb(70, 21, 74)"/><path d="M11.9 9.8c.35 1.2-1.59 1.98-1.77 3.2-.18 1.2 1.46 2.56.79 3.54-.7 1-2.52-.08-3.57.52-1.02.59-1.01 2.73-2.19 2.78-1.2.06-1.54-2.07-2.67-2.54-1.1-.47-2.72.85-3.52-.07-.82-.93.6-2.5.23-3.7-.34-1.16-2.38-1.66-2.2-2.86.2-1.22 2.29-1.04 2.97-2.06.67-.99-.25-2.93.78-3.5C1.81 4.5 3 6.3 4.21 6.22 5.4 6.16 6.3 4.25 7.38 4.72c1.13.49.53 2.54 1.35 3.46.8.9 2.84.46 3.17 1.63z" fill="rgb(30, 5, 47)"/></g></svg>');
-    }
-
-    .app {
-        position: absolute;
-        background-color: #4158D0;
-        background-image: linear-gradient(156deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
-        border-radius: 16px;
-        width: 56px;
-        height: 56px;
-        top: -100px;
-        transform: translate(-50%, -50%);
-        transition: 0.8s;
-        z-index: 2;
-        overflow: hidden;
-        box-sizing: border-box;
-    }
-
-    .appMove {
-        border-top: 6px white solid;
-        transition: border-radius 0.4s, width 0.4s, height 0.4s;
-    }
-
-    #bar {
-        position: absolute;
-        width: 256px;
-        height: 128px;
-        border-radius: 16px;
-        /*border: white 3px solid;*/
-        background-color: #7774;
-        transform: translate(-50%, -50%);
-        left: 50%;
-        bottom: 64px;
-        box-sizing: border-box;
-        z-index: 2;
-    }
-
-    #barHandle {
-        width: 80%;
-        height: 32px;
-        border-radius: 32px;
-        /*border: white solid 3px;*/
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -200%);
-    }
-
-    .app-max {
-        width: 100%;
-        height: 100%;
-        border-radius: 0px;
-        top: 50% !important;
-        left: 50% !important;
-    }
-
-    #appCenter {
-        position: absolute;
-        /*border: white solid 3px;*/
-        background-color: #7774;
-        box-sizing: border-box;
-        border-radius: 16px;
-        width: 80%;
-        height: 80%;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    #navLine {
-        position: absolute;
-        left: 0;
-        top: 0;
-        margin: 0;
-        pointer-events: none;
-        stroke: inherit;
-        mix-blend-mode: difference;
-        z-index: 3;
-    }
-
-
-    #main-title {
-        border-radius: 32px;
-        position: fixed;
-        left: 50%;
-        transform: translate(-50%);
-        border: 5px white solid;
-        fill-opacity: 0;
-        mix-blend-mode: difference;
-        stroke: white;
-        stroke-width: 5;
-        stroke-linejoin: bevel;
-        transition: top 0.3s;
-        z-index: 3;
-        /*z-index: 99; /*I'm really sorry about this*/
-    }
-
-    #main-title.shrink{
-        left: 0;
-        transform: translate(-90px,-80px) scale(.25,.25);
-    }
-
-    #main-title * {
-        animation: pulse 1.2s backwards;
-    }
-
-    .a {
-        animation-delay: 0.5s !important;
-        transition: transform 1s;
-    }
-
-    .a2 {
-        animation-delay: 0.75s !important;
-        transition: transform 1s;
-    }
-
-    .k {
-        animation-delay: 1.25s !important;
-    }
-
-    .k2 {
-        animation-delay: 1.5s !important;
-    }
-
-    .e {
-        animation-delay: 2s !important;
-    }
-
-    .A {
-        animation-delay: 2.5s !important;
-    }
-
-    .A2 {
-        animation-delay: 2.75s !important;
-    }
-
-    .v {
-        animation-delay: 3.25s !important;
-    }
-
-    .o {
-        animation-delay: 3.75s !important;
-    }
-
-    .y {
-        animation-delay: 4.25s !important;
-    }
-
-    .y2 {
-        animation-delay: 4.75s !important;
-    }
-
-    @keyframes pulse {
-        0% {
-            stroke-dasharray: 0 250;
-            /*stroke-width:1;*/
-        }
-
-        100% {
-            stroke-dasharray: 250 0;
-            /*stroke-width:10;*/
-        }
-    }
-
-
-    .canvasHolder {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        opacity: 0;
-        transition: opacity 1s;
-        margin: 0;
-        top: 0;
-        overflow: hidden;
-        touch-action: none;
-
-        
-    }
-
-    .canvasHolder * {
-        position: relative;
-        left: 50%;
-        transform: translate(-50%);
-    }
-
-    #afterImage {
-        width: 100vw;
-        height: 100vh;
-        position: relative;
-        margin: 0;
-        left: 50%;
-        top: 0;
-        overflow: hidden;
-        transition: opacity 0.6s;
-        transform: translate(-50%);
-        touch-action: none;
-    }
-
-
-    @keyframes sunset {
-        0% {
-            background-position: 32% 0%
-        }
-
-        50% {
-            background-position: 69% 100%
-        }
-
-        100% {
-            background-position: 32% 0%
-        }
-    }
-
-    .app-icon{
-        position: relative;
-        width: 100%;
-        height: 100%;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: 32px;
-    }
-    .app-max .app-icon{
-        background-image:none !important; /*I am pure evil*/
-    }
-
-    #app1 {
-        background-color: #FAD961;
-        background-image: linear-gradient(150deg, #FAD961 0%, #F76B1C 100%);
-    }
-    #app1 .app-icon{
-        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 16.9 16.9"><g fill="white"><path d="M7.5 8h1.3l2.6-4 2.4 4h2L12 2.2l-7-.7-4 3.8z"/><path d="M2.4 6.9l5.2 2.2h2l1.9-3.5 2 3.3h1.2v6.4h-1.8v-3.9h-3v4l-2.4.3-5.3-3.1z"/></g></svg>');
-    }
-    .dark-mode #app1{
-        background-color: #C61B12;
-        background-image: linear-gradient(150deg, #C61B12 0%, #38053B 100%);
-        border: solid 4px #FAD961;
-    }
-
-    #app2 {
-        background-color: #17145D;
-        border: solid 4px rgb(250,1,200);
-        /*background-image: linear-gradient(45deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%);*/
-        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 0 24 24" width="48"  ><path stroke-width="4" stroke="rgb(150,000,250)" d="M1 1h24v24H1V1z" fill="none"/><path stroke-width="2" stroke="rgb(250,1,200)" d="M0 0h24v24H0V0z" fill="none"/></svg>');
-        animation: backgroundMove 2s infinite linear;
-    }
-    #app2 .app-icon{
-        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 16.9 16.9" fill="white"><path d="M7 1.3c-1.8.4-4.3 1.8-4.7 3-.6 2.4.2 4 .6 5.4-.5.4.6 3.1 2.6 1.7l.8 2.7h1.2l.2-1.2.3 2h1.6l.4-2 .2 1.4h.9l.6-2.7c1 .9 2.9-1 2-2.2 1-1.1 1.3-1.9 1-3.9-.3-2-1.9-3.5-3.6-4.2zm4.6 5c1.1.2 1.6 1 1.4 1.7-.2.6-1 .8-2 .6-.9-.2-1.5-1-1.4-1.5.1-.4.9-1 2-.8zm-3.7.4c.2.6-.3 1.9-1.3 2.2-1 .4-2-.3-2.3-.9-.2-.6.1-1.6 1.4-1.9 1.3-.2 2 .3 2.2.6zm1 2.2l.6.4.3 1.6c-.6-.3-1.2-.2-1.7 0l.1-1.5c.1-.1.5-.5.7-.5z"/></svg>');
-    }
-    .dark-mode #app2 {
-        background-color: black;
-        /*background-image: linear-gradient(45deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%);*/
-        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 0 24 24" width="48"  ><path stroke-width="4" stroke="rgb(0, 11, 125)" d="M1 1h24v24H1V1z" fill="none"/><path stroke-width="2" stroke="rgb(59, 0, 0)" d="M0 0h24v24H0V0z" fill="none"/></svg>');
-    }
-
-    #app3 {
-        background-color: #4158D0;
-        background-image: linear-gradient(156deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
-    }
-    #app3 .app-icon{
-        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 16.9 16.9"><g fill="white"><rect width="2.2" height="4.4" x="3.6" y="8.9" ry=".1"/><rect width="1.9" height="6.4" x="6.7" y="6.9" ry=".2"/><rect width="1.9" height="5.3" x="9.7" y="8.1" ry=".2"/><path d="M1.5 1.8c0-.3 1.3-.3 1.3 0l-.1 12.4h12.2c.4 0 .5 1 0 1H1.5V1.7z"/><rect width="2.2" height="11.7" x="12.6" y="1.7" ry=".5"/></g></svg>');
-    }
-    .dark-mode #app3{
-        border: #C850C0 4px solid;
-        background-color: #0C0F1D;
-        background-image: linear-gradient(156deg, #0C0F1D 30%, #B84AB2 46%, #5D0B11 80%);
-    }
-
-    #app4{
-        background-color: white;
-        background-image: linear-gradient(200deg, white 0%, #E7A3F0 30%);
-    }
-    #app4.app-max{
-        background-image: linear-gradient(200deg, white 60%, #E7A3F0 100%);
-    }
-    #app4 .app-icon{
-        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 16.93 16.93"><g fill="white"><path d="M2.09 9.02v5.11a1 1 0 001 1l5.4.03c1.77.02 5.53-.03 5.53-.03a1 1 0 001-1v-5c-.15.39-.53.64-.95.64H9.76l.03.5c0 .2-.16.37-.35.37h-1.5c-.2 0-.36-.17-.36-.38l-.03-.49H3.07c-.46 0-.86-.3-.98-.75zM7 1.12a1 1 0 00-.99 1V3.2H3a1 1 0 00-1 1v3.24c.15.52.54.87.96.87l4.57.03.03-.58c0-.23.15-.42.34-.42h1.49c.19 0 .34.19.34.42l-.03.58 4.43-.03c.3 0 .6-.18.8-.5V4.21a1 1 0 00-1-1h-3.1V2.1a1 1 0 00-1-1H7zm.65 1.1h1.61c.27 0 .48.2.48.44v.52H7.18v-.52c0-.24.21-.43.47-.43z"/><path d="M8.44 8.12h.45a.2.2 45 01.2.2v1.46a.2.2 135 01-.2.2h-.45a.2.2 45 01-.2-.2V8.32a.2.2 135 01.2-.2z"/></g></svg>');
-    }
-    .dark-mode #app4{
-        background-color: black;
-        background-image: linear-gradient(200deg, black 60%, #561C53 100%);
-        border: solid 4px white;
-    }
-    #app5 {
-        background-color: #85FFBD;
-        background-image: linear-gradient(180deg, #85FFBD 0%, #FFFB7D 100%);
-    }
-
-    
-    #app4 .canvasHolder{
-        height: 256px;
-        width: 256px;
-        border-radius: 128px;
-        transform: translate(-50%,-50%);
-        left: 50%;
-        top: 50%;
-    }
-
-    @keyframes backgroundMove {
-        from {
-            background-position: 0 48px;
-        }
-
-        to {
-            background-position: 0 0px;
-        }
-    }
-
-    #brightness {
-        z-index: 3;
-        width: 56px;
-        height: 56px;
-        border-radius: 28px;
-        position: absolute;
-        top: 0;
-        right: 0;
-        background-repeat: no-repeat;
-        background-size: 48px;
-        background-position: center center;
-
-
-        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="white"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M22.6 11.29L20 8.69V5c0-.55-.45-1-1-1h-3.69l-2.6-2.6c-.39-.39-1.02-.39-1.41 0L8.69 4H5c-.55 0-1 .45-1 1v3.69l-2.6 2.6c-.39.39-.39 1.02 0 1.41L4 15.3V19c0 .55.45 1 1 1h3.69l2.6 2.6c.39.39 1.02.39 1.41 0l2.6-2.6H19c.55 0 1-.45 1-1v-3.69l2.6-2.6c.39-.39.39-1.03 0-1.42zm-4.68 1.69c-.34 2.12-1.85 3.94-3.88 4.66-1.21.43-2.41.45-3.5.18-.41-.1-.48-.65-.13-.9C11.98 15.84 13 14.04 13 12s-1.02-3.84-2.58-4.92c-.35-.24-.29-.79.13-.9 1.09-.27 2.29-.25 3.5.18 2.02.72 3.54 2.54 3.88 4.66.05.33.07.66.07.98-.01.32-.03.65-.08.98z"/></svg>');
-    }
-
-    .brightnessDark {
-        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" ><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 15.31l2.6-2.6c.39-.39.39-1.02 0-1.41L20 8.69V5c0-.55-.45-1-1-1h-3.69l-2.6-2.6c-.39-.39-1.02-.39-1.41 0L8.69 4H5c-.55 0-1 .45-1 1v3.69l-2.6 2.6c-.39.39-.39 1.02 0 1.41L4 15.3V19c0 .55.45 1 1 1h3.69l2.6 2.6c.39.39 1.02.39 1.41 0l2.6-2.6H19c.55 0 1-.45 1-1v-3.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>') !important;
-    }
-
-    cube {
-        --s: 1s;
-        transform-style: preserve-3d;
-        top: 50%;
-        left: 50%;
-        position: absolute;
-        width: 100px;
-        height: 100px;
-        background-color: rgba(255, 0, 0, 0.3);
-        transition: transform 1s;
-        /*transform:  rotate(0,0,1, 10deg);*/
-        animation: cubeSpin var(--s) linear forwards infinite;
-        outline: 5px solid black;
-        box-sizing: border-box;
-    }
-
-    cube:before {
-        display: block;
-        content: '';
-        width: 100px;
-        height: 100px;
-        top: 00px;
-        left: 0px;
-        position: absolute;
-        background-color: rgba(0, 0, 255, 0.3);
-        transform: rotateX(90deg) translateZ(50px) translateY(-50px);
-        outline: 5px solid black;
-        box-sizing: border-box;
-    }
-
-    cube:after {
-        display: block;
-        content: '';
-        width: 100px;
-        height: 100px;
-        /*top:100px;
-	left:0px;*/
-        position: absolute;
-        background-color: rgba(0, 255, 0, 0.3);
-        transform: rotateY(90deg) translateZ(50px) translateX(50px);
-        outline: 5px solid black;
-        box-sizing: border-box;
-    }
-
-    @keyframes cubeSpin {
-        00% {
-            transform: rotate3d(-1, 0, 0, 90deg) translate3d(-50%, -50%, 50px);
-        }
-
-        33% {
-            transform: rotate3d(0, -1, 0, 90deg) translate3d(-50%, -50%, 50px);
-        }
-
-        66% {
-            transform: rotate3d(0, 0, 0, 90deg) translate3d(-50%, -50%, 50px);
-        }
-
-        100% {
-            transform: rotate3d(-1, 0, 0, 90deg) translate3d(-50%, -50%, 50px);
-        }
-
-        /*80% {transform: rotate3d(-1,-1,-1, 90deg) translate3d(0,0,50px);}
-	90% {transform: rotate3d(-1,-1,1, 90deg) translate3d(0,0,50px);}
-	100% {transform: rotate3d(-1,-1,-1, 90deg) translate3d(0,0,50px);}*/
-
-        /*90% {transform: rotate3d(-1,-1,0, 90deg)translate3d(0,0,50px);}*/
-        /*60% {transform:  rotate3d(-2,0,-1, 45deg);}*/
-        /*60% {transform:  rotate3d(0,-1,0, 90deg);}
-	80% {transform:  rotate3d(-1,-1,1, 60deg);}
-	100% {transform:  rotate3d(0,0,0, 0deg);}*/
-    }
-
-    .lineButton {
-        animation: lineWiggle 4s linear infinite;
-        stroke-dasharray: 100 20;
-        stroke: inherit;
-    }
-
-    @keyframes lineWiggle {
-        0% {
-            stroke-dashoffset: 0;
-            transform: scale(1, 1)
-        }
-
-        50% {
-            transform: scale(1, 0.8)
-        }
-
-        100% {
-            stroke-dashoffset: var(--offset);
-            transform: scale(1, 1)
-        }
-    }
-    </style>
 </head>
 
 <body>
@@ -492,28 +20,41 @@
         <div id="bar">
             <div id="barHandle"></div>
         </div>
-        <div class="app" id="app1"><div class="app-icon"></div><img id="afterImage" style="opacity:0"  /></div>
-        <div class="app" id="app2"><div class="app-icon"></div></div>
-        <div class="app" id="app3"><div class="app-icon"></div></div>
-        <div class="app" id="app4"><div class="app-icon"></div></div></div></div>
-        <svg id='navLine' fill="none" stroke-width="6" stroke-linecap="round">
-            <path d="M0 0 L 0 2" />
-        </svg>
-        <svg id="main-title" style="top: 28px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-10 0 320 100" width="300" height="100">
-            <path d="M20.8 75V28.5L42 56.1l21.4-27.6V75" class="M" />
-            <path d="M98 58.3c0 6.3-5.4 11.4-12 11.4-6.5 0-11.8-5.1-11.8-11.4 0-6.3 5.3-11.4 11.8-11.4 6.6 0 12 5 12 11.4z" class="a" />
-            <path d="M106.1 70c-4 .4-6.4-3.7-7.6-12.1-3-21.7-10.7-26.4-23.3-14.1" class="a2" />
-            <path d="M113.4 28.5V70" class="k" />
-            <path d="M131.2 45.8l-17.8 6.9L131.2 63" class="k2" />
-            <path d="M139 56.1c-.3.2 7.7.2 23.9 0-2.7-7-6.6-10.5-11.8-10.3-7.8.3-10.5 3-12 10.3-1.6 7.3 4 14.2 11.7 13.8a23 23 0 0012-3.5" class="e" />
-            <path d="M170.4 70l14.2-41.5L199 70" class="A" />
-            <path d="M176 52.7h20" class="A2" />
-            <path d="M202.4 45.8l10 24.2L223 45.8" class="v" />
-            <path d="M227.4 57.9c0 6.6 5.5 12 12.3 12 6.9 0 12.4-5.4 12.4-12 0-6.7-5.5-12.1-12.4-12.1-6.8 0-12.3 5.4-12.3 12z" class="o" />
-            <path d="M283.3 46.8l-27.8 43.9" class="y" />
-            <path d="M258.3 49.2l13.3 17.3" class="y2" />
-        </svg>
-        <div id="brightness" class='brightnessDark'></div>
+        <div class="app" id="app1">
+            <div class="app-icon"></div><img id="afterImage" style="opacity:0" />
+        </div>
+        <div class="app" id="app2">
+            <div class="app-icon"></div>
+        </div>
+        <div class="app" id="app3">
+            <div class="app-icon"></div>
+        </div>
+        <div class="app" id="app4">
+            <div class="app-icon"></div>
+        </div>
+        <div class="app" id="app5">
+            <div class="app-icon"></div>
+        </div>
+    </div>
+    </div>
+    <svg id='navLine' fill="none" stroke-width="6" stroke-linecap="round">
+        <path d="M0 0 L 0 2" />
+    </svg>
+    <svg id="main-title" style="top: 28px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-10 0 320 100" width="300" height="100">
+        <path d="M20.8 75V28.5L42 56.1l21.4-27.6V75" class="M" />
+        <path d="M98 58.3c0 6.3-5.4 11.4-12 11.4-6.5 0-11.8-5.1-11.8-11.4 0-6.3 5.3-11.4 11.8-11.4 6.6 0 12 5 12 11.4z" class="a" />
+        <path d="M106.1 70c-4 .4-6.4-3.7-7.6-12.1-3-21.7-10.7-26.4-23.3-14.1" class="a2" />
+        <path d="M113.4 28.5V70" class="k" />
+        <path d="M131.2 45.8l-17.8 6.9L131.2 63" class="k2" />
+        <path d="M139 56.1c-.3.2 7.7.2 23.9 0-2.7-7-6.6-10.5-11.8-10.3-7.8.3-10.5 3-12 10.3-1.6 7.3 4 14.2 11.7 13.8a23 23 0 0012-3.5" class="e" />
+        <path d="M170.4 70l14.2-41.5L199 70" class="A" />
+        <path d="M176 52.7h20" class="A2" />
+        <path d="M202.4 45.8l10 24.2L223 45.8" class="v" />
+        <path d="M227.4 57.9c0 6.6 5.5 12 12.3 12 6.9 0 12.4-5.4 12.4-12 0-6.7-5.5-12.1-12.4-12.1-6.8 0-12.3 5.4-12.3 12z" class="o" />
+        <path d="M283.3 46.8l-27.8 43.9" class="y" />
+        <path d="M258.3 49.2l13.3 17.3" class="y2" />
+    </svg>
+    <div id="brightness" class='brightnessDark'></div>
     </div>
 </body>
 

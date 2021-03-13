@@ -41,7 +41,7 @@ var SCENE_IMPORT;
 
 
 function init(data, initialScene) {
-    if(initialScene)
+    if (initialScene)
         activeScene = initialScene;
 
     SCENE_IMPORT = data;
@@ -110,11 +110,11 @@ function loadModel(model, callback, texture, color) {
             let model; //=gltf.scene.children[0];
             gltf.scene.rotation.x = Math.PI / 2;
             gltf.scene.traverse(function(child) {
-                if(child instanceof THREE.Mesh) {
+                if (child instanceof THREE.Mesh) {
                     //if(child.name=="Cube"){
                     model = child;
-                    if(!texture) {
-                        if(color)
+                    if (!texture) {
+                        if (color)
                             child.material = new THREE.MeshStandardMaterial({ color: color, metalness: 0, roughness: 1.0 }); // 
                         else
                             child.material = specterMaterial; //new THREE.MeshStandardMaterial({ vertexColors: THREE.VertexColors, metalness: 0, roughness: 1.0}); // 
@@ -135,12 +135,12 @@ function loadModel(model, callback, texture, color) {
             //let mixer = new THREE.AnimationMixer( gltf.scene );
             //model=gltf.scene.children[0]
             let m2 = gltf.scene.children[0];
-            if(model) {
+            if (model) {
                 var animations = gltf.animations;
-                if(animations && animations.length) {
+                if (animations && animations.length) {
 
                     mixer = new THREE.AnimationMixer(model);
-                    for(var i = 0; i < animations.length; i++) {
+                    for (var i = 0; i < animations.length; i++) {
                         var animation = animations[i];
                         // There's .3333 seconds junk at the tail of the Monster animation that
                         // keeps it from looping cleanly. Clip it at 3 seconds
@@ -185,28 +185,29 @@ function resize() {
         docWidth =  window.screen.width
         docHeight = window.screen.height
     }*/
-    if(alphaCanvas.custom){
-        docWidth=alphaCanvas.custom;
-        docHeight=alphaCanvas.custom
-    }else{
-        docWidth=document.documentElement.clientWidth
-        docHeight=document.documentElement.clientHeight
+    if (alphaCanvas.custom) {
+        docWidth = alphaCanvas.custom;
+        docHeight = alphaCanvas.custom
+    } else {
+        docWidth = document.documentElement.clientWidth
+        docHeight = document.documentElement.clientHeight
     }
     //docWidth =  window.innerWidth //Math.max(window.screen.width, window.innerWidth)
-        //docHeight = window.innerHeight //Math.max(window.screen.height, window.innerHeight)//window.innerHeight;
+    //docHeight = window.innerHeight //Math.max(window.screen.height, window.innerHeight)//window.innerHeight;
 
-        camera.aspect = docWidth / docHeight;
-        camera.updateProjectionMatrix();
+    camera.aspect = docWidth / docHeight;
+    camera.updateProjectionMatrix();
 
-        renderer.setPixelRatio(1);//window.devicePixelRatio / SIZE_DIVIDER);
-        renderer.setSize(docWidth, docHeight);
-    
+    renderer.setPixelRatio(1); //window.devicePixelRatio / SIZE_DIVIDER);
+    renderer.setSize(docWidth, docHeight);
+
 }
-var lastTime=0
+var lastTime = 0
+
 function animate(time) {
-    let delta=time-lastTime;
-    delta/=1000.0
-    lastTime=time;
+    let delta = time - lastTime;
+    delta /= 1000.0
+    lastTime = time;
     sceneAnimate(delta);
     renderer.render(getScene(), camera);
     //composer.render();
@@ -215,7 +216,7 @@ function animate(time) {
 
 function dumpImage(img) {
     let dom = document.querySelector('#afterImage');
-    if(dom)
+    if (dom)
         dom.setAttribute('src', img);
 }
 
@@ -236,7 +237,7 @@ function addAnchor(host, bubble) {
         offset: 0,
     }
     anchors.forEach(a => {
-        if(a.host == host) {
+        if (a.host == host) {
             a.offset -= 40;
         }
     })
@@ -247,11 +248,11 @@ function addAnchor(host, bubble) {
 }
 
 function updateAnchor(anchor, index) {
-    if(!anchor.bubble) {
+    if (!anchor.bubble) {
         anchors.splice(index, 1);
         return false;
     }
-    if(anchor.host) {
+    if (anchor.host) {
         let vector = projectVector(anchor.host);
         anchor.bubble.style.left = -16 + vector.x + 'px';
         anchor.bubble.style.top = (40 + anchor.offset + vector.y) + 'px';
@@ -263,16 +264,16 @@ function updateAnchor(anchor, index) {
 
 function roundEdge(x) {
     x = x % (Math.PI)
-    if(x < 0)
+    if (x < 0)
         x += Math.PI * 2;
 
-    if(x > Math.PI / 4) {
-        if(x > 5 * Math.PI / 4) {
-            if(x < 7 * Math.PI / 4) {
+    if (x > Math.PI / 4) {
+        if (x > 5 * Math.PI / 4) {
+            if (x < 7 * Math.PI / 4) {
                 return Math.PI * 3 / 2;
             }
         } else {
-            if(x > 3 * Math.PI / 4) {
+            if (x > 3 * Math.PI / 4) {
                 return Math.PI;
             } else {
                 return Math.PI / 2;
@@ -320,7 +321,7 @@ function getRandomColor() {
 }
 
 function applyCursor() {
-    if(Control.down()) {
+    if (Control.down()) {
         pointer.material = pointerMatOn;
     } else
         pointer.material = pointerMat;
@@ -600,31 +601,32 @@ function sceneInit() {
 
 
 function sceneAnimate(delta) {
-    if(activeModule) {
+    if (activeModule) {
         activeModule.animate(delta)
     }
 }
 
-function closeModule(){
-    if(activeModule && activeModule.close)
+function closeModule() {
+    if (activeModule && activeModule.close)
         activeModule.close();
 }
-function flipScene(i,appDom) {
+
+function flipScene(i, appDom) {
     //this method contains some duplicate logic compared to getScene when loading is complete
 
-    let canvas=getAlphaCanvas();
+    let canvas = getAlphaCanvas();
     canvas.remove();
     activeScene = i;
-    canvas.style.opacity=1;
+    canvas.style.opacity = 1;
 
     //not proud of the setup but its better to isolate all the render logic out from the app opening mangement of Main
     //literally just checking the scene has fully loaded and to call its app open function
     let scene = scenes[i];
-    if(scene != undefined && scene != 'pend' && scene[1].open){
-        if(!scene[1].open(canvas)){
+    if (scene != undefined && scene != 'pend' && scene[1].open) {
+        if (!scene[1].open(canvas)) {
             appDom.appendChild(canvas)
         }
-    }else
+    } else
         appDom.appendChild(canvas)
 
 
@@ -637,32 +639,38 @@ var activeModule;
 function getScene() {
     let index = activeScene;
     let outgoingScene = scenes[index];
-    if(outgoingScene == undefined) {
+    if (outgoingScene == undefined) {
         outgoingScene = emptyScene
         scenes[index] = 'pend';
 
         //wow this is a conufsing mess but it's functional!
         let importerFunction = SCENE_IMPORT[index];
-        if(importerFunction) {
+        if (importerFunction) {
             Main.pendApp(index)
             importerFunction(module => {
                 //set the scene index to our now loaded script, but due to some likely additional resources loadding in we're still pending
                 //when the resources are ALL loaded, per the loaded script's requirements, it calls the complete function that was passed it below
                 //This complete function should wrap up any remainder logic, such as removing hte loading animation, allowing hte scene to render, and calling the "open app" function
-                scenes[index] = [module.init(index,Main.apps[index],()=>{
-                    
-                    let canvas=getAlphaCanvas();
+
+
+                let initialScene = module.init(index, Main.apps[index], () => {
+                    let canvas = getAlphaCanvas();
                     canvas.remove();
-                    canvas.style.opacity=1;
-                    if(module.open && Main.getCurrentAppId()==index){
-                        if(module.open(canvas)){
+                    canvas.style.opacity = 1;
+                    if (module.open && Main.getCurrentAppId() == index) {
+                        if (module.open(canvas)) {
                             Main.clearPendApp(index);
-                        }else
-                            Main.clearPendApp(index,canvas);
-                    }else
-                        Main.clearPendApp(index,canvas);
-                }), module];
-                
+                        } else
+                            Main.clearPendApp(index, canvas);
+                    } else
+                        Main.clearPendApp(index, canvas);
+                });
+
+                if (!initialScene)
+                    initialScene = emptyScene;
+
+                scenes[index] = [initialScene, module];
+
             });
         } else {
             scenes[index] = [emptyScene, undefined]
@@ -671,7 +679,7 @@ function getScene() {
         /*import(SCENE_DATA[index][0]).then(module => {
             scenes[index] = module.init(SCENE_DATA[index][1], Render, THREE);
         })*/
-    } else if(outgoingScene == 'pend') {
+    } else if (outgoingScene == 'pend') {
         outgoingScene = emptyScene;
     } else {
         activeModule = outgoingScene[1]; //define the module that's currently active so we can run it's animate function in sceneAnimate()
