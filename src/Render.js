@@ -53,11 +53,10 @@ function init(data, initialScene) {
     camera.lookAt(new THREE.Vector3(0, 100, 0));
 
 
-
     alphaCanvas = document.createElement('div');
     betaCanvas = document.createElement('div');
-    alphaCanvas.classList.add('canvasHolder');
-    betaCanvas.classList.add('canvasHolder');
+    alphaCanvas.classList.add('canvas-holder');
+    betaCanvas.classList.add('canvas-holder');
     betaCanvas.style.background = '#fff5'
     alphaCanvas.reserved = false;
     betaCanvas.reserved = false;
@@ -671,7 +670,7 @@ function getScene() {
 
                 scenes[index] = [initialScene, module];
 
-            });
+            }); 
         } else {
             scenes[index] = [emptyScene, undefined]
         }

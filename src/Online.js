@@ -4,10 +4,11 @@
  import * as UI from "./UI.js";
  import * as Chat from "./App5Chat.js";
 
- var socket;
+ let socket;
 
- var physReady = false;
- var pendingLogin;
+ let physReady = false;
+ let pendingLogin;
+ let username;
 
  function initSocket() {
      try {
@@ -55,10 +56,29 @@
              }
          });
 
-         socket.on('message', function(userId, m) {
-             Chat.hook(userId, m)
+         socket.on('message', function(username, m) {
+             Chat.hook(username, m)
          });
-         
+         socket.on('join', function(name) {
+             Chat.makeDivider(name + " joined the room");
+         })
+         socket.on('leave', function(name) {
+             Chat.makeDivider(name + " left the room");
+         })
+         socket.on('guest', function(name) {
+            username=name;
+         });
+         socket.on('admin',function(name,guests){
+            Chat.setRooms(guests);
+            username=name;
+         })
+         socket.on('switched',function(room){
+            Chat.clear();
+            Chat.makeDivider('Joined '+room)
+            
+         })
+
+
          /*
          socket.on('join', function(username) {
              Chat.makeDivider(username + ' has joined!')
@@ -70,7 +90,7 @@
          })
 
          //lastChats();
-        
+
          getEquipment(PlayerManager.getOwnPlayer().id);
          Control.init();
      } catch (err) {
@@ -103,36 +123,36 @@
      }).then(function(data) {
          if (data) {
              //UI.systemMessage(data.message, 'success')
-             PlayerManager.setOwnPlayer(data.id)
-             initSocket();
+             //PlayerManager.setOwnPlayer(data.id)
+             //initSocket();
          }
      }).catch(e => {
          UI.systemMessage(e, 'error')
          console.error('ERROR ', e);
      });
  }
-/*
- function lastChats() {
-     fetch('/lastChats', {
-         method: 'post',
-         headers: {
-             'Content-Type': 'application/json'
-         },
-         //body: JSON.stringify({ username: username, password: pass })
-     }).then(function(response) {
-         if (!response.ok) {
-             return undefined;
-         } else
-             return response.json();
-     }).then(function(data) {
-         if (data) {
-             Chat.lastChats(data.array)
-         }
-     }).catch(e => {
-         UI.systemMessage(e, 'error')
-         console.error('ERROR ', e);
-     });
- }*/
+ /*
+  function lastChats() {
+      fetch('/lastChats', {
+          method: 'post',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          //body: JSON.stringify({ username: username, password: pass })
+      }).then(function(response) {
+          if (!response.ok) {
+              return undefined;
+          } else
+              return response.json();
+      }).then(function(data) {
+          if (data) {
+              Chat.lastChats(data.array)
+          }
+      }).catch(e => {
+          UI.systemMessage(e, 'error')
+          console.error('ERROR ', e);
+      });
+  }*/
 
  function message(string) {
      socket.emit('message', string);
@@ -147,5 +167,11 @@
  function sysMessage(m, type) {
      socket.emit('sysMessage', m, type);
  }
+ function getUsername(){
+    return username;
+ }
+ function switchRoom(room){
+    socket.emit('switch', room);
+ }
 
- export { guest, login, message }
+ export { guest, login, message, getUsername,switchRoom }

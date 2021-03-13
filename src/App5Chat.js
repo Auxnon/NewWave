@@ -1,4 +1,7 @@
 import * as Online from "./Online.js";
+import * as Helper from "./Helper.js";
+import {shrinkTitle} from "./Main.js";
+import * as THREE from "./lib/three.module.js";
 
 import './chatStyle.css';
 
@@ -8,9 +11,12 @@ import './chatStyle.css';
 
 //called at first run, plugs in all the goods
 function init(index, dom, complete) {
-
+    let scene = new THREE.Scene();
+    shrinkTitle();
     initChat(dom)
     Online.guest();
+    return scene;
+
 }
 
 //runs every frame
@@ -27,7 +33,9 @@ function deinit() {
 //also passes in the canvas in case the app wants to do something wacky with it like resize it or place it somewhere else
 //return true if changes were made and it wont follow the default
 function open(canvas) {
-
+    shrinkTitle();
+    //if(chatInput)
+        chatInput.focus();
 }
 //called when app is closed out for another one
 function close() {
@@ -46,29 +54,34 @@ import * as PlayerManager from "./PlayerManager.js";
 import * as Drawer from "./Drawer.js"; 
 import * as UI from "./UI.js";*/
 
-var chatPane;
-//var chatBlock;
-var chatInput;
-var chatBottom;
+let chatPane;
+//let chatBlock;
+let chatInput;
+let chatBottom;
+
+//only matters to admin (me?)
+let loginMenu;
+let roomHider;
+let roomSwitcher;
+
 
 function initChat(mainDom) {
 
-
-    chatPane = document.createElement('div');
-    chatPane.classList.add('chat-pane');
+    let chatWrapper=div('chat-wrapper')
+    chatPane = div('chat-pane');
 
     //mainDom.appendChild(chatButton);
-    mainDom.appendChild(chatPane);
+    chatWrapper.appendChild(chatPane);
+    chatWrapper.style.height='calc(100% - 128px)' //FIX should set this based on bar pos
     //mainDom.appendChild(chatBlock);
 
 
 
-    chatBottom = document.createElement('div');
-    chatBottom.classList.add('chat-bottom');
+    chatBottom = div('chat-bottom');
 
     chatInput = document.createElement('input');
-    let color = "0xffff55"; //World.getOwnPlayer().color
-    color = '#' + color.substring(2, color.length);
+    let color = "black";//"0xffff55"; //World.getOwnPlayer().color
+    //color = '#' + color.substring(2, color.length);
     chatInput.style.border = color + " 6px solid"
     chatBottom.appendChild(chatInput);
 
@@ -85,7 +98,9 @@ function initChat(mainDom) {
     //toggle.classList.add('chatToggle');
     //bottom.appendChild(toggle);
 
-    mainDom.appendChild(chatBottom)
+    chatWrapper.appendChild(chatBottom)
+
+
 
     //chatBlock.style.left='100%';
 
@@ -103,7 +118,7 @@ function initChat(mainDom) {
     chatInput.addEventListener('keyup', function(ev) {
 
         if (ev.which == 13) {
-            if (chatInput.value.length > 0 || Drawer.getState() == 'chat') {
+            if (chatInput.value.length > 0 ){//|| Drawer.getState() == 'chat') {
                 submit();
             } else {
                 setTimeout(closeChat, 20);
@@ -130,12 +145,46 @@ function initChat(mainDom) {
 
 
     //setTimeout(()=>{Mail.init()},800);
+    loginMenu=div('login-menu');
+    let name=document.createElement('input')
+    let pass=document.createElement('input')
+    let passButton=document.createElement('button')
+    loginMenu.className=
+    pass.setAttribute('type','password')
+    passButton.innerText='Submit'
 
+    loginMenu.appendChild(name)
+    loginMenu.appendChild(pass)
+    loginMenu.appendChild(passButton)
+    passButton.addEventListener('click', ev => {
+        Online.login(name.value, pass.value)
+        loginMenu.style.display = ''
+    })
+    roomSwitcher=div('room-switcher');
+    roomHider=div('room-switcher-hider')
+    roomHider.addEventListener('click',ev=>{
+        if(roomSwitcher.style.display=='none')
+            roomSwitcher.style.display=''
+        else
+            roomSwitcher.style.display='none'
+    })
+    chatWrapper.appendChild(roomHider)
+    
+    mainDom.appendChild(loginMenu)
+
+    chatWrapper.appendChild(roomSwitcher)
+
+    mainDom.appendChild(chatWrapper)
+}
+function div(classname){
+    let dom=document.createElement('div')
+    dom.className=classname;
+    return dom;
 }
 var pastDom = null;
-var pastPlayerId = -1;
+var pastPlayerName = "";
 var lastDom = null;
-var lastPlayerId = -1
+var lastPlayerName = "";
 
 function addBubble(s, player, model) {
 
@@ -163,6 +212,9 @@ function addBubble(s, player, model) {
         }
     }
 
+    if(s=="&&&pp&&&"){
+        loginMenu.style.display='block'
+    }
 
     /*let stt=s.split('');
     stt.forEach((c,i)=>{
@@ -182,12 +234,12 @@ function addBubble(s, player, model) {
     let chatRow = document.createElement('div');
     chatRow.classList.add('chat-row')
 
-    if (player.id == PlayerManager.getOwnPlayer().id)
+    if (player.username == Online.getUsername())
         chatRow.classList.add('chat-right')
 
     chatBubble.classList.add('chat-bubble');
-    if (lastPlayerId >= 0 && lastPlayerId == player.id) {
-        if (pastPlayerId == player.id) {
+    if (lastPlayerName && lastPlayerName == player.username) {
+        if (pastPlayerName == player.username) {
             lastDom.classList.remove("chat-bubble-footer");
             lastDom.classList.add("chat-bubble-body");
         } else {
@@ -201,7 +253,7 @@ function addBubble(s, player, model) {
         nameTag.classList.add('chat-nametag');
         nameTag.innerHTML = player.username;
         let tagRow = document.createElement('div');
-        if (player.id == PlayerManager.getOwnPlayer().id)
+        if (player.username == Online.getUsername())
             tagRow.style.textAlign = 'right'
         //nameTag.style.background=color;
         tagRow.appendChild(nameTag);
@@ -209,14 +261,15 @@ function addBubble(s, player, model) {
     }
 
     pastDom = lastDom;
-    pastPlayerId = lastPlayerId;
+    pastPlayerName= lastPlayerName;
     lastDom = chatBubble;
-    lastPlayerId = player.id;
+    lastPlayerName = player.username;
 
 
     chatRow.appendChild(chatBubble)
     chatPane.appendChild(chatRow)
     chatPane.scrollTop = chatPane.scrollHeight;
+
 
     return chatBubble;
 
@@ -235,8 +288,9 @@ function submit() {
     }
 }
 
-function hook(id, message) {
-    let player = PlayerManager.getUser(id) //World.getPlayer(id);
+function hook(username, message) {
+    //let player = PlayerManager.getUser(id) //World.getPlayer(id);
+    let player;
     let color = 'black'
     /*if(player){ //TODO
     	color=player.color;
@@ -254,10 +308,9 @@ function hook(id, message) {
     //if(!Control.isMenuLocked())
     //	Control.addConfetti(window.innerWidth-30,window.innerHeight-30,225);
     if (!player)
-        player = { username: 'Unknown', id: -1, color: 'black' }
+        player = { username: username, id: -1, color: 'black' }
     addBubble(message, player);
-    BarUI.setNotifier(2, 1)
-    //makeEpic('test')
+    //BarUI.setNotifier(2, 1)
 }
 
 function lastChats(chats) {
@@ -283,7 +336,7 @@ function closeChat() {
     //BarUI.closeApp();
     //Control.lockMenu(false);
 }
-/*
+
 function makeDivider(message) {
     let dom = document.createElement('div');
     dom.className = 'chat-divider'
@@ -291,7 +344,7 @@ function makeDivider(message) {
     p.innerText = message
     dom.appendChild(p)
     chatPane.appendChild(dom)
-}*/
+}
 
 function setSize(bool) {
     if (!chatPane || !chatBottom)
@@ -313,10 +366,32 @@ function popBubble(anchor) {
 function updateBubble(anchor) {
     anchor.bubble
 }
+function setRooms(guests){
+    roomSwitcher.querySelectorAll('.room-button').forEach(r=>{
+        r.removeEventListener('click',roomClick)
+        r.remove();
+    })
+    guests.forEach(guest=>{
+
+        let room=div('room-button');
+        room.innerText=guest.room!=undefined?guest.room:"???"
+        room.addEventListener('click',roomClick);
+        roomSwitcher.appendChild(room)
+    });
+}
+function roomClick(ev){
+    let t=ev.target.innerText
+    if(t!="???")
+        Online.switchRoom(t)
+}
+function clear(){
+    Object.values(chatPane.children).forEach(child=>{
+        child.remove();
+    })
+}
 
 
 
 
 
-
-export { init, animate, deinit, open, close,hook, }
+export { init, animate, deinit, open, close,hook,makeDivider,setRooms,clear }

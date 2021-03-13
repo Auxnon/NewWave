@@ -758,6 +758,9 @@ function shrinkTitle() {
     mainTitle.classList.add('shrink')
 }
 
+function getBarSide(){
+    barPos
+}
 
 /**
 OlD curve code
@@ -803,4 +806,4 @@ OlD curve code
             }
 **/
 
-export { pendApp, clearPendApp, apps, getPos, getCurrentAppId, shrinkTitle }
+export { pendApp, clearPendApp, apps, getPos, getCurrentAppId, shrinkTitle,getBarSide }
