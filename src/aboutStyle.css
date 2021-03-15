@@ -215,7 +215,7 @@ section:focus {
     margin-bottom: 256px;
 }
 
-.shrink {
+section.shrink {
     width: 256px;
     height: 144px;
     transform: none;
@@ -226,8 +226,8 @@ section:focus {
             transform: initial;*/
 }
 
-.shrink video,
-.shrink img {
+section.shrink video,
+section.shrink img {
     width: 256px;
     height: 144px;
 }

@@ -47,6 +47,9 @@ function componentToHex(c) {
 function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
+function rgbToBinary(r, g, b){
+	return parseInt("0x" + componentToHex(r) + componentToHex(g) + componentToHex(b));
+}
 
 function rgbFloatToHex(r, g, b) {
     r = Math.floor(r * 256);
@@ -105,4 +108,4 @@ function clearMarks(){
     })
 }
 
-export { rgbToHex, rgbFloatToHex, hexToRGB, hexToRGBFloat, getRandomColor, testBW,fp16ToRGBFloat,fp16ToHex}//mark,clearMarks }
+export { rgbToHex,rgbToBinary, rgbFloatToHex, hexToRGB, hexToRGBFloat, getRandomColor, testBW,fp16ToRGBFloat,fp16ToHex}//mark,clearMarks }

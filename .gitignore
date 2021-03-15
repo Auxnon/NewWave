@@ -109,5 +109,6 @@ public/*
 ssl/*
 sessions
 oneshotChat.sqlite
+RoomLogs/*
 
 .DS_Store

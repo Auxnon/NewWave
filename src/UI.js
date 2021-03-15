@@ -1,11 +1,11 @@
-//version 2.7 confetti added and fixed sizing on mobile
+//version 2.9 confetti added and fixed sizing on mobile,and now a zindex override, empty sysMessage type now defaults
 
 
 let main;
 let sysTop;
 let textDump;
 
-function init(mainDom) {
+function init(mainDom,zIndex) {
 
     styleInit();
     if (mainDom) {
@@ -20,6 +20,8 @@ function init(mainDom) {
     if (main) {
         sysTop = document.createElement('div');
         sysTop.className = 'uiHolderSysTop';
+        if(zIndex!=undefined)
+        	sysTop.style.zIndex=zIndex;
         main.appendChild(sysTop);
 
         //systemMessage(_spam('this is a test'))
@@ -92,7 +94,7 @@ function systemMessage(m, type, persistant, timeout) {
                 extra += 'uiIconTime';
                 dom.style.backgroundColor = '#5094D9';
                 break;
-            case 'success':
+            default:
                 extra += 'uiIconSuccess';
                 dom.style.backgroundColor = '#95F17F';
                 break;

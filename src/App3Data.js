@@ -1,47 +1,99 @@
 import * as THREE from "./lib/three.module.js";
 import * as Render from "./Render.js";
+import * as Main from "./Main.js";
+import * as Helper from "./Helper.js";
 
-var shapes;
+let shapes;
+let groupMove;
+let groupPivot;
+
+let barGroups = [];
+
+
+
+
 
 function init(index, dom, complete) {
+    initStyle();
+    let section=document.createElement('div')
+    section.className='data-section'
+    let input=document.createElement('textarea')
+    let button=document.createElement('button')
+    input.value= "70.114, 69.14, 69.14, 68.653, 68.653, 69.14, 68.653, 69.627, 69.627, 68.653, 69.627, 69.14, 69.14, 68.653, 70.114, 69.14, 69.14, 69.14, 68.653, 69.14";
+
+    button.innerText="Make Graph"
+    button.addEventListener('click',ev=>{
+
+        let array=input.value.split(',')
+        if(array && array.length>0)
+            barGraph(array,groupMove)
+    })
+
+    section.appendChild(input)
+    section.appendChild(button)
+    dom.appendChild(section)
 
     let scene = new THREE.Scene();
-    var ambientLight = new THREE.AmbientLight(0xffffff); // soft white light
+    groupMove = new THREE.Group();
+    groupPivot = new THREE.Group();
+    let ambientLight = new THREE.AmbientLight(0xffffff); // soft white light
     scene.add(ambientLight);
-    var sunLight = new THREE.DirectionalLight(0xffffff, 0.6); //DirectionalLight
+    let sunLight = new THREE.DirectionalLight(0xffffff, 0.6); //DirectionalLight
     sunLight.position.set(0, 1, 0);
     sunLight.castShadow = true;
     scene.add(sunLight);
-    var sunTarget = new THREE.Object3D();
+    let sunTarget = new THREE.Object3D();
     sunTarget.position.set(-20, 0, -20);
     scene.add(sunTarget);
     sunLight.target = sunTarget;
 
     shapes = [];
-    let cubeGeometry = new THREE.BoxBufferGeometry(20, 20, 40);
+    /*let cubeGeometry = new THREE.BoxBufferGeometry(20, 20, 40);
     let cubeMaterial = Render.specterMaterial; //new THREE.MeshBasicMaterial( { color:0xD53229 } )
 
     let cubeO = new THREE.Mesh(cubeGeometry, cubeMaterial);
     cubeO.position.set(-40, 0, 0);
     shapes.push(cubeO);
-    scene.add(cubeO);
+    groupMove.add(cubeO);*/
     Render.specterMaterial.color = 0xD53229;
-    var pyramid = new THREE.Mesh(new THREE.ConeGeometry(20, 20, 4), new THREE.MeshStandardMaterial({ color: 0xD53229 }));
-    pyramid.position.set(40, 0, 0);
-    shapes.push(pyramid)
-    scene.add(pyramid);
+    let pyramid1 = new THREE.Mesh(new THREE.ConeGeometry(20, 20, 4), new THREE.MeshStandardMaterial({ color: 0x6A00FE }));
+    pyramid1.position.set(-50, 0, 0);
+    shapes.push(pyramid1)
+    groupPivot.add(pyramid1);
 
-    barGraph([70.114, 69.14, 69.14, 68.653, 68.653, 69.14, 68.653, 69.627, 69.627, 68.653, 69.627, 69.14, 69.14, 68.653, 70.114, 69.14, 69.14, 69.14, 68.653, 69.14], scene, new THREE.Vector3(0, 0, 30));
+    let pyramid2 = new THREE.Mesh(new THREE.ConeGeometry(20, 20, 4), new THREE.MeshStandardMaterial({ color: 0xD53229 }));
+    pyramid2.position.set(50, 0, 0);
+    shapes.push(pyramid2)
+    groupPivot.add(pyramid2);
+
+    barGraph([70.114, 69.14, 69.14, 68.653, 68.653, 69.14, 68.653, 69.627, 69.627, 68.653, 69.627, 69.14, 69.14, 68.653, 70.114, 69.14, 69.14, 69.14, 68.653, 69.14], groupMove);
+    groupPivot.add(groupMove)
+    scene.add(groupPivot)
     //barGraph([Math.log(2),Math.log(4),Math.log(6),Math.log(8),Math.log(10),Math.log(12),Math.log(14)],scene,new THREE.Vector3(0,40,0))
     complete();
+
     return scene;
 }
 
 function animate(delta) {
+
     shapes.forEach(c => {
         c.rotation.x = Math.PI / 2
         c.rotation.y += delta * 2;
     })
+    let pos = Main.getPos();
+    let max=barGroups.length*40
+
+    groupMove.position.y -= (pos.y-0.5)*8
+    if (groupMove.position.y > 0) {
+        groupMove.position.y = 0;
+    } else if (groupMove.position.y < -max) {
+        groupMove.position.y = -max;
+    }
+
+    groupPivot.rotation.z = ((pos.x / 2.0) - 0.25) * TAU
+    
+
 }
 
 function deinit() {
@@ -55,27 +107,46 @@ function barGraph(data, scene, offset) {
          shapesTwo.push(cubeO)
          scenes[1].add(cubeO);
          Render.specterMaterial.color=0xD53229;*/
+    data=data.map(parseFloat) // cool
     if (!offset)
         offset = new THREE.Vector3(0, 0, 0)
 
     let factor = 80 / data.length
     let geo = new THREE.BoxBufferGeometry(factor / 2, 10, 15)
-    let s = 0xFFD631;
-    let e = 0xD53229;
+    let lowColor = 0x6A00FE;
+    let highColor = 0xD53229;
+    let lowRGB = Helper.hexToRGB(lowColor)
+    let highRGB = Helper.hexToRGB(highColor)
+    let rDelta = highRGB[0] - lowRGB[0]
+    let gDelta = highRGB[1] - lowRGB[1]
+    let bDelta = highRGB[2] - lowRGB[2]
 
+    let lowest = Math.min.apply(Math, data)
+    let highest = Math.max.apply(Math, data)
+    let valueDelta = highest - lowest;
 
+    let barGroup = new THREE.Group();
 
     for (let i = 0; i < data.length; i++) {
-        let val = data[i]
-        let scale = (72 - val) / 3
-        let color = ((e - s) * scale) + s
-        console.log(scale)
-
+        let val = (data[i] - lowest) / valueDelta
+        let scale = .1 + val * 2
+        let color = Helper.rgbToBinary(Math.floor(lowRGB[0] + rDelta * val), Math.floor(lowRGB[1] + gDelta * val), Math.floor(lowRGB[2] + bDelta * val))
+        //console.log(scale)
+        //if(i==0){
         let cube = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: color }));
-        cube.position.set(-40 + i * factor + offset.x, offset.y, scale * 4 + offset.z + 10)
+        cube.position.set(-40 + i * factor + offset.x, offset.y, +scale * 8 + offset.z)
         cube.scale.set(1, 1, scale)
-        scene.add(cube)
+        barGroup.add(cube)
+        //}
     }
+    barGroups.push(barGroup)
+    if (barGroups.length > 10)
+        scene.remove(barGroups.shift());
+    barGroups.forEach((g, i) => {
+        g.position.y = (barGroups.length-i) * 40
+    })
+
+    scene.add(barGroup)
 }
 
 function getHeat() {
@@ -85,6 +156,28 @@ function getHeat() {
             console.log(response.temps)
 
         })
+}
+function initStyle(){
+    let styleDom=document.createElement('style')
+    styleDom.innerHTML = `
+        .data-section{
+            position: absolute;
+            top: 148px;
+            left: 50%;
+            transform: translate(-50%);
+            width: 256px;
+            height: auto;
+            border-radius: 16px;
+            background: #fff4;
+            padding: 16px;
+        }
+        .data-section button{
+            position: relative;
+            left: 50%;
+            transform: trnslate(-50%);
+        }
+    `
+    document.body.appendChild(styleDom)
 }
 
 export { init, animate, deinit }

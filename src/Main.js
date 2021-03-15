@@ -45,6 +45,9 @@ let positionalData = { x: 0, y: 0 }
 
 let currentAppId = -1;
 
+//I DO THIS FOR THR GREATER GOOD
+window.TAU=Math.PI*2;
+
 function init(argument) {
     let preApps = document.querySelectorAll('.app');
     apps = []
@@ -59,6 +62,7 @@ function init(argument) {
         app.appId = index;
         app.addEventListener('pointerdown', ev => { appSelect(app, ev); })
         app.addEventListener('dragstart', ev => { ev.preventDefault() })
+        app.style.zIndex=1;
     });
 
     window.addEventListener('pointerup', winMouseUp)
@@ -128,7 +132,7 @@ function init(argument) {
         }
     });
 
-    UI.init(document.body);
+    UI.init(document.body,4);
 
 }
 init();
@@ -139,7 +143,7 @@ function openApp(id) {
     if (app) {
         app.classList.add('app-max')
         app.focused = true;
-        app.style.zIndex = 1;
+        app.style.zIndex = 0;
         if (Render) {
             openAppApplyRender(id, app)
         } else {
@@ -181,9 +185,9 @@ function closeApp(disableFade) {
     if (focused) {
         focused.classList.remove('app-max')
         if (focused.spot == -1)
-            focused.style.zIndex = 0;
+            focused.style.zIndex = -1;
         else
-            focused.style.zIndex = 3;
+            focused.style.zIndex = 1;
         focused.focused = undefined; //wow why did i name this like this
         window.history.pushState({}, '', '/');
         if (Render) {
@@ -463,6 +467,7 @@ function mousemove(ev) {
             if (targetMove.moving) { //called once per state change
                 targetMove.moving = undefined;
                 targetMove.spot = 0;
+                targetMove.style.zIndex=1;
                 barCalculate();
             }
 
@@ -470,6 +475,7 @@ function mousemove(ev) {
             if (!targetMove.moving) { //called once per state change
                 targetMove.moving = true;
                 targetMove.spot = -1;
+                targetMove.style.zIndex=-1;
 
                 barCalculate()
             }
@@ -666,7 +672,7 @@ function winMouseUp(ev) {
                 targetMove.classList.remove('app-max')
                 targetMove.focused = undefined;
                 focused = undefined;
-                targetMove.style.zIndex = 3;
+                //targetMove.style.zIndex = 2;
                 window.history.pushState({}, '', '/');
 
             } else {

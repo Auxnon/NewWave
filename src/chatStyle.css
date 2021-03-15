@@ -28,7 +28,7 @@
     width: 100vw;
     max-width: 720px;
     height: calc(100vh - 100px);
-    background-color: #fff6;
+    /*background-color: #fff6;*/
     position: absolute;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -179,7 +179,7 @@
 .chat-bottom {
     position: absolute;
     display: block;
-    height:52px;
+    height:50px;
     width: 360px;
     bottom: 0px;
     transform: translate(-50%, 0);
@@ -189,7 +189,7 @@
 .chat-bottom input {
     position: absolute;
     padding: 0.5em;
-    font-size: 20px;
+    font-size: 1.1em;
     border-radius: 16px;
     left: 50%;
     transform: translate(-50%, 0);
@@ -229,6 +229,7 @@
     text-align: center;
     margin: 32px;
     font-size: 22px;
+    color: #a4d4ab;
 }
 
 .login-menu{
@@ -286,4 +287,13 @@
     transform: translate(-50%);
     border-radius: 24px;
     background: #AAFF3B;
+}
+.room-deleter{
+    position: absolute;
+    right: 0;
+    bottom:0;
+    width: 32px;
+    height: 32px;
+    border-radius: 24px;
+    background: red;
 }

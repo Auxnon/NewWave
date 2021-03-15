@@ -9,11 +9,13 @@
  let physReady = false;
  let pendingLogin;
  let username;
+ let currentRoom;
 
  function initSocket() {
      try {
 
-
+         window.sysMessage = sysMessage //should only work for an 'admin' anyway
+         window.deleteAllRooms = deleteAllRooms;
 
          console.log('trying auth...');
          pendingLogin = UI.systemMessage('attempting communications...', 'net', true)
@@ -56,8 +58,8 @@
              }
          });
 
-         socket.on('message', function(username, m) {
-             Chat.hook(username, m)
+         socket.on('message', function(username, m, timestamp) {
+             Chat.hook(username, m, timestamp)
          });
          socket.on('join', function(name) {
              Chat.makeDivider(name + " joined the room");
@@ -66,16 +68,29 @@
              Chat.makeDivider(name + " left the room");
          })
          socket.on('guest', function(name) {
-            username=name;
+             username = name;
          });
-         socket.on('admin',function(name,guests){
-            Chat.setRooms(guests);
-            username=name;
+         socket.on('admin', function(name, guests,conversation) {
+             Chat.setRooms(guests);
+             if (guests && guests.length) {
+                 let options = {
+                     body: ("You now have " + guests.length + " guests!"),
+                     icon: './favicon-32x32.png',
+                     //link: 'https://Staddy.makeavoy.com'
+                 };
+                 let notification = new Notification("You now have " + guests.length + " guests!", options);
+             }
+             if (conversation && conversation.length)
+                 Chat.lastChats(conversation)
+
+             username = name;
          })
-         socket.on('switched',function(room){
-            Chat.clear();
-            Chat.makeDivider('Joined '+room)
-            
+         socket.on('switched', function(room, conversation) {
+             Chat.clear();
+
+             if (conversation && conversation.length)
+                 Chat.lastChats(conversation)
+             Chat.makeDivider('Joined ' + room)
          })
 
 
@@ -90,9 +105,6 @@
          })
 
          //lastChats();
-
-         getEquipment(PlayerManager.getOwnPlayer().id);
-         Control.init();
      } catch (err) {
          UI.systemMessage("Stage2 Auth: " + err, 'error');
          console.log('test')
@@ -167,11 +179,27 @@
  function sysMessage(m, type) {
      socket.emit('sysMessage', m, type);
  }
- function getUsername(){
-    return username;
- }
- function switchRoom(room){
-    socket.emit('switch', room);
+
+ function getUsername() {
+     return username;
  }
 
- export { guest, login, message, getUsername,switchRoom }
+ function switchRoom(room) {
+     currentRoom = room;
+     socket.emit('switch', room);
+ }
+
+ function deleteAllRooms() {
+     UI.systemMessage('DELETING ALL ROOMS ', 'person')
+     socket.emit('deleteAllRooms')
+ }
+
+ function deleteRoom() {
+     if (currentRoom) {
+         UI.systemMessage('deleting room ' + currentRoom, 'person')
+         socket.emit('deleteRoom', currentRoom)
+     }
+
+ }
+
+ export { guest, login, message, getUsername, switchRoom,deleteRoom }

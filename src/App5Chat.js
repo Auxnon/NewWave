@@ -11,11 +11,12 @@ import './chatStyle.css';
 
 //called at first run, plugs in all the goods
 function init(index, dom, complete) {
-    let scene = new THREE.Scene();
+    //let scene = new THREE.Scene();
     shrinkTitle();
     initChat(dom)
     Online.guest();
-    return scene;
+    //return scene;
+    complete();
 
 }
 
@@ -35,11 +36,12 @@ function deinit() {
 function open(canvas) {
     shrinkTitle();
     //if(chatInput)
-        chatInput.focus();
+    chatWrapper.style.display=''
+    chatInput.focus();
 }
 //called when app is closed out for another one
 function close() {
-
+    chatWrapper.style.display='none'
 }
 
 
@@ -54,20 +56,22 @@ import * as PlayerManager from "./PlayerManager.js";
 import * as Drawer from "./Drawer.js"; 
 import * as UI from "./UI.js";*/
 
-let chatPane;
+let chatWrapper; //holds all chat app elements, not the canvas as usual
+let chatPane; //holds only actual chat bubbles
 //let chatBlock;
-let chatInput;
-let chatBottom;
+let chatInput; //text entry
+
 
 //only matters to admin (me?)
 let loginMenu;
 let roomHider;
 let roomSwitcher;
+let roomDeleter;
 
 
 function initChat(mainDom) {
 
-    let chatWrapper=div('chat-wrapper')
+    chatWrapper=div('chat-wrapper')
     chatPane = div('chat-pane');
 
     //mainDom.appendChild(chatButton);
@@ -77,7 +81,7 @@ function initChat(mainDom) {
 
 
 
-    chatBottom = div('chat-bottom');
+    let chatBottom = div('chat-bottom');
 
     chatInput = document.createElement('input');
     let color = "black";//"0xffff55"; //World.getOwnPlayer().color
@@ -144,7 +148,6 @@ function initChat(mainDom) {
 
 
 
-    //setTimeout(()=>{Mail.init()},800);
     loginMenu=div('login-menu');
     let name=document.createElement('input')
     let pass=document.createElement('input')
@@ -161,13 +164,23 @@ function initChat(mainDom) {
         loginMenu.style.display = ''
     })
     roomSwitcher=div('room-switcher');
+    roomSwitcher.style.display='none' //explicitly set this so it's easier to toggle
     roomHider=div('room-switcher-hider')
     roomHider.addEventListener('click',ev=>{
-        if(roomSwitcher.style.display=='none')
+        if(roomSwitcher.style.display=='none'){
+            roomDeleter.style.display=''
             roomSwitcher.style.display=''
-        else
+        }else{
+            roomDeleter.style.display='none'
             roomSwitcher.style.display='none'
+        }
     })
+    roomDeleter=div('room-deleter');
+    roomDeleter.style.display='none'
+    roomDeleter.addEventListener('click',ev=>{
+        Online.deleteRoom()
+    })
+    mainDom.appendChild(roomDeleter)
     chatWrapper.appendChild(roomHider)
     
     mainDom.appendChild(loginMenu)
@@ -186,7 +199,7 @@ var pastPlayerName = "";
 var lastDom = null;
 var lastPlayerName = "";
 
-function addBubble(s, player, model) {
+function addBubble(s, player, timestamp) {
 
     let chatBubble = document.createElement('p');
     let color = player.color;
@@ -268,7 +281,7 @@ function addBubble(s, player, model) {
 
     chatRow.appendChild(chatBubble)
     chatPane.appendChild(chatRow)
-    chatPane.scrollTop = chatPane.scrollHeight;
+    chatPane.scrollTo(0, chatPane.scrollHeight);
 
 
     return chatBubble;
@@ -288,10 +301,13 @@ function submit() {
     }
 }
 
-function hook(username, message) {
-    //let player = PlayerManager.getUser(id) //World.getPlayer(id);
+function hook(username, message,timestamp) {
+    
     let player;
-    let color = 'black'
+    let color = '#fff';
+    if(!username.startsWith('Guest')){ //not bothering with user colors for now
+        color='#8A0'
+    }
     /*if(player){ //TODO
     	color=player.color;
     	color='#'+color.substring(2,color.length);
@@ -308,16 +324,16 @@ function hook(username, message) {
     //if(!Control.isMenuLocked())
     //	Control.addConfetti(window.innerWidth-30,window.innerHeight-30,225);
     if (!player)
-        player = { username: username, id: -1, color: 'black' }
-    addBubble(message, player);
+        player = { username, id: -1, color}
+    addBubble(message, player,timestamp);
     //BarUI.setNotifier(2, 1)
 }
 
 function lastChats(chats) {
     chats.forEach(chat => {
-        hook(chat[0], chat[1])
+        hook(chat[1], chat[2],chat[0])
     });
-    makeDivider('Last 10 messages')
+    //makeDivider('Last 10 messages')
 }
 
 function openChat() {
@@ -339,13 +355,15 @@ function closeChat() {
 
 function makeDivider(message) {
     let dom = document.createElement('div');
-    dom.className = 'chat-divider'
+    dom.className = 'chat-divider';
     let p = document.createElement('p');
-    p.innerText = message
-    dom.appendChild(p)
-    chatPane.appendChild(dom)
+    p.innerText = message;
+    dom.appendChild(p);
+    chatPane.appendChild(dom);
+    lastPlayerName='';
+    pastPlayerName='';
 }
-
+/*
 function setSize(bool) {
     if (!chatPane || !chatBottom)
         return
@@ -357,7 +375,7 @@ function setSize(bool) {
         chatBottom.style.bottom = '0px'
     }
 }
-
+*/
 function popBubble(anchor) {
     anchor.bubble.remove();
     anchor.bubble = null;
@@ -394,4 +412,4 @@ function clear(){
 
 
 
-export { init, animate, deinit, open, close,hook,makeDivider,setRooms,clear }
+export { init, animate, deinit, open, close,hook,makeDivider,setRooms,lastChats,clear }

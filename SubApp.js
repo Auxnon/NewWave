@@ -29,13 +29,18 @@ module.exports = function Game(app, express, server, io, sessionObj) {
         app.use(passportSession);*/
 
 
-
+    //Obviously these aren't actually constants per all caps naming convention, but just emphasizing how important these "hashes" are
     var USERS = [];
-    var GUESTS={};
+    var GUESTS = {};
+    var GUEST_ROOM_HASH = {};
+    var ROOM_LOGS = {};
+
     var possibleUsers = []; //TODO get rid of this lol
     var lastChats = [];
 
-    var roomCounter=0;
+    var roomCounter = 0;
+
+
 
 
 
@@ -238,7 +243,7 @@ module.exports = function Game(app, express, server, io, sessionObj) {
     // });
 
     var me;
-    var users = [];
+    //var users = [];
     var sockets = [];
 
     var count = -1;
@@ -259,28 +264,53 @@ module.exports = function Game(app, express, server, io, sessionObj) {
                 console.log('- kicked null user'.yellow)
             } else {
                 //socket nodes
-                if(user.guest){
-                    console.log('-socket connected to a guest:',user.username);
-                    socket.join(''+user.room)
-                    socket.broadcast.emit('guest', user ? user.username : 'Unknown');
-                }else{
+                user.socketId=socket.id;
+                if (user.guest) {
+                    console.log('-socket connected to a guest:', user.username);
+                    socket.join('' + user.room)
+                    socket.emit('guest', user ? user.username : 'Unknown');
+                    oneshotSpace.to('' + user.room).emit('join', user ? user.username : 'Unknown');
+                } else {
                     console.log('-socket connected to user:', user.username);
+                    user.socket = socket; //remmebering the socket but please dont send this anywhere
                     //let user = USERS[socket.request.session.id];
-                    socket.join(''+user.room)
-                    oneshotSpace.to(''+user.room).emit('join', user ? user.username : 'Unknown');
-                    socket.emit('admin',user.username,Object.values(GUESTS));
+                    socket.join('' + user.room)
+                    oneshotSpace.to('' + user.room).emit('join', user ? user.username : 'Unknown');
+                    let conversation = ROOM_LOGS[user.room];
+                    socket.emit('admin', user.username, Object.values(GUESTS),conversation);
 
                     socket.on('switch', function(room) {
                         let user = getUserObject(socket.request.session);
+                        oneshotSpace.to('' + user.room).emit('leave', user.username);
 
-                        socket.join(''+room);
-                        socket.emit('switched',room);
-                        user.room=room;
+                        socket.join('' + room);
+                        let conversation = ROOM_LOGS[room];
+                        socket.emit('switched', room, conversation);
+                        user.room = room;
+                        oneshotSpace.to('' + user.room).emit('join', user.username);
                         user.save();
                     });
+                    socket.on('deleteRoom', function(room) {
+                        socket.join('admin');
+                        deleteRoom(room)
+                        let conversation = ROOM_LOGS[room];
+                        socket.emit('admin', user.username, Object.values(GUESTS),conversation);
+                    })
+                    socket.on('deleteAllRooms', function() {
+                        socket.join('admin');
+                        let array = Object.values(GUESTS)
+                        array.forEach(guest => {
+                            deleteRoom(guest.room)
+                        })
+                    })
+
+
+                    socket.on('sysMessage', function(m, type) {
+                        oneshotSpace.emit('sysMessage', m, type)
+                    })
                 }
-            
-                
+
+
             }
         });
 
@@ -290,17 +320,34 @@ module.exports = function Game(app, express, server, io, sessionObj) {
                 user.online = false;
                 user.save();
             }*/
+            let user = getUserObject(socket.request.session);
+            if (user) {
+                if (user.room)
+                    oneshotSpace.to('' + user.room).emit('leave', user.username);
+                if (user.socket)
+                    user.socket = undefined
+            }
+
             console.log('lost connection to user')
         });
         socket.on('message', function(m) {
             let user = getUserObject(socket.request.session);
             //lastChats.push([user.id, m]);
             //if (lastChats.length > 10)
-                //lastChats.shift()
-            if(m=="pp"){
+            //lastChats.shift()
+            let timestamp = Date.now()
+            if (user.room) {
+                let conversation = ROOM_LOGS[user.room];
+                if (!conversation)
+                    ROOM_LOGS[user.room] = [
+                        [timestamp, user.username, m]
+                    ]
+                else
+                    conversation.push([timestamp, user.username, m]);
             }
 
-            oneshotSpace.to(''+user.room).emit('message', user.username, m)
+
+            oneshotSpace.to('' + user.room).emit('message', user.username, m, timestamp)
             /*User.findOne({ which: { username: user } }).then(o => {
                 console.log('messaged with id ', o ? o.username : undefined, " message: ", m);
             })*/
@@ -316,9 +363,7 @@ module.exports = function Game(app, express, server, io, sessionObj) {
         });*/
 
 
-        socket.on('sysMessage', function(m) {
-            oneshotSpace.emit('sysMessage', m)
-        })
+
 
 
     });
@@ -348,10 +393,10 @@ module.exports = function Game(app, express, server, io, sessionObj) {
         if (session) {
             let user = USERS[session.id];
             if (user) {
-                return user
-            }else{
-                let guest=GUESTS[session.id];
-                return guest
+                return user;
+            } else {
+                let guest = GUESTS[session.id];
+                return guest;
             }
         }
     }
@@ -365,9 +410,18 @@ module.exports = function Game(app, express, server, io, sessionObj) {
                     callback(result)
                 } else {
                     //USERS[session.id]={username:"guest"}
-                    let guest={username:"Guest"+roomCounter,guest:true,session:session.id,room:roomCounter}
-                    GUESTS[session.id]=guest;
+                    let guest = { username: "Guest " + roomCounter, guest: true, session: session.id, room: ''+roomCounter }
+                    let admins = Object.values(USERS);
+
+                    //socket.emit('admin', user.username, Object.values(GUESTS));
+                    GUESTS[session.id] = guest;
+                    GUEST_ROOM_HASH[guest.room] = guest;
                     roomCounter++;
+
+                    admins.forEach(admin => {
+                        if (admin.socket)
+                            admin.socket.emit('admin', admin.username, Object.values(GUESTS));
+                    })
                     callback(guest)
                 }
             })
@@ -375,6 +429,54 @@ module.exports = function Game(app, express, server, io, sessionObj) {
             callback(user)
         }
 
+    }
+
+    function deleteRoom(room) {
+        let conversation = ROOM_LOGS[room];
+        let guest = GUEST_ROOM_HASH[room];
+
+        if (conversation) {
+            writeLog('Room' + room, conversation)
+        }
+
+
+        delete ROOM_LOGS[room];
+        delete GUEST_ROOM_HASH[room];
+        if (guest && guest.socketId) {
+            let socket = oneshotSpace.sockets.connected[guest.socketId]
+            if (socket)
+                socket.disconnect('kicked');
+        }
+        //oneshotSpace.socketsLeave(''+room);
+
+        if (guest && guest.session) {
+            delete GUESTS[guest.session];
+        }
+
+    }
+
+    function writeLog(filename, array) {
+        writeFile(filename, JSON.stringify(array)) //yes im petty enough to save a json call because if it has to keep checking it could really add bloat
+    }
+
+    function writeFile(filename, text, iter) {
+        fs.writeFile(
+            './RoomLogs/' + filename + '.txt',
+
+            text, { flag: "wx" },
+            function(err) {
+                if (err) {
+                    if (iter && iter < 52) {
+                        console.log("file " + filename + " already exists, testing next");
+                        writeFile(filename + "_", text, iter == undefined ? 0 : iter);
+                    } else {
+                        console.log("file" + filename + " is boy howdy broken that's 52 undercores")
+                    }
+                } else {
+                    console.log("Succesfully written " + filename);
+                }
+            }
+        );
     }
 
 }
