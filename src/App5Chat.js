@@ -167,6 +167,8 @@ function initChat(mainDom) {
     roomSwitcher.style.display='none' //explicitly set this so it's easier to toggle
     roomHider=div('room-switcher-hider')
     roomHider.addEventListener('click',ev=>{
+        wiggleElement(ev.target)
+
         if(roomSwitcher.style.display=='none'){
             roomDeleter.style.display=''
             roomSwitcher.style.display=''
@@ -178,6 +180,7 @@ function initChat(mainDom) {
     roomDeleter=div('room-deleter');
     roomDeleter.style.display='none'
     roomDeleter.addEventListener('click',ev=>{
+        wiggleElement(ev.target)
         Online.deleteRoom()
     })
     mainDom.appendChild(roomDeleter)
@@ -189,10 +192,16 @@ function initChat(mainDom) {
 
     mainDom.appendChild(chatWrapper)
 }
+function wiggleElement(ele){
+    ele.style.animation='';
+    void ele.offsetWidth;
+    ele.style.animation='wiggle 0.4s';
+
+}
 function div(classname){
-    let dom=document.createElement('div')
-    dom.className=classname;
-    return dom;
+    let ele=document.createElement('div')
+    ele.className=classname;
+    return ele;
 }
 var pastDom = null;
 var pastPlayerName = "";
@@ -277,7 +286,7 @@ function addBubble(s, player, timestamp) {
     pastPlayerName= lastPlayerName;
     lastDom = chatBubble;
     lastPlayerName = player.username;
-
+    
 
     chatRow.appendChild(chatBubble)
     chatPane.appendChild(chatRow)

@@ -9,7 +9,7 @@ a {
 
 a.site-link,
 a.code-link,
-a.mail-link {
+a.mail-link,.chat-link {
     display: inline-block;
     font-size: 1.6em;
     font-weight: bold;
@@ -23,6 +23,10 @@ a.site-link,
 a.mail-link {
     background-color: #5AFC67;
     background-image: linear-gradient(150deg, #5AFC67 0%, #0095ED 100%);
+}
+.chat-link{
+    background-color: #4C3DFF;
+    background-image: linear-gradient(150deg, #1816D0 0%, #7400F0 100%);
 }
 
 a.code-link {
