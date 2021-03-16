@@ -264,7 +264,7 @@ module.exports = function Game(app, express, server, io, sessionObj) {
                 console.log('- kicked null user'.yellow)
             } else {
                 //socket nodes
-                user.socketId=socket.id;
+                user.socketId = socket.id;
                 if (user.guest) {
                     console.log('-socket connected to a guest:', user.username);
                     socket.join('' + user.room)
@@ -272,12 +272,12 @@ module.exports = function Game(app, express, server, io, sessionObj) {
                     oneshotSpace.to('' + user.room).emit('join', user ? user.username : 'Unknown');
                 } else {
                     console.log('-socket connected to user:', user.username);
-                    user.socket = socket; //remmebering the socket but please dont send this anywhere
+
                     //let user = USERS[socket.request.session.id];
                     socket.join('' + user.room)
                     oneshotSpace.to('' + user.room).emit('join', user ? user.username : 'Unknown');
                     let conversation = ROOM_LOGS[user.room];
-                    socket.emit('admin', user.username, Object.values(GUESTS),conversation);
+                    socket.emit('admin', user.username, Object.values(GUESTS), conversation);
 
                     socket.on('switch', function(room) {
                         let user = getUserObject(socket.request.session);
@@ -294,7 +294,7 @@ module.exports = function Game(app, express, server, io, sessionObj) {
                         socket.join('admin');
                         deleteRoom(room)
                         let conversation = ROOM_LOGS[room];
-                        socket.emit('admin', user.username, Object.values(GUESTS),conversation);
+                        socket.emit('admin', user.username, Object.values(GUESTS), conversation);
                     })
                     socket.on('deleteAllRooms', function() {
                         socket.join('admin');
@@ -322,8 +322,18 @@ module.exports = function Game(app, express, server, io, sessionObj) {
             }*/
             let user = getUserObject(socket.request.session);
             if (user) {
-                if (user.room)
+                if (user.room) {
+                    let timestamp = Date.now()
+                    let conversation = ROOM_LOGS[user.room];
+                    if (!conversation)
+                        ROOM_LOGS[user.room] = [
+                            [timestamp, 'System', user.username + ' closed chat']
+                        ]
+                    else
+                        conversation.push([timestamp, 'System', user.username + ' closed chat']);
+
                     oneshotSpace.to('' + user.room).emit('leave', user.username);
+                }
                 if (user.socket)
                     user.socket = undefined
             }
@@ -335,19 +345,21 @@ module.exports = function Game(app, express, server, io, sessionObj) {
             //lastChats.push([user.id, m]);
             //if (lastChats.length > 10)
             //lastChats.shift()
-            let timestamp = Date.now()
-            if (user.room) {
-                let conversation = ROOM_LOGS[user.room];
-                if (!conversation)
-                    ROOM_LOGS[user.room] = [
-                        [timestamp, user.username, m]
-                    ]
-                else
-                    conversation.push([timestamp, user.username, m]);
+            if (user) {
+                let timestamp = Date.now()
+                if (user.room) {
+                    let conversation = ROOM_LOGS[user.room];
+                    if (!conversation)
+                        ROOM_LOGS[user.room] = [
+                            [timestamp, user.username, m]
+                        ]
+                    else
+                        conversation.push([timestamp, user.username, m]);
+                }
+                oneshotSpace.to('' + user.room).emit('message', user.username, m, timestamp)
+            } else {
+                socket.disconnect('kicked')
             }
-
-
-            oneshotSpace.to('' + user.room).emit('message', user.username, m, timestamp)
             /*User.findOne({ which: { username: user } }).then(o => {
                 console.log('messaged with id ', o ? o.username : undefined, " message: ", m);
             })*/
@@ -410,7 +422,7 @@ module.exports = function Game(app, express, server, io, sessionObj) {
                     callback(result)
                 } else {
                     //USERS[session.id]={username:"guest"}
-                    let guest = { username: "Guest " + roomCounter, guest: true, session: session.id, room: ''+roomCounter }
+                    let guest = { username: "Guest " + roomCounter, guest: true, session: session.id, room: '' + roomCounter }
                     let admins = Object.values(USERS);
 
                     //socket.emit('admin', user.username, Object.values(GUESTS));
@@ -419,8 +431,13 @@ module.exports = function Game(app, express, server, io, sessionObj) {
                     roomCounter++;
 
                     admins.forEach(admin => {
-                        if (admin.socket)
-                            admin.socket.emit('admin', admin.username, Object.values(GUESTS));
+                        if (admin.socketId) {
+                            let socket = oneshotSpace.sockets.get(admin.socketId)
+                            if (socket)
+                                socket.emit('admin', admin.username, Object.values(GUESTS));
+                        }
+
+
                     })
                     callback(guest)
                 }
@@ -443,7 +460,8 @@ module.exports = function Game(app, express, server, io, sessionObj) {
         delete ROOM_LOGS[room];
         delete GUEST_ROOM_HASH[room];
         if (guest && guest.socketId) {
-            let socket = oneshotSpace.sockets.connected[guest.socketId]
+
+            let socket = oneshotSpace.sockets.get(guest.socketId)
             if (socket)
                 socket.disconnect('kicked');
         }

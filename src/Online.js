@@ -49,6 +49,9 @@
              if (data.includes('disconnect')) {
                  //Login.show();
                  //socket.io.opts.reconnection = false;
+                 UI.systemMessage('Disconnected! Trying refreshing ♥', 'net')
+                 Chat.clear();
+                 Chat.offline();
              } else {
                  pendingLogin = UI.systemMessage('lost connection, attempting reconnection...', 'net', true)
                  /*socket.connect('', {
@@ -71,6 +74,7 @@
              username = name;
          });
          socket.on('admin', function(name, guests,conversation) {
+            username = name;
              Chat.setRooms(guests);
              if (guests && guests.length) {
                  let options = {
@@ -83,7 +87,8 @@
              if (conversation && conversation.length)
                  Chat.lastChats(conversation)
 
-             username = name;
+             
+             Chat.unhideAdmin()
          })
          socket.on('switched', function(room, conversation) {
              Chat.clear();
@@ -198,6 +203,7 @@
      if (currentRoom) {
          UI.systemMessage('deleting room ' + currentRoom, 'person')
          socket.emit('deleteRoom', currentRoom)
+         Chat.clear();
      }
 
  }

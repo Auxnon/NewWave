@@ -1,5 +1,5 @@
 import * as UI from "./UI.js";
-import './mainStyle.css';
+import './style/mainStyle.css';
 
 var Render;
 
@@ -812,4 +812,4 @@ OlD curve code
             }
 **/
 
-export { pendApp, clearPendApp, apps, getPos, getCurrentAppId, shrinkTitle,getBarSide }
+export { openApp, pendApp, clearPendApp, apps, getPos, getCurrentAppId, shrinkTitle,getBarSide }

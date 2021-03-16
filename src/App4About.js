@@ -2,7 +2,7 @@ import * as THREE from "./lib/three.module.js";
 import * as Render from "./Render.js";
 import * as Main from "./Main.js";
 import * as UI from "./UI.js";
-import './aboutStyle.css'
+import './style/aboutStyle.css'
 
 //pass in name, and a pointer to a complete function which dictates everything has loaded, 
 //we keep track inside the mini class by counting  resources and incrementing till count is complete then, complte()
@@ -180,6 +180,11 @@ function initAbout(dom) {
         clickerOverlay.addEventListener('click', ev => {
             closeAll();
         })
+        let chatter=main.querySelector('.chat-link')
+        if(chatter)
+            chatter.addEventListener('click',ev=>{
+                Main.openApp(4) //chat id
+            })
         /*
         section.addEventListener('pointerdown',ev=>{
             moveTarget=section
@@ -268,6 +273,7 @@ function initAbout(dom) {
         }, 200)
         hideOverlay();
     })
+
 }
 
 function selectSection(section) {
@@ -341,20 +347,29 @@ function emailFixer(dom){
 
     let emailButton=dom.querySelector('.mail-link');
     function emailButtonOverride(ev){
+        const string="CWa[Wleo6]cW_b$Yec";//'Makeavoy@gmail.com'
+
+        let array=string.split("");
+       
+      
+
         //if(ev.originalEvent !== undefined){
             UI.systemMessage('Fixing email (Anti-Spam)','success')
            
             let counter=0;
             fixerInterval=setInterval(()=>{
-                emailButton.innerText=''+Math.floor(Math.random()*Math.pow(10,18));
+                let shiftedArray=array.map(function(val) {
+                    return String.fromCharCode(val.charCodeAt()+counter);
+                });
+                let newString=shiftedArray.join('');
+                emailButton.innerText=newString;//''+Math.floor(Math.random()*Math.pow(10,18));
                 counter++;
-                if(counter>20){
+                if(counter>10){
                     clearInterval(fixerInterval);
                     emailButton.removeEventListener('click',emailButtonOverride);
-                    emailButton.innerText='Makeavoy@gmail.com'
-                    emailButton.href="mailto:makeavoy@gmail.com"
+                    emailButton.href="mailto:"+newString;
                 }
-            },100)
+            },200)
             
         //}
         ev.preventDefault();
@@ -362,9 +377,6 @@ function emailFixer(dom){
     }
 
     emailButton.addEventListener('click',emailButtonOverride)
-    
-
-   // mailto:makeavoy@gmail.com
 }
 
 

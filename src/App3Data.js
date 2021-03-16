@@ -82,11 +82,11 @@ function animate(delta) {
         c.rotation.y += delta * 2;
     })
     let pos = Main.getPos();
-    let max=barGroups.length*40
+    let max=(barGroups.length)*40
 
     groupMove.position.y -= (pos.y-0.5)*8
-    if (groupMove.position.y > 0) {
-        groupMove.position.y = 0;
+    if (groupMove.position.y > -40) {
+        groupMove.position.y = -40;
     } else if (groupMove.position.y < -max) {
         groupMove.position.y = -max;
     }

@@ -3,7 +3,7 @@ import * as Helper from "./Helper.js";
 import {shrinkTitle} from "./Main.js";
 import * as THREE from "./lib/three.module.js";
 
-import './chatStyle.css';
+import './style/chatStyle.css';
 
 //pass in name, and a pointer to a complete function which dictates everything has loaded, 
 //we keep track inside the mini class by counting  resources and incrementing till count is complete then, complte()
@@ -152,7 +152,6 @@ function initChat(mainDom) {
     let name=document.createElement('input')
     let pass=document.createElement('input')
     let passButton=document.createElement('button')
-    loginMenu.className=
     pass.setAttribute('type','password')
     passButton.innerText='Submit'
 
@@ -166,6 +165,7 @@ function initChat(mainDom) {
     roomSwitcher=div('room-switcher');
     roomSwitcher.style.display='none' //explicitly set this so it's easier to toggle
     roomHider=div('room-switcher-hider')
+    roomHider.style.display='none'
     roomHider.addEventListener('click',ev=>{
         wiggleElement(ev.target)
 
@@ -186,11 +186,9 @@ function initChat(mainDom) {
     mainDom.appendChild(roomDeleter)
     chatWrapper.appendChild(roomHider)
     
-    mainDom.appendChild(loginMenu)
-
     chatWrapper.appendChild(roomSwitcher)
-
     mainDom.appendChild(chatWrapper)
+    mainDom.appendChild(loginMenu)
 }
 function wiggleElement(ele){
     ele.style.animation='';
@@ -298,7 +296,7 @@ function addBubble(s, player, timestamp) {
 }
 
 function submit() {
-    if (chatInput.value.length > 0 || Drawer.getState() == 'chat') { //redundant
+    if (chatInput.value.length > 0) { //redundant
         let message = '';
         /*if (Drawer.getState() == 'chat') {
             message += Drawer.getData() + '#'
@@ -313,9 +311,11 @@ function submit() {
 function hook(username, message,timestamp) {
     
     let player;
-    let color = '#fff';
-    if(!username.startsWith('Guest')){ //not bothering with user colors for now
-        color='#8A0'
+    let color = '#8A0';
+    if(username.startsWith('Guest')){ //not bothering with user colors for now
+        color='#fff';
+    }else if(username=="System"){
+        color='#f50'
     }
     /*if(player){ //TODO
     	color=player.color;
@@ -416,9 +416,17 @@ function clear(){
         child.remove();
     })
 }
+function unhideAdmin(){
+    roomHider.style.display='';
+}
+function offline(){
+    let banner=div('chat-banner')
+    banner.innerText='Offline\nReload site 😵'
+    chatPane.appendChild(banner)
+}
 
 
 
 
 
-export { init, animate, deinit, open, close,hook,makeDivider,setRooms,lastChats,clear }
+export { init, animate, deinit, open, close,hook,makeDivider,setRooms,lastChats,clear,unhideAdmin,offline }

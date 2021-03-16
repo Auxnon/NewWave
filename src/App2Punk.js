@@ -115,7 +115,7 @@ function animate(delta) {
 
         group.rotation.x = -Math.PI / 6 + (aniFactor / 100.0) * Math.PI / 16
         moveGroups.forEach(move => {
-            move.position.y -= 2;
+            move.position.y -= 2+(1-pos.y)*16;
             if (move.position.y < -200)
                 move.position.y = -60 + moveGroups.length * 32
         })
