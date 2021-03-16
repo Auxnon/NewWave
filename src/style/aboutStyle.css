@@ -260,9 +260,10 @@ section:focus {
     border-radius: 16px;
     display: inline-block;
     position: relative;
-    border: dashed #0005 3px;
+    border: dashed #0005 6px;
     box-sizing: border-box;
     margin: 16px;
+    transform: scale(.5);
 }
 
 .section-holder:last-child {
@@ -270,7 +271,7 @@ section:focus {
 }
 
 section.shrink {
-    width: 256px;
+    width: auto; /*256*/
     height: 144px;
     transform: none;
     left: 0;
@@ -279,10 +280,13 @@ section.shrink {
             height: 0;
             transform: initial;*/
 }
+section.shrink *:not(:first-child){
+    display: none;
+}
 
 section.shrink video,
 section.shrink img {
-    width: 256px;
+    width: auto;/*256px;*/
     height: 144px;
 }
 

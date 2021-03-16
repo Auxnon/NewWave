@@ -355,6 +355,7 @@ body.dark-mode {
 .dark-mode #app5 {
     background-color: #094112;
     background-image: linear-gradient(180deg, black 0%, #094112 100%);
+    border: solid 4px #85FFBD;
 }
 
 

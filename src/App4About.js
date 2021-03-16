@@ -66,7 +66,6 @@ function init(index, dom, complete) {
 
 
 function animate(delta) {
-
     if (portrait) {
         let pos = Main.getPos()
         portrait.rotation.y = (-.25 + pos.x / 2.0) * Math.PI
@@ -86,8 +85,6 @@ function animate(delta) {
                 eyeTimer = 0;
         }
     }
-
-
 }
 
 function deinit() {
@@ -180,9 +177,9 @@ function initAbout(dom) {
         clickerOverlay.addEventListener('click', ev => {
             closeAll();
         })
-        let chatter=main.querySelector('.chat-link')
-        if(chatter)
-            chatter.addEventListener('click',ev=>{
+        let chatter = main.querySelector('.chat-link')
+        if (chatter)
+            chatter.addEventListener('click', ev => {
                 Main.openApp(4) //chat id
             })
         /*
@@ -305,7 +302,7 @@ function fit() {
         section.scrollTo(0, 0)
         if (section.className == 'shrink') {
             let holder = holders[i]
-            section.style.left = holder.offsetLeft + 'px';
+            section.style.left = (holder.offsetLeft+128-section.offsetWidth/2) + 'px';
             section.style.top = holder.offsetTop + 'px';
             section.style.zIndex = 0;
         } else
@@ -342,41 +339,42 @@ function unhideOverlay() {
     overlay.style.opacity = 1;
 }
 
-function emailFixer(dom){
+function emailFixer(dom) {
     let fixerInterval;
 
-    let emailButton=dom.querySelector('.mail-link');
-    function emailButtonOverride(ev){
-        const string="CWa[Wleo6]cW_b$Yec";//'Makeavoy@gmail.com'
+    let emailButton = dom.querySelector('.mail-link');
 
-        let array=string.split("");
-       
-      
+    function emailButtonOverride(ev) {
+        const string = "CWa[Wleo6]cW_b$Yec"; //'Makeavoy@gmail.com'
+
+        let array = string.split("");
+
+
 
         //if(ev.originalEvent !== undefined){
-            UI.systemMessage('Fixing email (Anti-Spam)','success')
-           
-            let counter=0;
-            fixerInterval=setInterval(()=>{
-                let shiftedArray=array.map(function(val) {
-                    return String.fromCharCode(val.charCodeAt()+counter);
-                });
-                let newString=shiftedArray.join('');
-                emailButton.innerText=newString;//''+Math.floor(Math.random()*Math.pow(10,18));
-                counter++;
-                if(counter>10){
-                    clearInterval(fixerInterval);
-                    emailButton.removeEventListener('click',emailButtonOverride);
-                    emailButton.href="mailto:"+newString;
-                }
-            },200)
-            
+        UI.systemMessage('Fixing email (Anti-Spam)', 'success')
+
+        let counter = 0;
+        fixerInterval = setInterval(() => {
+            let shiftedArray = array.map(function(val) {
+                return String.fromCharCode(val.charCodeAt() + counter);
+            });
+            let newString = shiftedArray.join('');
+            emailButton.innerText = newString; //''+Math.floor(Math.random()*Math.pow(10,18));
+            counter++;
+            if (counter > 10) {
+                clearInterval(fixerInterval);
+                emailButton.removeEventListener('click', emailButtonOverride);
+                emailButton.href = "mailto:" + newString;
+            }
+        }, 200)
+
         //}
         ev.preventDefault();
         return false;
     }
 
-    emailButton.addEventListener('click',emailButtonOverride)
+    emailButton.addEventListener('click', emailButtonOverride)
 }
 
 
