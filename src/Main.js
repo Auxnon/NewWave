@@ -17,7 +17,7 @@ const SCENE_IMPORT = [
 ]
 
 //for now we need all these filled with some kind of data, no undefineds
-const HASHES = { "sky": 1, "punk": 2, "data": 3, "portfolio": 4, "chat": 5, "donate":6, "room": 7 }
+const HASHES = { "sky": 1, "punk": 2, "data": 3, "portfolio": 4, "chat": 5, "donate": 6, "room": 7 }
 
 //doms
 let apps;
@@ -55,6 +55,7 @@ let currentAppId = -1;
 window.TAU = Math.PI * 2;
 
 function init(argument) {
+    window.UI=UI
     let preApps = document.querySelectorAll('.app');
     apps = [undefined]
     preApps.forEach(app => { //convert out of a nodelist to an array, it matters trust me
@@ -71,7 +72,7 @@ function init(argument) {
             app.container = index > 5 ? 1 : 0;
             app.addEventListener('pointerdown', ev => { appSelect(app, ev); })
             app.addEventListener('dragstart', ev => { ev.preventDefault() })
-            app.style.zIndex = 1;
+            app.style.zIndex = index > 5 ? -1 : 1;
         }
     });
 
@@ -350,9 +351,14 @@ function barCalculate(notate) {
     })
 
     let homeRect = appHome.getBoundingClientRect();
-    appsInHome.forEach(app => {
+    let rows = (appsInHome.length * (56 + 28) + 28) / homeRect.width;
+    rows = Math.ceil(rows)
+    let perRow = appsInHome.length / rows
+    console.log('rows', rows)
+    let homeRatio = (homeRect.width - 112) / (appsInHome.length - 1)
+    appsInHome.forEach((app, relativeIndex) => {
         let i = app.appId;
-        appPoints[i] = { x: 32 + homeRect.left + (relativeIndex) * ratio, y: homeRect.top };
+        appPoints[i] = { x: 56 + homeRect.left + (relativeIndex) * homeRatio, y: homeRect.top + 56 };
         _moveEle(app, appPoints[i].x, appPoints[i].y)
     })
     if (barLineFactor == -1) {
@@ -789,7 +795,7 @@ function switchApp(id) {
     }
     openApp(id);
     let ar = Object.keys(HASHES)
-    let hashString = ar[id-1] //as we offset our app ids to start at 1, new arrays need id -1
+    let hashString = ar[id - 1] //as we offset our app ids to start at 1, new arrays need id -1
     if (hashString)
         window.location.hash = '#' + hashString
 }

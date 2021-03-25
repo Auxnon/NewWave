@@ -120,7 +120,7 @@ function systemMessage(m, type, persistant, timeout) {
         setTimeout(function() {
             if (persistant) {
                 dom.style.position = 'absolute'
-                dom.style.left = '-64px'
+                //dom.style.left = '32px'
                 dom.addEventListener('click', function(ev) {
                     dom.style.animation = '0.5s uiSysMax forwards';
                     setTimeout(function() {

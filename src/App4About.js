@@ -104,7 +104,7 @@ function open(canvas) {
         Render.resize();
     }
 
-
+    fit();
     setTimeout(function() {
         if (main) {
             main.style.display = 'initial'
@@ -146,7 +146,7 @@ let resizeTimer;
 let currentSection
 let clickerOverlay;
 let portfolioHolder;
-
+let closeButton;
 
 
 function initAbout(dom) {
@@ -174,9 +174,11 @@ function initAbout(dom) {
         section.addEventListener('click', ev => {
             selectSection(section)
         })
-        clickerOverlay.addEventListener('click', ev => {
-            closeAll();
-        })
+        clickerOverlay.addEventListener('click', closeAll)
+        closeButton=main.querySelector('#closeButton')
+        if(closeButton)
+            closeButton.addEventListener('click', closeAll)
+
         let chatter = main.querySelector('.chat-link')
         if (chatter)
             chatter.addEventListener('click', ev => {
@@ -283,8 +285,11 @@ function selectSection(section) {
 
         portfolioHolder.style.overflowY='hidden'
 
+
         section.className = ''
         section.style.left = '50%';
+        closeButton.style.display='block'
+        section.addEventListener('scroll',sectionScrollChecker)
         let sHeight = section.parentElement.parentElement.scrollTop
         let height = window.innerHeight; //section.parentElement.parentElement.offsetHeight
         //UI.systemMessage('sheight'+sHeight+' height '+height,'warn')
@@ -317,6 +322,7 @@ function shrinkAll() {
     main.querySelectorAll('section').forEach(s => {
         if (s.className != 'shrink') {
             s.className = 'shrink'
+            s.removeEventListener('scroll',sectionScrollChecker)
             let vid = s.querySelector('video')
             if (vid)
                 vid.pause();
@@ -330,6 +336,7 @@ function closeAll() {
     portfolioHolder.style.overflowY=''
     currentSection = null;
     clickerOverlay.classList.remove('clicker-active');
+    closeButton.style.display=''
 }
 
 function hideOverlay() {
@@ -380,16 +387,9 @@ function emailFixer(dom) {
     emailButton.addEventListener('click', emailButtonOverride)
 }
 
-
-
-
-
-
-
-
-
-
-
+function sectionScrollChecker(ev){
+    console.log('scroll'+ev.target.scrollTop)
+}
 
 
 
