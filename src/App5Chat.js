@@ -12,6 +12,7 @@ import './style/chatStyle.css';
 //called at first run, plugs in all the goods
 function init(index, dom, complete) {
     //let scene = new THREE.Scene();
+
     shrinkTitle();
     initChat(dom)
     Online.guest();
@@ -86,6 +87,7 @@ function initChat(mainDom) {
     chatInput = document.createElement('input');
     let color = "black";//"0xffff55"; //World.getOwnPlayer().color
     //color = '#' + color.substring(2, color.length);
+    chatInput.placeholder="Send me a message!"
     chatInput.style.border = color + " 6px solid"
     chatBottom.appendChild(chatInput);
 
@@ -103,8 +105,6 @@ function initChat(mainDom) {
     //bottom.appendChild(toggle);
 
     chatWrapper.appendChild(chatBottom)
-
-
 
     //chatBlock.style.left='100%';
 

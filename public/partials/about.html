@@ -25,23 +25,35 @@
                 </article>
             </section>
             <section>
-                <img src="./assets/makeavoy.png"></img>
+                <video src="./assets/makeavoy.mp4" muted loop></video>
                 <article>
                     <h2>Makeavoy</h2>
                     <p>This site, makeavoy.com, utilizies all of my favorite techniques I've picked up over the years. It's a little experimental as it's exploring what's possible for a single page application, so don't be surprised if the source is a little bit sloppy! There's a lot going on under the hood so I'm going to break it down here...</p>
                     <h2>Backend</h2>
-                    <p>I primarily use node.js for it's approachable nature front a front-end first approach.
-                        Vhost and exoress takes care of the subdomain routing so I can easily incorporate multiple projects and easily seperate <abbr title="Progressive Web App">PWA</abbr> manifests. socket.io trivializes the websocket for chat communications and state updates. Although I also utilize a physics server for another experimental project #SocialGame. There's also mariadb and asqlite3 databases for testing user authentication. After that, the various projects are seperated by folders and sub modules to keep things organized. It's all rolled out on my locally hosted ubuntu server. It was Arch linux but I opted for something a little more mainstream for maintenance reasons :)
+                    <p>I primarily use node.js for it's approachable nature coming from a front-end background.
+                        Vhost and express.js take care of the subdomain routing so I can easily incorporate multiple projects and easily seperate <abbr title="Progressive Web App">PWA</abbr> manifests. socket.io trivializes the websocket for chat communications and rapid status updates. Although I also utilize a physics server for another experimental project i just call <a href="https://dev.makeavoy.com">Social Game</a>. There's also mariadb and asqlite3 databases for testing user authentication. After that, the various projects are seperated by folders and sub modules to keep things organized. It's all rolled out on my locally hosted ubuntu server. It was Arch linux but I opted for something a little more mainstream for maintenance reasons :)
                     </p>
                     <h2>FrontEnd</h2>
                     <p>
-                        The main site utilizes a lot of 3d via Three.js. Due to the above average script sizes, everything is lazy loaded on demand in order to reduce the Time to Interaction. The Rendering system is triggered to load at runtime, while each additional "app" is loaded upon clicking so as to only load the necessary content, at the cost of some load time. The intial payload hosts the basics such as the 3d css loading animation, and the app navigation system. The site loads in a self made vector title that 'draws' into place by a stroke-dashoffset. It also includes dynamic app button movement and placement ala an iPad, and a snazzy vector based drawing system to animate the navigation bar using perpendicular velocity offsets. The title accommodates for the bar as well. Finally, each app when loaded in applies to canvas3d the scene contents and animation cycles. Upon swapping apps, the buffer is dumped to an image raster and stealthily swapped in for a clean load out. This is because there can only be one canvas3d at any given time, so this was a nice hack.
+                        The main site utilizes a lot of 3d via Three.js. Due to the above average script sizes, everything is lazy loaded on demand in order to reduce the Time to Interaction. The Rendering system is triggered to load at runtime, while each additional "app" is loaded upon clicking so as to only load the necessary content, at the cost of some load time. The intial payload hosts the basics such as the 3d css loading animation, and the app navigation system. The site loads in a self made SVG title that 'draws' into place by a stroke-dashoffset. It also includes dynamic app button movement and placement ala an iPad, and a snazzy vector based drawing system to animate the navigation bar using perpendicular velocity offsets. The title accommodates for the bar as well. Finally, each app when loaded in applies to canvas3d the scene contents and animation cycles. Upon swapping apps, the buffer is dumped to an image raster and stealthily swapped in for a clean load out. This is because there can only be one canvas3d at any given time, so this was a nice hack. Finally hit the top right icon to toggle night mode! All 3d and SVG assets are my own.
+
+                         Currently the main page hosts 5 apps. First two being mostly artistic intent: a floating island landscape, and vapor wave style skull. After that you can try the bar graph generator, try any data range, only real number arrays please! Currently you're in my portfolio app, which is over the top with its adjusting panels, but it does support left, right, spacebar, and escape for some accessiblity options. Finally the chat app is a fullly functional messaging system that only I can read. It supports infinite rooms for as many guest users want to send me a message, and is capable of saving to logs so I should be able to read them after the fact. I have a lot of one off ideas I want to host on the main page, since it only loads what it needs. Stay Tuned!
                     </p>
                     <a href="https://github.com/Auxnon/NewWave" class="code-link"></a>
                 </article>
             </section>
             <section>
-                <video src="./assets/bottle1.mp4" muted loop></video>
+                <video src="./assets/social.mp4" muted loop></video>
+                <h2>Social Game - experimental online board game</h2>
+                <p>
+                    This was an extremely ambitious project. As mentioned before, the server hosts an instance of cannon.js that keeps synced up with local user instances of cannon.js in order to replicate a multiplayer physics sandbox experience on a hexagonal grid game platform. The current results are less then ideal as the updates are not constant in order to not strain the server. But aside the occasional physics artifacts it has the abilit to 'store' 3d items into the DOM, send messages including 16x16 images, modify the terrain on the fly, and user authentication and administration. There was also a D&D character sheet implemented that saves into a sqlite3 database. Everything is very WIP. An "infinite" terrain system is in the works, as well as height maps, inverse kinematics animation systems, better environmental glsl effects, and waypointing. Like i said, extremely ambitious. But I'm super happy with it so far!
+
+                    You can try one of the test users, their names all start with "B", login is just 1234. Don't crash it 😉
+                </p>
+                <a href="https://dev.makeavoy.com/" class="site-link"></a>
+            </section>
+            <section>
+                <video src="./assets/desk.mp4" muted loop></video>
                 <article>
                     <h2>Desk.js</h2>
                     <p>This interface is intended for touchscreens. It utilizes all of your fingers for a multi touch interface, and for what seemed like the first time, allows different objects to be moved and scaled simultaneously. It's not perfect but you can use both hands or even separate fingers on the same hand like a mad man to move and stretch. You can drag an image file to it from the desktop to paste in images, or double tap a square to paste text. You can select multiple elements with one finger by overlapping them, just like if you had pieces of paper ontop of each other. Context menu (long prress or right click) the desktop brings up a radial menu. The entire project is a bit rough and really needs an update to iron out the bugs, including some lag only on iOS. </p>
@@ -50,10 +62,12 @@
                 </article>
             </section>
             <section>
-                <video src="./assets/svgEditor.mp4" muted loop></video>
+                <video src="./assets/fruit.mp4" muted loop></video>
                 <article>
-                    <h2>"Pixel Perfect"</h2>
-                    <p></p>
+                    <h2>Fruit App</h2>
+                    <p>This was a recent attempt to achieve a "Pixel Perfect" web application. It's based on dribble artist <a href="https://dribbble.com/shots/6798936-Food-fruits">Caroline's</a> design. It's not perfect obviously, especialy without knowing exact measurements. It's mobile first, so desktop looks a little bit silly, but it's fully responsive. Pulled some slightly <a href="https://material.io/resources/icons/">Material Design icons</a> plus my own, and added some nifty animations for transitions. This is my first official use of SCSS, using just sublime build system rather then webpack. Due to the small scope, housed the JS in the html file. </p>
+                    <a href="https://makeavoy.com/fruit/" class="site-link"></a>
+                    <a href="https://github.com/Auxnon/PixelPerfect" class="code-link"></a>
                 </article>
             </section>
             <section>
@@ -111,4 +125,4 @@
             
         </div>
     </div>
-</main><script src="../runtime.33ba83291e11c53fc839.js"></script><script src="../main.4f99a708cfc9c335ac1b.js"></script>
+</main><script src="../runtime.e8e2377fb547020ec4db.js"></script><script src="../main.68dab756dd4ef656b5ad.js"></script>

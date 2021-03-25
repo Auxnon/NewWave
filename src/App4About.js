@@ -145,6 +145,7 @@ let resizeTimer;
 //let moveTarget;
 let currentSection
 let clickerOverlay;
+let portfolioHolder;
 
 
 
@@ -172,7 +173,6 @@ function initAbout(dom) {
 
         section.addEventListener('click', ev => {
             selectSection(section)
-
         })
         clickerOverlay.addEventListener('click', ev => {
             closeAll();
@@ -180,7 +180,7 @@ function initAbout(dom) {
         let chatter = main.querySelector('.chat-link')
         if (chatter)
             chatter.addEventListener('click', ev => {
-                Main.openApp(4) //chat id
+                Main.switchApp("chat") //chat id
             })
         /*
         section.addEventListener('pointerdown',ev=>{
@@ -225,7 +225,7 @@ function initAbout(dom) {
     })
     setTimeout(function() { fit() }, 1); //make sure DOM is done
     let portraitHolder = main.querySelector('.portrait-holder')
-    let portfolioHolder = main.querySelector('.portfolio-section-block')
+    portfolioHolder = main.querySelector('.portfolio-section-block')
     portfolioHolder.addEventListener('scroll', ev => {
         if (ev.target.scrollTop > 0) {
             portraitHolder.style.height = '128px';
@@ -250,13 +250,13 @@ function initAbout(dom) {
                     selectSection(currentSection.parentElement.lastElementChild)
                 else
                     selectSection(currentSection.previousElementSibling)
-            } else if (ev.which == 39 || ev.which == 32) { //right
+            } else if (ev.which == 39 ) { //right //|| ev.which == 32
                 if (currentSection.nextElementSibling == null)
                     selectSection(currentSection.parentElement.children[1])
                 else
                     selectSection(currentSection.nextElementSibling)
             }
-        } else if (ev.which == 27 || ev.which == 39 || ev.which == 32) {
+        } else if (ev.which == 27 || ev.which == 39 ) { //ev.which == 32
             selectSection(main.querySelector('section'))
         }
 
@@ -280,6 +280,8 @@ function selectSection(section) {
         let vid = section.querySelector('video')
         if (vid)
             vid.play();
+
+        portfolioHolder.style.overflowY='hidden'
 
         section.className = ''
         section.style.left = '50%';
@@ -325,6 +327,7 @@ function shrinkAll() {
 function closeAll() {
     shrinkAll()
     fit();
+    portfolioHolder.style.overflowY=''
     currentSection = null;
     clickerOverlay.classList.remove('clicker-active');
 }

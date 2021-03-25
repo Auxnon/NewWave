@@ -6,13 +6,18 @@ var Render;
 //We could have technically done imports as a variable input to the Render class import statement
 //But webpack won't convert the chunk parameters correctly unless it's explicitly within an import statement
 const SCENE_IMPORT = [
+    undefined,
     i => { import( /* webpackChunkName: "App1SkyIsland" */ './App1SkyIsland').then(i) },
     i => { import( /* webpackChunkName: "App2Punk" */ './App2Punk').then(i) },
     i => { import( /* webpackChunkName: "App3Data" */ './App3Data').then(i) },
     i => { import( /* webpackChunkName: "App4About" */ './App4About').then(i) },
-    i => { import( /* webpackChunkName: "App5Chat" */ './App5Chat').then(i) }
+    i => { import( /* webpackChunkName: "App5Chat" */ './App5Chat').then(i) },
+    undefined,
+    i => { import( /* webpackChunkName: "App7Room" */ './App7Room').then(i) }
 ]
-const HASHES = { "sky": 0, "punk": 1, "data": 2, "portfolio": 3, "chat": 4 }
+
+//for now we need all these filled with some kind of data, no undefineds
+const HASHES = { "sky": 1, "punk": 2, "data": 3, "portfolio": 4, "chat": 5, "donate":6, "room": 7 }
 
 //doms
 let apps;
@@ -20,6 +25,7 @@ let svg;
 let path;
 let bar;
 let barBox;
+let appHome;
 let mainTitle;
 
 let focused;
@@ -46,23 +52,27 @@ let positionalData = { x: 0, y: 0 }
 let currentAppId = -1;
 
 //I DO THIS FOR THR GREATER GOOD
-window.TAU=Math.PI*2;
+window.TAU = Math.PI * 2;
 
 function init(argument) {
     let preApps = document.querySelectorAll('.app');
-    apps = []
+    apps = [undefined]
     preApps.forEach(app => { //convert out of a nodelist to an array, it matters trust me
-        apps.push(app)
+        let i = parseInt(app.id.replace('app', ''))
+        apps[i] = (app)
     });
 
     apps.forEach((app, index) => {
-        app.style.top = Math.random() * window.innerWidth + 'px'
-        app.style.left = Math.random() * window.innerHeight + 'px'
-        app.offset = { x: 0, y: 0 };
-        app.appId = index;
-        app.addEventListener('pointerdown', ev => { appSelect(app, ev); })
-        app.addEventListener('dragstart', ev => { ev.preventDefault() })
-        app.style.zIndex=1;
+        if (app) {
+            app.style.top = Math.random() * window.innerWidth + 'px'
+            app.style.left = Math.random() * window.innerHeight + 'px'
+            app.offset = { x: 0, y: 0 };
+            app.appId = index; //lets not parseInt constantly
+            app.container = index > 5 ? 1 : 0;
+            app.addEventListener('pointerdown', ev => { appSelect(app, ev); })
+            app.addEventListener('dragstart', ev => { ev.preventDefault() })
+            app.style.zIndex = 1;
+        }
     });
 
     window.addEventListener('pointerup', winMouseUp)
@@ -84,7 +94,7 @@ function init(argument) {
 
     resize();
     animate();
-    setInterval(() => { boundaryCheck() }, 3000)
+    setInterval(() => { boundaryCheck() }, 10000)
     let brightness = document.querySelector('#brightness');
     brightness.addEventListener('click', ev => {
         if (brightness.classList.contains('brightnessDark')) {
@@ -115,8 +125,6 @@ function init(argument) {
         if (id != undefined)
             openApp(id)
     }
-
-
     // button.onclick = e => import(/* webpackChunkName: "print" */ './print').then(module => {
     //     const print = module.default;
 
@@ -132,7 +140,7 @@ function init(argument) {
         }
     });
 
-    UI.init(document.body,4);
+    UI.init(document.body, 4);
 
 }
 init();
@@ -172,10 +180,10 @@ function openAppApplyRender(id, app) {
         setTimeout(() => { afterImage.style.opacity = 0; }, 1);
     } else { //silly I know but it's just easier to keep the afterImage within the dom, even if in this logical case it's not used
         afterImage.style.opacity = 0;
-        if (app == 0)
-            apps[1].appendChild(afterImage);
+        if (app == 1)
+            apps[2].appendChild(afterImage);
         else
-            apps[0].appendChild(afterImage);
+            apps[1].appendChild(afterImage);
     }
     Render.bufferPrint();
     Render.flipScene(id, app)
@@ -184,7 +192,7 @@ function openAppApplyRender(id, app) {
 function closeApp(disableFade) {
     if (focused) {
         focused.classList.remove('app-max')
-        if (focused.spot == -1)
+        if (focused.container == 1)
             focused.style.zIndex = -1;
         else
             focused.style.zIndex = 1;
@@ -202,7 +210,7 @@ function closeApp(disableFade) {
     }
     mainTitle.classList.remove('shrink')
 
-    currentAppId = 1;
+    currentAppId = 0;
 }
 
 
@@ -237,6 +245,7 @@ function initLine() {
 
 
 function barInit() {
+    appHome = document.querySelector('#app-center')
     bar = document.querySelector('#bar')
     let barHandle = document.querySelector('#barHandle')
     barHandle.addEventListener('pointerdown', ev => {
@@ -272,19 +281,23 @@ function barCalculate(notate) {
     //first determine  how many apps will be visably part of the app bar
     let count = 0;
     let appsInRow = [];
+    let appsInHome = []
     let sideWays = barPos == 0 || barPos == 2;
 
-    if (!notate) {
-        apps.forEach(app => {
-            if (app.spot != -1) {
+    apps.forEach(app => {
+        if (app) {
+            if (app.container == 0) {
                 appsInRow.push(app)
                 count++;
+            } else {
+                appsInHome.push(app)
             }
-        })
-    } else {
+        }
+    })
+    /* } else {
         count = apps.length;
         appsInRow = apps;
-    }
+    }*/
     if (sideWays) {
         bar.style.height = (count > 0 ? count : 1) * 64 + 'px'
         bar.style.width = '64px'
@@ -293,13 +306,10 @@ function barCalculate(notate) {
         bar.style.height = '64px'
     }
 
-
-
-
-    let rect = bar.getBoundingClientRect();
-    barBox = rect
-    let width = rect.width;
-    let height = rect.height;
+    let barRect = bar.getBoundingClientRect();
+    barBox = barRect
+    let width = barRect.width;
+    let height = barRect.height;
 
     let ratio;
     if (sideWays)
@@ -318,23 +328,33 @@ function barCalculate(notate) {
             });
     }
 
+    let relativeIndex = -1;
+    appsInRow.forEach((app, relativeIndex) => {
 
-    for (let i = 0; i < count; i++) {
+        let i = app.appId;
         if (sideWays)
-            appPoints[i] = { x: rect.left + width / 2, y: 32 + rect.top + (i) * ratio };
+            appPoints[i] = { x: barRect.left + width / 2, y: 32 + barRect.top + (relativeIndex) * ratio };
         else
-            appPoints[i] = { x: 32 + rect.left + (i) * ratio, y: rect.top + height / 2 };
+            appPoints[i] = { x: 32 + barRect.left + (relativeIndex) * ratio, y: barRect.top + height / 2 };
 
 
-        if (targetMove && targetMove == appsInRow[i])
+        if (targetMove && targetMove == app) //appsInRow[i])
             targetPoint = appPoints[i]
 
         if (notate) {
-            apps[i].spot = i;
-            appPoints[i].app = appsInRow[i]
+            app.spot = relativeIndex;
+            appPoints[i].app = app; //appsInRow[i]
         }
-        _moveEle(appsInRow[i], appPoints[i].x, appPoints[i].y)
-    }
+        _moveEle(app, appPoints[i].x, appPoints[i].y) //appsInRow[i]
+
+    })
+
+    let homeRect = appHome.getBoundingClientRect();
+    appsInHome.forEach(app => {
+        let i = app.appId;
+        appPoints[i] = { x: 32 + homeRect.left + (relativeIndex) * ratio, y: homeRect.top };
+        _moveEle(app, appPoints[i].x, appPoints[i].y)
+    })
     if (barLineFactor == -1) {
         let handle = barHandle.getBoundingClientRect();
         if (sideWays) {
@@ -411,7 +431,6 @@ function animate() {
             if (barLineFactor % 5 == 1) {
 
                 let target = points.shift();
-                //console.log('chop off points ' + points.length)
                 if (points.length <= 3) {
                     barLineFactor = -1;
                     barCalculate();
@@ -425,8 +444,6 @@ function animate() {
 
         }
     }
-    /*if(targetMove)
-        moveFactor++;*/
 
     requestAnimationFrame(animate);
 }
@@ -466,16 +483,16 @@ function mousemove(ev) {
             targetMove.pos = { x: point.x - d.x / 3, y: point.y - d.y / 3 }
             if (targetMove.moving) { //called once per state change
                 targetMove.moving = undefined;
-                targetMove.spot = 0;
-                targetMove.style.zIndex=1;
+                targetMove.container = 0;
+                targetMove.style.zIndex = 1;
                 barCalculate();
             }
 
         } else {
             if (!targetMove.moving) { //called once per state change
                 targetMove.moving = true;
-                targetMove.spot = -1;
-                targetMove.style.zIndex=-1;
+                targetMove.container = 1;
+                targetMove.style.zIndex = -1;
 
                 barCalculate()
             }
@@ -676,13 +693,7 @@ function winMouseUp(ev) {
                 window.history.pushState({}, '', '/');
 
             } else {
-                closeApp(true);
-
-                openApp(targetMove.appId);
-                let ar = Object.keys(HASHES)
-                let hashString = ar[targetMove.appId]
-                if (hashString)
-                    window.location.hash = '#' + hashString
+                switchApp(targetMove.appId)
                 //window.history.pushState({ appId: targetMove.appId }, targetMove.name, '?id=' + targetMove.appId + '&app=' + targetMove.id);
             }
         } else {
@@ -702,7 +713,7 @@ function winMouseUp(ev) {
 
 function boundaryCheck() {
     apps.forEach(app => {
-        if (!app.focused) {
+        if (app && !app.focused) {
             let rect = app.getBoundingClientRect();
 
             let x = rect.left;
@@ -764,8 +775,23 @@ function shrinkTitle() {
     mainTitle.classList.add('shrink')
 }
 
-function getBarSide(){
+function getBarSide() {
     barPos
+}
+
+function switchApp(id) {
+
+    closeApp(true);
+    if (typeof id == "string") {
+        id = HASHES[id]
+        if (id == undefined)
+            return;
+    }
+    openApp(id);
+    let ar = Object.keys(HASHES)
+    let hashString = ar[id-1] //as we offset our app ids to start at 1, new arrays need id -1
+    if (hashString)
+        window.location.hash = '#' + hashString
 }
 
 /**
@@ -812,4 +838,4 @@ OlD curve code
             }
 **/
 
-export { openApp, pendApp, clearPendApp, apps, getPos, getCurrentAppId, shrinkTitle,getBarSide }
+export { switchApp, pendApp, clearPendApp, apps, getPos, getCurrentAppId, shrinkTitle, getBarSide }

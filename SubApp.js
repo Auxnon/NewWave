@@ -117,8 +117,9 @@ module.exports = function Game(app, express, server, io, sessionObj) {
             console.log('P U R G I N G  DB'.red)
             await sequelize.sync({ force: true });
             let contents = [
-                ['Nick', '?notThatSecure?', 'salt', '#7EBB1D'],
-                ['Heather', '?extremelyBadLogin?', 'uhhh', '#A44AB6'],
+                /*['Nick', '?notThatSecure?', 'salt', '#7EBB1D'],
+                ['Heather', '?extremelyBadLogin?', 'uhhh', '#A44AB6'],*/
+                //these aren't even injected lol
             ]
 
             contents.forEach(stuff => {
