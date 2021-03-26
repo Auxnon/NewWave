@@ -688,6 +688,10 @@ function getScene() {
     return outgoingScene;
 }
 
+function adjustModule(pos){
+    if(activeModule && activeModule.adjust)
+        activeModule.adjust(pos)
+}
 ///////////////
 
 
@@ -695,4 +699,4 @@ function getScene() {
 
 
 
-export { init, getAlphaCanvas, getBetaCanvas, bufferPrint, loadModel, flipScene, specterMaterial, resize, closeModule }
+export { init, getAlphaCanvas, getBetaCanvas, bufferPrint, loadModel, flipScene, specterMaterial, resize, closeModule, adjustModule }

@@ -1,6 +1,6 @@
 import * as Online from "./Online.js";
 import * as Helper from "./Helper.js";
-import {shrinkTitle} from "./Main.js";
+import { shrinkTitle } from "./Main.js";
 import * as THREE from "./lib/three.module.js";
 
 import './style/chatStyle.css';
@@ -18,7 +18,6 @@ function init(index, dom, complete) {
     Online.guest();
     //return scene;
     complete();
-
 }
 
 //runs every frame
@@ -37,12 +36,37 @@ function deinit() {
 function open(canvas) {
     shrinkTitle();
     //if(chatInput)
-    chatWrapper.style.display=''
+    chatWrapper.style.display = ''
     chatInput.focus();
 }
 //called when app is closed out for another one
 function close() {
-    chatWrapper.style.display='none'
+    chatWrapper.style.display = 'none'
+}
+
+function adjust(pos) {
+    chatWrapper.style.left=0;
+    chatWrapper.style.top=0;
+    switch (pos) {
+        case 0:
+            chatWrapper.style.width = 'calc(100% - 128px)';
+            chatWrapper.style.height = '100%';
+            chatWrapper.style.left='128px';
+            break;
+        case 2:
+            chatWrapper.style.width = 'calc(100% - 128px)';
+            chatWrapper.style.height = '100%';
+            break;
+        case 3:
+            chatWrapper.style.width = '100%';
+            chatWrapper.style.height = 'calc(100% - 128px)';
+            chatWrapper.style.top='128px'
+            break;
+
+        default:
+            chatWrapper.style.width = '100%';
+            chatWrapper.style.height = 'calc(100% - 128px)';
+    }
 }
 
 
@@ -72,12 +96,12 @@ let roomDeleter;
 
 function initChat(mainDom) {
 
-    chatWrapper=div('chat-wrapper')
+    chatWrapper = div('chat-wrapper')
     chatPane = div('chat-pane');
 
     //mainDom.appendChild(chatButton);
     chatWrapper.appendChild(chatPane);
-    chatWrapper.style.height='calc(100% - 128px)' //FIX should set this based on bar pos
+    chatWrapper.style.height = 'calc(100% - 128px)' //FIX should set this based on bar pos
     //mainDom.appendChild(chatBlock);
 
 
@@ -85,9 +109,9 @@ function initChat(mainDom) {
     let chatBottom = div('chat-bottom');
 
     chatInput = document.createElement('input');
-    let color = "black";//"0xffff55"; //World.getOwnPlayer().color
+    let color = "black"; //"0xffff55"; //World.getOwnPlayer().color
     //color = '#' + color.substring(2, color.length);
-    chatInput.placeholder="Send me a message!"
+    chatInput.placeholder = "Send me a message!"
     chatInput.style.border = color + " 6px solid"
     chatBottom.appendChild(chatInput);
 
@@ -110,19 +134,19 @@ function initChat(mainDom) {
 
 
     /*
-    	chatButton.addEventListener('click',function(ev){
-    		Control.addConfetti(window.innerWidth-30,window.innerHeight-30,225);
-    		openChat();
-    	})*/
+        chatButton.addEventListener('click',function(ev){
+            Control.addConfetti(window.innerWidth-30,window.innerHeight-30,225);
+            openChat();
+        })*/
     /*
-    	chatPane.addEventListener('click',function(ev){
-    		closeChat();
-    	})
+        chatPane.addEventListener('click',function(ev){
+            closeChat();
+        })
     */
     chatInput.addEventListener('keyup', function(ev) {
 
         if (ev.which == 13) {
-            if (chatInput.value.length > 0 ){//|| Drawer.getState() == 'chat') {
+            if (chatInput.value.length > 0) { //|| Drawer.getState() == 'chat') {
                 submit();
             } else {
                 setTimeout(closeChat, 20);
@@ -132,13 +156,13 @@ function initChat(mainDom) {
         }
     });
     /*toggle.addEventListener('click',function(ev){
-    	if(toggle.classList.contains('chatToggle')){
-    		toggle.classList.remove('chatToggle');
-    		toggle.classList.add('mailToggle');
-    	}else{
-    		toggle.classList.remove('mailToggle');
-    		toggle.classList.add('chatToggle');
-    	}
+        if(toggle.classList.contains('chatToggle')){
+            toggle.classList.remove('chatToggle');
+            toggle.classList.add('mailToggle');
+        }else{
+            toggle.classList.remove('mailToggle');
+            toggle.classList.add('chatToggle');
+        }
 
     })*/
 
@@ -148,12 +172,12 @@ function initChat(mainDom) {
 
 
 
-    loginMenu=div('login-menu');
-    let name=document.createElement('input')
-    let pass=document.createElement('input')
-    let passButton=document.createElement('button')
-    pass.setAttribute('type','password')
-    passButton.innerText='Submit'
+    loginMenu = div('login-menu');
+    let name = document.createElement('input')
+    let pass = document.createElement('input')
+    let passButton = document.createElement('button')
+    pass.setAttribute('type', 'password')
+    passButton.innerText = 'Submit'
 
     loginMenu.appendChild(name)
     loginMenu.appendChild(pass)
@@ -162,43 +186,45 @@ function initChat(mainDom) {
         Online.login(name.value, pass.value)
         loginMenu.style.display = ''
     })
-    roomSwitcher=div('room-switcher');
-    roomSwitcher.style.display='none' //explicitly set this so it's easier to toggle
-    roomHider=div('room-switcher-hider')
-    roomHider.style.display='none'
-    roomHider.addEventListener('click',ev=>{
+    roomSwitcher = div('room-switcher');
+    roomSwitcher.style.display = 'none' //explicitly set this so it's easier to toggle
+    roomHider = div('room-switcher-hider')
+    roomHider.style.display = 'none'
+    roomHider.addEventListener('click', ev => {
         wiggleElement(ev.target)
 
-        if(roomSwitcher.style.display=='none'){
-            roomDeleter.style.display=''
-            roomSwitcher.style.display=''
-        }else{
-            roomDeleter.style.display='none'
-            roomSwitcher.style.display='none'
+        if (roomSwitcher.style.display == 'none') {
+            roomDeleter.style.display = ''
+            roomSwitcher.style.display = ''
+        } else {
+            roomDeleter.style.display = 'none'
+            roomSwitcher.style.display = 'none'
         }
     })
-    roomDeleter=div('room-deleter');
-    roomDeleter.style.display='none'
-    roomDeleter.addEventListener('click',ev=>{
+    roomDeleter = div('room-deleter');
+    roomDeleter.style.display = 'none'
+    roomDeleter.addEventListener('click', ev => {
         wiggleElement(ev.target)
         Online.deleteRoom()
     })
     mainDom.appendChild(roomDeleter)
     chatWrapper.appendChild(roomHider)
-    
+
     chatWrapper.appendChild(roomSwitcher)
     mainDom.appendChild(chatWrapper)
     mainDom.appendChild(loginMenu)
 }
-function wiggleElement(ele){
-    ele.style.animation='';
+
+function wiggleElement(ele) {
+    ele.style.animation = '';
     void ele.offsetWidth;
-    ele.style.animation='wiggle 0.4s';
+    ele.style.animation = 'wiggle 0.4s';
 
 }
-function div(classname){
-    let ele=document.createElement('div')
-    ele.className=classname;
+
+function div(classname) {
+    let ele = document.createElement('div')
+    ele.className = classname;
     return ele;
 }
 var pastDom = null;
@@ -232,21 +258,21 @@ function addBubble(s, player, timestamp) {
         }
     }
 
-    if(s=="&&&pp&&&"){
-        loginMenu.style.display='block'
+    if (s == "&&&pp&&&") {
+        loginMenu.style.display = 'block'
     }
 
     /*let stt=s.split('');
     stt.forEach((c,i)=>{
-    	let sp=document.createElement('span');
-    	sp.style.animationDelay=(i*0.03 +Math.random()/10)+'s';
-    	sp.innerHTML=c;
-    	if(c==' ')
-    		sp.innerHTML='&nbsp'
-    	chatBubble.appendChild(sp)
+        let sp=document.createElement('span');
+        sp.style.animationDelay=(i*0.03 +Math.random()/10)+'s';
+        sp.innerHTML=c;
+        if(c==' ')
+            sp.innerHTML='&nbsp'
+        chatBubble.appendChild(sp)
     })
     setTimeout(function(){
-    	chatBubble.innerHTML=s;
+        chatBubble.innerHTML=s;
     },(s.length*0.03+2)*1000)*/
     chatBubble.innerHTML += s;
 
@@ -281,10 +307,10 @@ function addBubble(s, player, timestamp) {
     }
 
     pastDom = lastDom;
-    pastPlayerName= lastPlayerName;
+    pastPlayerName = lastPlayerName;
     lastDom = chatBubble;
     lastPlayerName = player.username;
-    
+
 
     chatRow.appendChild(chatBubble)
     chatPane.appendChild(chatRow)
@@ -308,39 +334,39 @@ function submit() {
     }
 }
 
-function hook(username, message,timestamp) {
-    
+function hook(username, message, timestamp) {
+
     let player;
     let color = '#8A0';
-    if(username.startsWith('Guest')){ //not bothering with user colors for now
-        color='#fff';
-    }else if(username=="System"){
-        color='#f50'
+    if (username.startsWith('Guest')) { //not bothering with user colors for now
+        color = '#fff';
+    } else if (username == "System") {
+        color = '#f50'
     }
     /*if(player){ //TODO
-    	color=player.color;
-    	color='#'+color.substring(2,color.length);
+        color=player.color;
+        color='#'+color.substring(2,color.length);
 
-    	
+        
 
-    	
-    	let anchor=addBubble(message,player,color,player.model);
-    	setTimeout(function(){
-    		anchor.bubble.remove();
-    		anchor.bubble=null;
-    	},8000)
+        
+        let anchor=addBubble(message,player,color,player.model);
+        setTimeout(function(){
+            anchor.bubble.remove();
+            anchor.bubble=null;
+        },8000)
     }*/
     //if(!Control.isMenuLocked())
-    //	Control.addConfetti(window.innerWidth-30,window.innerHeight-30,225);
+    //  Control.addConfetti(window.innerWidth-30,window.innerHeight-30,225);
     if (!player)
-        player = { username, id: -1, color}
-    addBubble(message, player,timestamp);
+        player = { username, id: -1, color }
+    addBubble(message, player, timestamp);
     //BarUI.setNotifier(2, 1)
 }
 
 function lastChats(chats) {
     chats.forEach(chat => {
-        hook(chat[1], chat[2],chat[0])
+        hook(chat[1], chat[2], chat[0])
     });
     //makeDivider('Last 10 messages')
 }
@@ -369,8 +395,8 @@ function makeDivider(message) {
     p.innerText = message;
     dom.appendChild(p);
     chatPane.appendChild(dom);
-    lastPlayerName='';
-    pastPlayerName='';
+    lastPlayerName = '';
+    pastPlayerName = '';
 }
 /*
 function setSize(bool) {
@@ -393,35 +419,40 @@ function popBubble(anchor) {
 function updateBubble(anchor) {
     anchor.bubble
 }
-function setRooms(guests){
-    roomSwitcher.querySelectorAll('.room-button').forEach(r=>{
-        r.removeEventListener('click',roomClick)
+
+function setRooms(guests) {
+    roomSwitcher.querySelectorAll('.room-button').forEach(r => {
+        r.removeEventListener('click', roomClick)
         r.remove();
     })
-    guests.forEach(guest=>{
+    guests.forEach(guest => {
 
-        let room=div('room-button');
-        room.innerText=guest.room!=undefined?guest.room:"???"
-        room.addEventListener('click',roomClick);
+        let room = div('room-button');
+        room.innerText = guest.room != undefined ? guest.room : "???"
+        room.addEventListener('click', roomClick);
         roomSwitcher.appendChild(room)
     });
 }
-function roomClick(ev){
-    let t=ev.target.innerText
-    if(t!="???")
+
+function roomClick(ev) {
+    let t = ev.target.innerText
+    if (t != "???")
         Online.switchRoom(t)
 }
-function clear(){
-    Object.values(chatPane.children).forEach(child=>{
+
+function clear() {
+    Object.values(chatPane.children).forEach(child => {
         child.remove();
     })
 }
-function unhideAdmin(){
-    roomHider.style.display='';
+
+function unhideAdmin() {
+    roomHider.style.display = '';
 }
-function offline(){
-    let banner=div('chat-banner')
-    banner.innerText='Offline\nReload site 😵'
+
+function offline() {
+    let banner = div('chat-banner')
+    banner.innerText = 'Offline\nReload site 😵'
     chatPane.appendChild(banner)
 }
 
@@ -429,4 +460,4 @@ function offline(){
 
 
 
-export { init, animate, deinit, open, close,hook,makeDivider,setRooms,lastChats,clear,unhideAdmin,offline }
+export { init, animate, deinit, open, close,adjust, hook, makeDivider, setRooms, lastChats, clear, unhideAdmin, offline }

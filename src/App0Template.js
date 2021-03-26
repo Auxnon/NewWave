@@ -30,5 +30,8 @@ function open(canvas) {
 function close() {
 
 }
+function adjust(){
+	
+}
 
 export { init, animate, deinit, open, close }

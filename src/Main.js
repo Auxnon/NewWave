@@ -50,12 +50,13 @@ let resizeDebouncer;
 let positionalData = { x: 0, y: 0 }
 
 let currentAppId = -1;
+let appSortingMode = false;
 
 //I DO THIS FOR THR GREATER GOOD
 window.TAU = Math.PI * 2;
 
 function init(argument) {
-    window.UI=UI
+    window.UI = UI
     let preApps = document.querySelectorAll('.app');
     apps = [undefined]
     preApps.forEach(app => { //convert out of a nodelist to an array, it matters trust me
@@ -86,10 +87,20 @@ function init(argument) {
     initLine();
     window.addEventListener('pointermove', mousemove)
     window.addEventListener('pointerdown', mousemove)
-
     mainTitle.addEventListener('click', ev => {
         closeApp();
     })
+    let sortButton = document.querySelector('button#app-sort-button');
+    if (sortButton)
+        sortButton.addEventListener('click', ev => {
+            appSortingMode = !appSortingMode
+            if (appSortingMode)
+                ev.target.classList.add('sorting--enabled')
+            else
+                ev.target.classList.remove('sorting--enabled')
+
+            barCalculate();
+        });
 
     barInit();
 
@@ -349,29 +360,33 @@ function barCalculate(notate) {
         _moveEle(app, appPoints[i].x, appPoints[i].y) //appsInRow[i]
 
     })
-
-    let homeRect = appHome.getBoundingClientRect();
-    let rows = (appsInHome.length * (56 + 28) + 28) / homeRect.width;
-    rows = Math.ceil(rows)
-    let perRow = appsInHome.length / rows
-    console.log('rows', rows)
-    let homeRatio = (homeRect.width - 112) / (appsInHome.length - 1)
-    appsInHome.forEach((app, relativeIndex) => {
-        let i = app.appId;
-        appPoints[i] = { x: 56 + homeRect.left + (relativeIndex) * homeRatio, y: homeRect.top + 56 };
-        _moveEle(app, appPoints[i].x, appPoints[i].y)
-    })
-    if (barLineFactor == -1) {
-        let handle = barHandle.getBoundingClientRect();
-        if (sideWays) {
-            let xx = handle.left + handle.width / 2
-            drawSimpleBarLine({ x: xx, y: handle.top }, { x: xx, y: handle.bottom })
-        } else {
-            let yy = handle.top + handle.height / 2
-            drawSimpleBarLine({ x: handle.left, y: yy }, { x: handle.right, y: yy })
-        }
-
+    if (appSortingMode) {
+        let homeRect = appHome.getBoundingClientRect();
+        let rows = (appsInHome.length * (56 + 28) + 28) / homeRect.width;
+        rows = Math.ceil(rows)
+        let perRow = appsInHome.length / rows
+        console.log('rows', rows)
+        let homeRatio = (homeRect.width - 112) / (appsInHome.length - 1)
+        appsInHome.forEach((app, relativeIndex) => {
+            let i = app.appId;
+            appPoints[i] = { x: 56 + homeRect.left + (relativeIndex) * homeRatio, y: homeRect.top + 56 };
+            _moveEle(app, appPoints[i].x, appPoints[i].y)
+        })
     }
+        if (barLineFactor == -1) {
+            let handle = barHandle.getBoundingClientRect();
+            if (sideWays) {
+                let xx = handle.left + handle.width / 2
+                drawSimpleBarLine({ x: xx, y: handle.top }, { x: xx, y: handle.bottom })
+            } else {
+                let yy = handle.top + handle.height / 2
+                drawSimpleBarLine({ x: handle.left, y: yy }, { x: handle.right, y: yy })
+            }
+
+        }
+    
+    if (Render)
+        Render.adjustModule(barPos)
 }
 
 function animate() {
@@ -615,7 +630,7 @@ function barAdjust() {
         barHandle.style.transform = 'translate(100%,-50%)'
         bar.style.left = '64px';
         bar.style.top = '50%'
-        barCalculate()
+        barCalculate();
         barHandle.style.width = '32px'
         barHandle.style.height = '80%'
         mainTitle.style.top = '28px';

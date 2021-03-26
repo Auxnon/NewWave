@@ -104,15 +104,18 @@ function open(canvas) {
         Render.resize();
     }
 
-    fit();
+    hideOverlay();
     setTimeout(function() {
         if (main) {
             main.style.display = 'initial'
             fit();
             void main.offsetWidth;
             main.style.opacity = 1;
+            setTimeout(()=>{
+                unhideOverlay();
+            },500)
         }
-    }, 1000)
+    }, 100)
 
     return true;
 }
@@ -284,8 +287,6 @@ function selectSection(section) {
             vid.play();
 
         portfolioHolder.style.overflowY='hidden'
-
-
         section.className = ''
         section.style.left = '50%';
         closeButton.style.display='block'
@@ -295,9 +296,11 @@ function selectSection(section) {
         //UI.systemMessage('sheight'+sHeight+' height '+height,'warn')
         section.style.top = ((height / 2 + sHeight) - section.parentElement.offsetTop - 64) + 'px';
         section.focus();
-        fit();
+        
         currentSection = section;
-        clickerOverlay.classList.add('clicker-active');
+        clickerOverlay.classList.add('clicker-active')
+        setTimeout(fit,1)
+        
     } else
         closeAll();
 
@@ -332,11 +335,12 @@ function shrinkAll() {
 
 function closeAll() {
     shrinkAll()
-    fit();
+    
     portfolioHolder.style.overflowY=''
     currentSection = null;
     clickerOverlay.classList.remove('clicker-active');
     closeButton.style.display=''
+    setTimeout(fit,1)
 }
 
 function hideOverlay() {

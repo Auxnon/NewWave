@@ -31,6 +31,12 @@ body {
 body.dark-mode {
     background-color: black;
 }
+button{
+    border: none;
+}
+button:focus{
+    outline: none;
+}
 
 #main {
     width: 100%;
@@ -118,6 +124,18 @@ body.dark-mode {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+}
+button#app-sort-button{
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    top: 8px;
+    right: 8px;
+    background: center / 24px no-repeat;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="gray"><path d="M0 0h24v24H0V0z" fill="none"/><circle cx="7" cy="14" r="3"/><circle cx="11" cy="6" r="3"/><circle cx="16.6" cy="17.6" r="3"/></svg>')
+}
+.sorting--enabled{
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="gray"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 13a2 2 0 012 2 2 2 0 01-2 2 2 2 0 01-2-2c0-1.1.9-2 2-2zm-8 2c0 1.1.9 2 2 2a2 2 0 002-2 2 2 0 00-2-2 2 2 0 00-2 2zm-6 0c0 1.1.9 2 2 2a2 2 0 002-2 2 2 0 00-2-2 2 2 0 00-2 2zm4-6a2 2 0 00-2-2 2 2 0 00-2 2c0 1.1.9 2 2 2a2 2 0 002-2zm2 0c0 1.1.9 2 2 2a2 2 0 002-2 2 2 0 00-2-2 2 2 0 00-2 2zm6 0c0 1.1.9 2 2 2a2 2 0 002-2 2 2 0 00-2-2 2 2 0 00-2 2z"/></svg>') !important;
 }
 
 #nav-line {
@@ -267,9 +285,7 @@ body.dark-mode {
     position: relative;
     width: 100%;
     height: 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 48px;
+    background: center / 48px no-repeat;
     pointer-events: none;
 }
 
@@ -386,9 +402,7 @@ body.dark-mode {
     position: absolute;
     top: 0;
     right: 0;
-    background-repeat: no-repeat;
-    background-size: 48px;
-    background-position: center center;
+    background: center / 48px no-repeat;
 
 
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="white"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M22.6 11.29L20 8.69V5c0-.55-.45-1-1-1h-3.69l-2.6-2.6c-.39-.39-1.02-.39-1.41 0L8.69 4H5c-.55 0-1 .45-1 1v3.69l-2.6 2.6c-.39.39-.39 1.02 0 1.41L4 15.3V19c0 .55.45 1 1 1h3.69l2.6 2.6c.39.39 1.02.39 1.41 0l2.6-2.6H19c.55 0 1-.45 1-1v-3.69l2.6-2.6c.39-.39.39-1.03 0-1.42zm-4.68 1.69c-.34 2.12-1.85 3.94-3.88 4.66-1.21.43-2.41.45-3.5.18-.41-.1-.48-.65-.13-.9C11.98 15.84 13 14.04 13 12s-1.02-3.84-2.58-4.92c-.35-.24-.29-.79.13-.9 1.09-.27 2.29-.25 3.5.18 2.02.72 3.54 2.54 3.88 4.66.05.33.07.66.07.98-.01.32-.03.65-.08.98z"/></svg>');
@@ -502,10 +516,7 @@ cube:after {
     left: 50%;
     bottom: 128px;
     transform: translate(-50%);
-    background-color: #5553;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 36px;
+    background: center / 36px no-repeat #5553; 
     z-index: 3; /*there's a lot going on with zIndex, needs tracing how this happened*/
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path fill="white" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>');
 }
