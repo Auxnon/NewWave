@@ -113,7 +113,7 @@ function open(canvas) {
             main.style.opacity = 1;
             setTimeout(()=>{
                 unhideOverlay();
-            },500)
+            },801)
         }
     }, 100)
 
@@ -127,6 +127,7 @@ function checkDone(complete) {
 
 function close() {
     if (main) {
+        hideOverlay();
         main.style.opacity = 0;
         setTimeout(function() {
             main.style.display = 'none'

@@ -29,7 +29,14 @@ function init(index, dom, complete) {
             barGraph(array,groupMove)
     })
 
+    let normalize=document.createElement('input')
+    normalize.setAttribute('type','checkbox');
+    let scaleBox=document.createElement('input')
+    scaleBox.setAttribute('type','text');
+
     section.appendChild(input)
+    section.appendChild(normalize)
+    section.appendChild(scaleBox)
     section.appendChild(button)
     dom.appendChild(section)
 
@@ -108,11 +115,12 @@ function barGraph(data, scene, offset) {
          scenes[1].add(cubeO);
          Render.specterMaterial.color=0xD53229;*/
     data=data.map(parseFloat) // cool
+    let size=20;
     if (!offset)
         offset = new THREE.Vector3(0, 0, 0)
 
     let factor = 80 / data.length
-    let geo = new THREE.BoxBufferGeometry(factor / 2, 10, 15)
+    let geo = new THREE.BoxBufferGeometry(1, 1, 1) //factor / 2
     let lowColor = 0x6A00FE;
     let highColor = 0xD53229;
     let lowRGB = Helper.hexToRGB(lowColor)
@@ -124,18 +132,23 @@ function barGraph(data, scene, offset) {
     let lowest = Math.min.apply(Math, data)
     let highest = Math.max.apply(Math, data)
     let valueDelta = highest - lowest;
+    
 
     let barGroup = new THREE.Group();
+    let cubeBase = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: lowColor }));
+    let bottomHeight=size*lowest/highest
+    cubeBase.scale.set(80, 1, bottomHeight);
+    barGroup.add(cubeBase)
 
     for (let i = 0; i < data.length; i++) {
-        let val = (data[i] - lowest) / valueDelta
-        let scale = .1 + val * 2
+        let val = (data[i] - lowest) / highest;
+        let scaleFactor = .01 + val * size
         let color = Helper.rgbToBinary(Math.floor(lowRGB[0] + rDelta * val), Math.floor(lowRGB[1] + gDelta * val), Math.floor(lowRGB[2] + bDelta * val))
         //console.log(scale)
         //if(i==0){
         let cube = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: color }));
-        cube.position.set(-40 + i * factor + offset.x, offset.y, +scale * 8 + offset.z)
-        cube.scale.set(1, 1, scale)
+        cube.position.set(-40 + (i+0.5) * factor, 0, scaleFactor/2 +bottomHeight/2)
+        cube.scale.set(factor, 1, scaleFactor)
         barGroup.add(cube)
         //}
     }
@@ -172,10 +185,35 @@ function initStyle(){
             padding: 16px;
         }
         .data-section button{
+            display: block;
+            margin: 8px;
             position: relative;
             left: 50%;
-            transform: trnslate(-50%);
+            transform: translate(-50%);
+            padding: 8px;
+            border-radius: 4px;
         }
+        
+        .data-section textarea{
+            width: 100%;
+            box-sizing: border-box; 
+            padding: 16px;
+            resize: vertical;
+            border: none;
+            border-radius: 16px 16px 0 16px;
+        }
+        .data-section textarea:focus{
+            box-shadow: 0 0 3px black;
+            outline: none;
+        }
+        .data-section input[type=text]{
+            width: 32px;
+        }
+        .data-section input[type=text]:before{
+            content:'Scale';
+        }
+        
+
     `
     document.body.appendChild(styleDom)
 }
