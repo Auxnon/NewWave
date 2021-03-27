@@ -15,27 +15,48 @@ let barGroups = [];
 
 function init(index, dom, complete) {
     initStyle();
-    let section=document.createElement('div')
-    section.className='data-section'
-    let input=document.createElement('textarea')
-    let button=document.createElement('button')
-    input.value= "70.114, 69.14, 69.14, 68.653, 68.653, 69.14, 68.653, 69.627, 69.627, 68.653, 69.627, 69.14, 69.14, 68.653, 70.114, 69.14, 69.14, 69.14, 68.653, 69.14";
+    let section = document.createElement('div')
+    section.className = 'data-section'
+    let input = document.createElement('textarea')
+    let button = document.createElement('button')
+    input.value = "70.114, 69.14, 69.14, 68.653, 68.653, 69.14, 68.653, 69.627, 69.627, 68.653, 69.627, 69.14, 69.14, 68.653, 70.114, 69.14, 69.14, 69.14, 68.653, 69.14";
 
-    button.innerText="Make Graph"
-    button.addEventListener('click',ev=>{
+    button.innerText = "Make Graph"
 
-        let array=input.value.split(',')
-        if(array && array.length>0)
-            barGraph(array,groupMove)
+
+    let normalize = document.createElement('input')
+    normalize.setAttribute('type', 'checkbox');
+    normalize.checked=true;
+    let normalizeLabel = document.createElement('span');
+    normalizeLabel.innerText = "Normalize"
+    let scaleBox = document.createElement('input')
+    scaleBox.setAttribute('type', 'text');
+    scaleBox.value = 20;
+    let scaleLabel = document.createElement('span')
+    scaleLabel.innerText = 'Scale factor'
+
+
+    button.addEventListener('click', ev => {
+
+
+        let array = input.value.split(',')
+        if (array && array.length > 0) {
+            if(array.length==1){
+                array=input.value.split(/[\n\r\s]+/)
+                if(!array || array.length==0)
+                    return;
+            }
+            let size = parseFloat(scaleBox.value)
+            if (!size && size != 0)
+                size = 20
+            barGraph(array, groupMove, normalize.checked, size)
+        }
     })
 
-    let normalize=document.createElement('input')
-    normalize.setAttribute('type','checkbox');
-    let scaleBox=document.createElement('input')
-    scaleBox.setAttribute('type','text');
-
     section.appendChild(input)
+    section.appendChild(normalizeLabel)
     section.appendChild(normalize)
+    section.appendChild(scaleLabel)
     section.appendChild(scaleBox)
     section.appendChild(button)
     dom.appendChild(section)
@@ -63,17 +84,17 @@ function init(index, dom, complete) {
     shapes.push(cubeO);
     groupMove.add(cubeO);*/
     Render.specterMaterial.color = 0xD53229;
-    let pyramid1 = new THREE.Mesh(new THREE.ConeGeometry(20, 20, 4), new THREE.MeshStandardMaterial({ color: 0x6A00FE }));
+    let pyramid1 = new THREE.Mesh(new THREE.ConeGeometry(10, 10, 4), new THREE.MeshStandardMaterial({ color: 0x6A00FE }));
     pyramid1.position.set(-50, 0, 0);
     shapes.push(pyramid1)
     groupPivot.add(pyramid1);
 
-    let pyramid2 = new THREE.Mesh(new THREE.ConeGeometry(20, 20, 4), new THREE.MeshStandardMaterial({ color: 0xD53229 }));
+    let pyramid2 = new THREE.Mesh(new THREE.ConeGeometry(10, 10, 4), new THREE.MeshStandardMaterial({ color: 0xD53229 }));
     pyramid2.position.set(50, 0, 0);
     shapes.push(pyramid2)
     groupPivot.add(pyramid2);
 
-    barGraph([70.114, 69.14, 69.14, 68.653, 68.653, 69.14, 68.653, 69.627, 69.627, 68.653, 69.627, 69.14, 69.14, 68.653, 70.114, 69.14, 69.14, 69.14, 68.653, 69.14], groupMove);
+    barGraph([70.114, 69.14, 69.14, 68.653, 68.653, 69.14, 68.653, 69.627, 69.627, 68.653, 69.627, 69.14, 69.14, 68.653, 70.114, 69.14, 69.14, 69.14, 68.653, 69.14], groupMove, true, 20);
     groupPivot.add(groupMove)
     scene.add(groupPivot)
     //barGraph([Math.log(2),Math.log(4),Math.log(6),Math.log(8),Math.log(10),Math.log(12),Math.log(14)],scene,new THREE.Vector3(0,40,0))
@@ -89,9 +110,9 @@ function animate(delta) {
         c.rotation.y += delta * 2;
     })
     let pos = Main.getPos();
-    let max=(barGroups.length)*40
+    let max = (barGroups.length) * 40
 
-    groupMove.position.y -= (pos.y-0.5)*8
+    groupMove.position.y -= (pos.y - 0.5) * 8
     if (groupMove.position.y > -40) {
         groupMove.position.y = -40;
     } else if (groupMove.position.y < -max) {
@@ -99,7 +120,7 @@ function animate(delta) {
     }
 
     groupPivot.rotation.z = ((pos.x / 2.0) - 0.25) * TAU
-    
+
 
 }
 
@@ -108,14 +129,18 @@ function deinit() {
 }
 
 
-function barGraph(data, scene, offset) {
+function barGraph(data, scene, normalize, size) {
     /* let cubeO=new THREE.Mesh(cubeGeometry,cubeMaterial);
          cubeO.position.set(-40,0,0);
          shapesTwo.push(cubeO)
          scenes[1].add(cubeO);
          Render.specterMaterial.color=0xD53229;*/
-    data=data.map(parseFloat) // cool
-    let size=20;
+    data = data.map(parseFloat) // cool
+    data=data.filter(function (value) {
+        return !Number.isNaN(value);
+    });
+    let offset
+
     if (!offset)
         offset = new THREE.Vector3(0, 0, 0)
 
@@ -132,13 +157,20 @@ function barGraph(data, scene, offset) {
     let lowest = Math.min.apply(Math, data)
     let highest = Math.max.apply(Math, data)
     let valueDelta = highest - lowest;
-    
+    let bottomHeight = size * lowest / highest
+
 
     let barGroup = new THREE.Group();
-    let cubeBase = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: lowColor }));
-    let bottomHeight=size*lowest/highest
-    cubeBase.scale.set(80, 1, bottomHeight);
-    barGroup.add(cubeBase)
+
+    if (!normalize) {
+        let cubeBase = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: lowColor }));
+        cubeBase.scale.set(80, 4, bottomHeight);
+        cubeBase.position.set(0, 0, bottomHeight / 2)
+        barGroup.add(cubeBase)
+    } else {
+        highest = valueDelta
+        bottomHeight=0;
+    }
 
     for (let i = 0; i < data.length; i++) {
         let val = (data[i] - lowest) / highest;
@@ -147,8 +179,8 @@ function barGraph(data, scene, offset) {
         //console.log(scale)
         //if(i==0){
         let cube = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: color }));
-        cube.position.set(-40 + (i+0.5) * factor, 0, scaleFactor/2 +bottomHeight/2)
-        cube.scale.set(factor, 1, scaleFactor)
+        cube.position.set(-40 + (i + 0.5) * factor, 0, scaleFactor / 2 + bottomHeight)
+        cube.scale.set(factor, 4, scaleFactor)
         barGroup.add(cube)
         //}
     }
@@ -156,7 +188,7 @@ function barGraph(data, scene, offset) {
     if (barGroups.length > 10)
         scene.remove(barGroups.shift());
     barGroups.forEach((g, i) => {
-        g.position.y = (barGroups.length-i) * 40
+        g.position.y = (barGroups.length - i) * 40
     })
 
     scene.add(barGroup)
@@ -170,8 +202,9 @@ function getHeat() {
 
         })
 }
-function initStyle(){
-    let styleDom=document.createElement('style')
+
+function initStyle() {
+    let styleDom = document.createElement('style')
     styleDom.innerHTML = `
         .data-section{
             position: absolute;
@@ -186,7 +219,7 @@ function initStyle(){
         }
         .data-section button{
             display: block;
-            margin: 8px;
+            margin: 8px 0;
             position: relative;
             left: 50%;
             transform: translate(-50%);

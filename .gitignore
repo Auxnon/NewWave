@@ -105,7 +105,6 @@ dist
 
 public/*
 !public/assets/
-!public/partials/
 ssl/*
 sessions
 oneshotChat.sqlite

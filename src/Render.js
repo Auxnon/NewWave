@@ -364,6 +364,7 @@ var specterMaterial
 function initCustomMaterial() {
 
     var meshphysical_frag = `
+    precision mediump float;
     #define STANDARD
 #ifdef PHYSICAL
     #define REFLECTIVITY
@@ -545,6 +546,7 @@ void main() {
             //wind: {value:new THREE.Vector3(0,0,0)}}
         ]
     );
+    uniforms.ambientLightColor.value = null;
 
     /*specterMaterial =  new THREE.ShaderMaterial({
     uniforms: uniforms,
@@ -560,8 +562,7 @@ void main() {
         vertexColors: true,
         vertexShader: meshphysical_vert,
         fragmentShader: meshphysical_frag,
-        roughness: 0.0,
-        metalness: 1.0,
+        
         //vertexShader: THREE.ShaderChunk.cube_vert,
         //fragmentShader: THREE.ShaderChunk.cube_frag
     });
@@ -693,6 +694,7 @@ function adjustModule(pos){
         activeModule.adjust(pos)
 }
 ///////////////
+
 
 
 

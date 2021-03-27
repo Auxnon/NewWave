@@ -25,7 +25,9 @@ function init(index, dom, complete) {
         var ambientLight = new THREE.AmbientLight(0xffffff); // soft white light
         scene.add(ambientLight);
         var sunLight = new THREE.DirectionalLight(0xffffff, 1); //DirectionalLight
-        sunLight.position.set(0, 1, 0);
+        sunLight.position.set(100, 100, 200);
+        window.sunLight=sunLight
+        window.Main=Main
         sunLight.castShadow = true;
         scene.add(sunLight);
         var sunTarget = new THREE.Object3D();
@@ -51,7 +53,7 @@ function animate(delta) {
         greenModel.rotation.y = 5.4 + value * 0.6 //5.2 - 6
         //m.position.set(0,260,-40)
         let pos = Main.getPos();
-        greenModel.position.set(30 - 30 * value + (pos.x - 0.2) * 30, -80 + 340 * value, 20 - 60 * value + (pos.y - 0.5) * 30)
+        greenModel.position.set(30 - 30 * value + (pos.x - 0.2) * 30, -80 + 340 * value, 20 - 60 * value + (pos.y - 0.5) * -30)
         // x: 30, y: -80, z: 20
         //console.log(greenModel.rotation.y)
     }

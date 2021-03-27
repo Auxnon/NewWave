@@ -36,6 +36,15 @@ function init(index, dom, complete) {
     })
     group = new THREE.Group();
 
+    let streetMesh = new THREE.Mesh(new THREE.BoxBufferGeometry(2, 6, 0.1), new THREE.MeshStandardMaterial({ color: 0xEBD7FE }));
+
+    let lamp1 = new THREE.Mesh(new THREE.BoxBufferGeometry(2, 2, 12), new THREE.MeshStandardMaterial({ color: 0xFDA3A8 }));
+    let lamp2=new THREE.Mesh(new THREE.BoxBufferGeometry(8, 4, 1), new THREE.MeshStandardMaterial({ color: 0xFDA3A8 }));
+    let lamp=new THREE.Group();
+    lamp.add(lamp1)
+    lamp2.position.set(3,0,6)
+    lamp.add(lamp2)
+    lamp.position.set(-23,0,-14)
     let mats = [new THREE.MeshStandardMaterial({ color: 0x6E2E6F }), new THREE.MeshStandardMaterial({ color: 0x432E6F }), new THREE.MeshStandardMaterial({ color: 0x142A7D })]
     moveGroups = []
     for (let j = 0; j < 5; j++) {
@@ -46,10 +55,28 @@ function init(index, dom, complete) {
                 if (!moveGroups[i]) {
                     moveGroups[i] = new THREE.Group();
                     moveGroups[i].position.y = -160 + i * 40
+
+                    let street=streetMesh.clone();
+                    let street2=streetMesh.clone();
+                    street.position.set(0,7,-19.8)
+                    street2.position.set(0,7,-19.8)
+                    if(i%4==0){
+                        let lampClone=lamp.clone();
+                        let lampClone2=lamp.clone();
+                        lampClone2.rotation.z=TAU/2
+                        lampClone2.position.set(23,0,-14)
+                        moveGroups[i].add(lampClone)
+                        moveGroups[i].add(lampClone2)
+                    }
+
+                    moveGroups[i].add(street)
+                    moveGroups[i].add(street2)
+
                     group.add(moveGroups[i])
+                    
                 }
 
-                let high = 20 + Math.random() * 68
+                let high = 20 + Math.random() * 88
                 let cube = new THREE.Mesh(new THREE.BoxBufferGeometry(26, 26, high), mats[Math.floor(Math.random() * 3)]);
                 cube.position.set((j - 2) * 40, 0, -20 + high / 2)
                 moveGroups[i].add(cube)
