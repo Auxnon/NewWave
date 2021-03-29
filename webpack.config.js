@@ -12,7 +12,7 @@ return {
   plugins:[
   	new CleanWebpackPlugin({ 
   		dry:false,
-  		cleanOnceBeforeBuildPatterns:['**/*','!styles','!styles/*','!assets','!assets/*','!partials','!partials/*'],
+  		cleanOnceBeforeBuildPatterns:['**/*','!styles','!styles/*','!assets','!assets/*','!assets/room/*','!partials','!partials/*'],
   		verbose: true
   	}),
   	new HtmlWebpackPlugin({template: './src/index.html'}),

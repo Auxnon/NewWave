@@ -357,6 +357,9 @@ function projectVector(object) {
     return vector;
 
 }
+function getCamera(){
+    return camera;
+}
 
 
 var specterMaterial
@@ -693,6 +696,7 @@ function adjustModule(pos){
     if(activeModule && activeModule.adjust)
         activeModule.adjust(pos)
 }
+
 ///////////////
 
 
@@ -701,4 +705,4 @@ function adjustModule(pos){
 
 
 
-export { init, getAlphaCanvas, getBetaCanvas, bufferPrint, loadModel, flipScene, specterMaterial, resize, closeModule, adjustModule }
+export { init, getAlphaCanvas, getBetaCanvas, bufferPrint, loadModel, flipScene, specterMaterial, resize, closeModule, adjustModule,getCamera }
