@@ -13,7 +13,7 @@ let plane;
 function init(index, dom, complete) {
     let scene = new THREE.Scene();
     group = new THREE.Group();
-    let geom = new THREE.BoxBufferGeometry(10, 10, 6);
+    let geom = new THREE.BoxBufferGeometry(10, 10, 5);
     let mat = new THREE.MeshStandardMaterial({ color: 0xFFCD00, side: THREE.BackSide });
     let room = new THREE.Mesh(geom, mat)
     group.add(room)
@@ -27,11 +27,11 @@ function init(index, dom, complete) {
     sunLight.castShadow = true;
     scene.add(ambientLight)
     scene.add(sunLight)
-
+/*
     let pillar = new THREE.Mesh(new THREE.BoxBufferGeometry(1, 1, 6), new THREE.MeshStandardMaterial({ color: 0xFF274B }))
     pillar.position.set(0, 5, 0)
     group.add(pillar);
-
+*/
     let seat=new THREE.Mesh(new THREE.BoxBufferGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: 0x78725B }))
     seat.position.set(0,0,-2)
     group.add(seat)
@@ -76,17 +76,25 @@ function init(index, dom, complete) {
         })
     })
     plane = new THREE.Mesh(planeGeo, doubleMat)
-    plane.position.set(0,3,-.25)
+    plane.position.set(0,-3,-.25)
     plane.rotation.set(TAU / 4, 0, 0)
     group.add(plane)
 
 
     Render.loadModel('assets/room/couch.glb',m=>{
     	//=.children[0]
-    	m.position.set(0,0,-2.5)
+    	m.position.set(0,-3,-2.5)
     	m.rotation.set(0,0,TAU/2)
     	window.m=m;
     	group.add(m)
+    })
+
+    Render.loadModel('assets/room/tv.glb',m=>{
+        //=.children[0]
+        m.position.set(0,4,-2.5)
+        //m.rotation.set(0,0,TAU/2)
+        //window.m=m;
+        group.add(m)
     })
 
     scene.add(group)
