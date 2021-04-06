@@ -98,6 +98,8 @@ function init(index, dom, complete) {
     })
 
     scene.add(group)
+    dom.style.stroke='none'
+    let svg=convertSVG(null,dom);
     complete();
     return scene;
 
@@ -197,6 +199,52 @@ function open(canvas) {
 //called when app is closed out for another one
 function close() {
 
+}
+
+function convertSVG(ele,dom){
+    /*let {width,height}=ele.getBBox();
+    let svg=ele.cloneNode(true);
+    let blob=new Blob([svg.outerHTML],{type: 'image/svg+xml;charset=utf-8'});
+    let url=;//window.URL || window.webkitURL || window;
+    let blobURL = URL.createObjectURL(blob);*/
+    let width=64,height=64;
+    let image=new Image();
+    image.onload = () =>{
+        let canvas=document.createElement('canvas');
+        canvas.width=width;
+        canvas.height=height;
+        let context=canvas.getContext('2d');
+        canvas.style.position='absolute',
+        canvas.style.left=0
+        canvas.style.top=0;
+        canvas.style.transform='scale(10,10)'
+        context.drawImage(image,0,0,width,height);
+        dom.appendChild(canvas)
+
+    }
+    fetch('assets/room/check.svg')
+  .then(response => response.text())
+  .then(svgString => {
+      //let outty=dom.insertAdjacentHTML("afterbegin", svg)
+      const fragment = document.createRange().createContextualFragment(svgString);
+      let svg=fragment.children[0]
+//document.getElementById('parent').appendChild(fragment);
+
+
+      let {w,h}=svg.getBBox();
+      width=w;height=h;
+    let svg2=fragment.cloneNode(true);
+    let blob=new Blob([svg2.outerHTML],{type: 'image/svg+xml;charset=utf-8'});
+    let url=window.URL || window.webkitURL || window;
+    let blobURL = URL.createObjectURL(blob);
+    image.src=blobURL;
+
+
+  });
+/*
+
+    image.src='assets/room/check.svg';//blobURL;
+    dom.appendChild(image)*/
 }
 
 export { init, animate, deinit, open, close }
