@@ -111,9 +111,9 @@ function open(canvas) {
             fit();
             void main.offsetWidth;
             main.style.opacity = 1;
-            setTimeout(()=>{
+            setTimeout(() => {
                 unhideOverlay();
-            },801)
+            }, 900)
         }
     }, 100)
 
@@ -151,6 +151,7 @@ let currentSection
 let clickerOverlay;
 let portfolioHolder;
 let closeButton;
+let holders=[];
 
 
 function initAbout(dom) {
@@ -159,14 +160,18 @@ function initAbout(dom) {
     overlay = main.querySelector('.portfolio-overlay')
     clickerOverlay = main.querySelector('.portfolio-clicker')
 
+
+
     main.querySelectorAll('section').forEach((section, i) => {
         let holder = document.createElement('div')
         holder.className = 'section-holder'
         holder.id = 'portfolio-section-holder' + i;
+        holders.push(holder)
         section.id = 'portfolio-section' + i;
         underlay.insertBefore(holder, underlay.firstElementChild)
         section.tabIndex = i
         //holder.appendChild(section)
+        section.holderId=i;
 
         section.className = 'shrink'
         //section.remove();
@@ -178,16 +183,15 @@ function initAbout(dom) {
         section.addEventListener('click', ev => {
             selectSection(section)
         })
-        clickerOverlay.addEventListener('click', closeAll)
-        closeButton=main.querySelector('#closeButton')
-        if(closeButton)
-            closeButton.addEventListener('click', closeAll)
+        let image=section.querySelector('image')
+        if(image)
+            image.addEventListener('load',loadListener)
 
-        let chatter = main.querySelector('.chat-link')
-        if (chatter)
-            chatter.addEventListener('click', ev => {
-                Main.switchApp("chat") //chat id
-            })
+        let video=section.querySelector('video')
+        if(video)
+        video.addEventListener('loadeddata', loadListener);
+
+
         /*
         section.addEventListener('pointerdown',ev=>{
             moveTarget=section
@@ -229,6 +233,19 @@ function initAbout(dom) {
 
 
     })
+    clickerOverlay.addEventListener('click', closeAll)
+    closeButton = main.querySelector('#closeButton')
+    if (closeButton)
+        closeButton.addEventListener('click', closeAll)
+
+    let chatter = main.querySelector('.chat-link')
+    if (chatter)
+        chatter.addEventListener('click', ev => {
+            Main.switchApp("chat") //chat id
+        })
+
+
+
     setTimeout(function() { fit() }, 1); //make sure DOM is done
     let portraitHolder = main.querySelector('.portrait-holder')
     portfolioHolder = main.querySelector('.portfolio-section-block')
@@ -256,13 +273,13 @@ function initAbout(dom) {
                     selectSection(currentSection.parentElement.lastElementChild)
                 else
                     selectSection(currentSection.previousElementSibling)
-            } else if (ev.which == 39 ) { //right //|| ev.which == 32
+            } else if (ev.which == 39) { //right //|| ev.which == 32
                 if (currentSection.nextElementSibling == null)
                     selectSection(currentSection.parentElement.children[1])
                 else
                     selectSection(currentSection.nextElementSibling)
             }
-        } else if (ev.which == 27 || ev.which == 39 ) { //ev.which == 32
+        } else if (ev.which == 27 || ev.which == 39) { //ev.which == 32
             selectSection(main.querySelector('section'))
         }
 
@@ -287,46 +304,60 @@ function selectSection(section) {
         if (vid)
             vid.play();
 
-        portfolioHolder.style.overflowY='hidden'
+        portfolioHolder.style.overflowY = 'hidden'
         section.className = ''
         section.style.left = '50%';
-        closeButton.style.display='block'
-        section.addEventListener('scroll',sectionScrollChecker)
+        closeButton.style.display = 'block'
+        section.addEventListener('scroll', sectionScrollChecker)
         let sHeight = section.parentElement.parentElement.scrollTop
         let height = window.innerHeight; //section.parentElement.parentElement.offsetHeight
         //UI.systemMessage('sheight'+sHeight+' height '+height,'warn')
         section.style.top = ((height / 2 + sHeight) - section.parentElement.offsetTop - 64) + 'px';
         section.focus();
-        
+
         currentSection = section;
         clickerOverlay.classList.add('clicker-active')
-        setTimeout(fit,1)
-        
+        setTimeout(fit, 1)
+
     } else
         closeAll();
 
 }
 
 function fit() {
-    let holders = main.querySelectorAll('.section-holder')
+    
     main.querySelectorAll('section').forEach((section, i) => {
-        section.scrollTo(0, 0)
+
+        fitSection(section);
+    });
+    clickerOverlay.style.zIndex = 2;
+}
+
+function fitSection(section) {
+    section.scrollTo(0, 0)
         if (section.className == 'shrink') {
-            let holder = holders[i]
-            section.style.left = (holder.offsetLeft+128-section.offsetWidth/2) + 'px';
+            let holder = holders[section.holderId]
+            section.style.left = (holder.offsetLeft + 128 - section.offsetWidth / 2) + 'px';
             section.style.top = holder.offsetTop + 'px';
             section.style.zIndex = 0;
         } else
             section.style.zIndex = 3;
-    });
-    clickerOverlay.style.zIndex = 2;
+}
+
+function loadListener(ev) {
+    fitSection(ev.target.parentElement)
+    if(ev.target["videoHeight"]==undefined)
+        ev.target.removeEventListener('load',loadListener);
+    else
+        ev.target.removeEventListener('loadeddata',loadListener);
+    console.log('late load')
 }
 
 function shrinkAll() {
     main.querySelectorAll('section').forEach(s => {
         if (s.className != 'shrink') {
             s.className = 'shrink'
-            s.removeEventListener('scroll',sectionScrollChecker)
+            s.removeEventListener('scroll', sectionScrollChecker)
             let vid = s.querySelector('video')
             if (vid)
                 vid.pause();
@@ -336,12 +367,12 @@ function shrinkAll() {
 
 function closeAll() {
     shrinkAll()
-    
-    portfolioHolder.style.overflowY=''
+
+    portfolioHolder.style.overflowY = ''
     currentSection = null;
     clickerOverlay.classList.remove('clicker-active');
-    closeButton.style.display=''
-    setTimeout(fit,1)
+    closeButton.style.display = ''
+    setTimeout(fit, 1)
 }
 
 function hideOverlay() {
@@ -392,8 +423,8 @@ function emailFixer(dom) {
     emailButton.addEventListener('click', emailButtonOverride)
 }
 
-function sectionScrollChecker(ev){
-    console.log('scroll'+ev.target.scrollTop)
+function sectionScrollChecker(ev) {
+    console.log('scroll' + ev.target.scrollTop)
 }
 
 

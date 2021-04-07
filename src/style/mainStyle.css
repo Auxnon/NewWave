@@ -401,7 +401,7 @@ button#app-sort-button{
     border-radius: 28px;
     position: absolute;
     top: 0;
-    right: 0;
+    right: 12px;
     background: center / 28px no-repeat;
 
 
