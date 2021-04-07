@@ -291,7 +291,7 @@ function svgProcess(svg){
                     letter=letter.toUpperCase();
                     if(letter=="M" || letter=="L" || letter=="C"){
                         let s=points[i+1].trim();
-                        let params=s.split(" ");
+                        let params=s.split(/(?=-)| /g);
                         /*if(selectedPath){
                             let selector=$("<div class='selector'/>");
                             selector.css({left:xy[0]+"px",top:xy[1]+"px"});
@@ -307,6 +307,15 @@ function svgProcess(svg){
                             val+=((Math.floor(100*Math.random())/100) - 0.5)*1.5
                             ns+=val+" ";
                         }
+                        //lookahead include minus sign /(?=-)/g
+                    }else if( letter=="A"){
+                        let s=points[i+1].trim();
+                        let params=s.split(/(?=-)| /g); 
+                        if(params.length<7){ //missing our flag values
+
+                        }
+                        [3]
+
                     }else if( letter=="V" || letter=="H"){
                         //registerPoint(parseInt(xy[0]),parseInt(xy[1]),id,i);
                         let s=points[i+1].trim();
@@ -314,7 +323,7 @@ function svgProcess(svg){
                             val+=((Math.floor(100*Math.random())/100) - 0.5)*1.5
 
                             ns+=val+" ";
-                    }else if(letter="Z"){
+                    }else if(letter=="Z"){
 
                     }
                 }
@@ -326,7 +335,7 @@ function svgProcess(svg){
 
     }
     function chunkPath(path){
-        let array=path.split(/([MLZCHVS])/ig);
+        let array=path.split(/([MLZCHVSA])/ig); //  /(?=-)/g
         array.shift();
         return array;
     }

@@ -1,6 +1,12 @@
 import * as UI from "./UI.js";
 import './style/mainStyle.css';
 
+/*CSS classes used
+
+#brightness
+.brightness--dark
+*/
+
 var Render;
 
 //We could have technically done imports as a variable input to the Render class import statement
@@ -52,7 +58,7 @@ let positionalData = { x: 0, y: 0 }
 let currentAppId = -1;
 let appSortingMode = false;
 
-//I DO THIS FOR THR GREATER GOOD
+//I DO THIS FOR THE GREATER GOOD
 window.TAU = Math.PI * 2;
 
 function init(argument) {
@@ -109,7 +115,7 @@ function init(argument) {
     setInterval(() => { boundaryCheck() }, 10000)
     let brightness = document.querySelector('#brightness');
     brightness.addEventListener('click', ev => {
-        if (brightness.classList.contains('brightnessDark')) {
+        if (brightness.classList.contains('brightness--dark')) {
             document.body.classList.add('dark-mode')
             //document.body.style.stroke = 'white';
             //mainTitle.style.border = 'white 5px solid';
@@ -120,7 +126,7 @@ function init(argument) {
             //mainTitle.style.border = 'black 5px solid';
             //mainTitle.style.stroke = 'black';
         }
-        brightness.classList.toggle('brightnessDark')
+        brightness.classList.toggle('brightness--dark')
     })
 
     /*//old query method
