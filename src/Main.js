@@ -609,7 +609,7 @@ function barAdjust() {
         barHandle.style.transform = 'translate(-200%,-50%)'
         barHandle.style.width = '32px';
         barHandle.style.height = '80%';
-        mainTitle.style.top = '';
+        mainTitle.style.top = '8px';
     } else if (barPos == 3) { //top
         barHandle.style.transform = 'translate(-50%,100%)'
         bar.style.left = '50%';
@@ -622,7 +622,7 @@ function barAdjust() {
         barHandle.style.transform = 'translate(-50%,-200%)'
         bar.style.left = '50%';
         bar.style.top = (window.innerHeight - 64) + 'px'; //-196+window.innerWidth/2
-        mainTitle.style.top = '';
+        mainTitle.style.top = '8px';
         barCalculate();
         barHandle.style.height = '32px';
         barHandle.style.width = '80%';
@@ -633,7 +633,7 @@ function barAdjust() {
         barCalculate();
         barHandle.style.width = '32px'
         barHandle.style.height = '80%'
-        mainTitle.style.top = '';
+        mainTitle.style.top = '8px';
     }
 }
 /*
