@@ -107,16 +107,15 @@ function open(canvas) {
     hideOverlay();
     setTimeout(function() {
         if (main) {
-            main.style.display = 'initial'
+            main.style.display = 'initial';
             fit();
             void main.offsetWidth;
             main.style.opacity = 1;
             setTimeout(() => {
                 unhideOverlay();
-            }, 900)
+            }, 900);
         }
-    }, 100)
-
+    }, 100);
     return true;
 }
 
@@ -151,7 +150,7 @@ let currentSection
 let clickerOverlay;
 let portfolioHolder;
 let closeButton;
-let holders=[];
+let holders = [];
 
 
 function initAbout(dom) {
@@ -171,7 +170,7 @@ function initAbout(dom) {
         underlay.insertBefore(holder, underlay.firstElementChild)
         section.tabIndex = i
         //holder.appendChild(section)
-        section.holderId=i;
+        section.holderId = i;
 
         section.className = 'shrink'
         //section.remove();
@@ -183,13 +182,13 @@ function initAbout(dom) {
         section.addEventListener('click', ev => {
             selectSection(section)
         })
-        let image=section.querySelector('image')
-        if(image)
-            image.addEventListener('load',loadListener)
+        let image = section.querySelector('image')
+        if (image)
+            image.addEventListener('load', loadListener)
 
-        let video=section.querySelector('video')
-        if(video)
-        video.addEventListener('loadeddata', loadListener);
+        let video = section.querySelector('video')
+        if (video)
+            video.addEventListener('loadeddata', loadListener);
 
 
         /*
@@ -325,7 +324,7 @@ function selectSection(section) {
 }
 
 function fit() {
-    
+
     main.querySelectorAll('section').forEach((section, i) => {
 
         fitSection(section);
@@ -335,21 +334,21 @@ function fit() {
 
 function fitSection(section) {
     section.scrollTo(0, 0)
-        if (section.className == 'shrink') {
-            let holder = holders[section.holderId]
-            section.style.left = (holder.offsetLeft + 128 - section.offsetWidth / 2) + 'px';
-            section.style.top = holder.offsetTop + 'px';
-            section.style.zIndex = 0;
-        } else
-            section.style.zIndex = 3;
+    if (section.className == 'shrink') {
+        let holder = holders[section.holderId]
+        section.style.left = (holder.offsetLeft + 128 - section.offsetWidth / 2) + 'px';
+        section.style.top = holder.offsetTop + 'px';
+        section.style.zIndex = 0;
+    } else
+        section.style.zIndex = 3;
 }
 
 function loadListener(ev) {
     fitSection(ev.target.parentElement)
-    if(ev.target["videoHeight"]==undefined)
-        ev.target.removeEventListener('load',loadListener);
+    if (ev.target["videoHeight"] == undefined)
+        ev.target.removeEventListener('load', loadListener);
     else
-        ev.target.removeEventListener('loadeddata',loadListener);
+        ev.target.removeEventListener('loadeddata', loadListener);
     console.log('late load')
 }
 
