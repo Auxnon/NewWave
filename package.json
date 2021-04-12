@@ -36,7 +36,7 @@
     "express-session": "^1.17.1",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "sequelize": "^6.5.1",
+    "sequelize": "^6.6.1",
     "socket.io": "^4.0.0",
     "sqlite3": "^5.0.2"
   }
