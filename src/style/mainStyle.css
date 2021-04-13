@@ -20,12 +20,19 @@
     -webkit-box-shadow: inset 0 0 12px black;
     background-color: none;
 }
+html,body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+}
 
 body {
+    z-index: -1; /*a lot z-index mania to get our desired app overlay results DEV better alternatives?*/
+    position: relative;
     background-color: white;
     stroke: white;
     font-family: sans-serif;
-
 }
 
 body.dark-mode {

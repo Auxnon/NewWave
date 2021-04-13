@@ -66,8 +66,8 @@ function init(argument) {
 
     apps.forEach((app, index) => {
         if (app) {
-            app.style.top = Math.random() * window.innerWidth + 'px'
-            app.style.left = Math.random() * window.innerHeight + 'px'
+            app.style.top = Math.random() * document.body.offsetWidth + 'px'
+            app.style.left = Math.random() * document.body.offsetHeight + 'px'
             app.offset = { x: 0, y: 0 };
             app.appId = index; //lets not parseInt constantly
             app.container = index > 5 ? 1 : 0;
@@ -81,9 +81,10 @@ function init(argument) {
     path = document.querySelector('path')
     svg = document.querySelector('svg')
     mainTitle = document.querySelector('#main-title');
-    mouseObj = { x: window.innerWidth / 2, y: -200 }
+    mouseObj = { x: window.document.body.offsetWidth / 2, y: -200 }
 
     window.addEventListener('resize', resize);
+    window.addEventListener('orientationchange',resize)
     initLine();
     window.addEventListener('pointermove', mousemove)
     window.addEventListener('pointerdown', mousemove)
@@ -231,8 +232,8 @@ function resize() {
 
     clearTimeout(resizeDebouncer);
     resizeDebouncer = setTimeout(function() {
-        svg.setAttribute('width', window.innerWidth + "px")
-        svg.setAttribute('height', window.innerHeight + "px")
+        svg.setAttribute('width', document.body.offsetWidth + "px")
+        svg.setAttribute('height', document.body.offsetHeight + "px")
         barAdjust();
         if (Render) {
             Render.resize();
@@ -283,7 +284,7 @@ function barInit() {
 
     barHandle.style.transform = 'translate(-50%,-200%)';
     bar.style.left = '50%';
-    bar.style.top = (window.innerHeight - 64) + 'px';
+    bar.style.top = (document.body.offsetHeight - 64) + 'px';
 
     barCalculate(true);
 }
@@ -492,7 +493,7 @@ function drawSimpleBarLine(one, two) {
 }
 
 function mousemove(ev) {
-    positionalData = { x: ev.clientX / window.innerWidth, y: ev.clientY / window.innerHeight }
+    positionalData = { x: ev.clientX / document.body.offsetWidth, y: ev.clientY / document.body.offsetHeight }
     barMoveHandler(ev);
     if (targetMove) {
         moveFactor++;
@@ -536,8 +537,8 @@ function barMoveHandler(ev) {
         moveFactor++;
         let xx = ev.clientX;
         let yy = ev.clientY;
-        let dx = xx - window.innerWidth / 2;
-        let dy = yy - window.innerHeight / 2;
+        let dx = xx - document.body.offsetWidth / 2;
+        let dy = yy - document.body.offsetHeight / 2;
         let r = Math.atan2(dy, dx) / Math.PI;
         let ar = Math.abs(r)
         if (ar < 0.25) { //right
@@ -603,7 +604,7 @@ function barMoveHandler(ev) {
 
 function barAdjust() {
     if (barPos == 2) { //right
-        bar.style.left = window.innerWidth - 64 + 'px';
+        bar.style.left = document.body.offsetWidth - 64 + 'px';
         bar.style.top = '50%'; //window.innerHeight/2;
         barCalculate();
         barHandle.style.transform = 'translate(-200%,-50%)'
@@ -621,7 +622,7 @@ function barAdjust() {
     } else if (barPos == 1) { //bottom
         barHandle.style.transform = 'translate(-50%,-200%)'
         bar.style.left = '50%';
-        bar.style.top = (window.innerHeight - 64) + 'px'; //-196+window.innerWidth/2
+        bar.style.top = (document.body.offsetHeight - 64) + 'px'; //-196+window.innerWidth/2
         mainTitle.style.top = '8px';
         barCalculate();
         barHandle.style.height = '32px';
@@ -749,8 +750,8 @@ function boundaryCheck() {
             }
             if (y < 0) {
                 app.style.top = h2 + 'px'
-            } else if (y > window.innerHeight - h2 * 2) {
-                app.style.top = window.innerHeight - h2 + 'px'
+            } else if (y > document.body.offsetHeight - h2 * 2) {
+                app.style.top = document.body.offsetHeight - h2 + 'px'
             }
 
         }

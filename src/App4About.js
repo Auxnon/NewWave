@@ -284,7 +284,7 @@ function initAbout(dom) {
 
 
     })
-    window.addEventListener('resize', ev => {
+    window.addEventListener('resize', ev => { //DEV FIX we shouldn't have an internal listener, that's just asking for trouble
         if (resizeTimer)
             clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function() {
