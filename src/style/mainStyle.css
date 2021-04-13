@@ -24,7 +24,8 @@ html,body {
     margin: 0;
     padding: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100%;
+    touch-action: none;
 }
 
 body {
@@ -167,7 +168,9 @@ button#app-sort-button{
     mix-blend-mode: difference;
     stroke: white;
     stroke-width: 5;
-    stroke-linejoin: bevel;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
     transition: top 0.3s;
     z-index: -1;
 }
@@ -178,6 +181,7 @@ button#app-sort-button{
 }
 
 #main-title * {
+    stroke-dashoffset: 10;
     animation: pulse 1.2s backwards;
 }
 
