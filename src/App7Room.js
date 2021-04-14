@@ -1,5 +1,6 @@
 import * as THREE from "./lib/three.module.js";
 import * as Render from "./Render.js";
+import * as Main from "./Main.js";
 
 //pass in name, and a pointer to a complete function which dictates everything has loaded, 
 //we keep track inside the mini class by counting  resources and incrementing till count is complete then, complte()
@@ -8,33 +9,85 @@ import * as Render from "./Render.js";
 //called at first run, plugs in all the goods
 let group
 let plane;
+let targetNode;
+let sunLight
+const SHADOW_SIZE = 2048;
+
+let xMatrix,zMatrix;
 
 
 function init(index, dom, complete) {
+    zMatrix = new THREE.Quaternion(),xMatrix = new THREE.Quaternion();;
+    xMatrix.setFromAxisAngle( new THREE.Vector3( 1,0,0 ),Math.PI/2);
     let scene = new THREE.Scene();
     group = new THREE.Group();
-    let geom = new THREE.BoxBufferGeometry(10, 10, 5);
-    let mat = new THREE.MeshStandardMaterial({ color: 0xFFCD00, side: THREE.BackSide });
+    let geom = new THREE.BoxBufferGeometry(10, 10, 1);
+    let mat = new THREE.MeshStandardMaterial({ color: 0xFFCD00});//, side: THREE.BackSide });
     let room = new THREE.Mesh(geom, mat)
+    room.position.z=-4
+    room.recieveShadow=true;
     group.add(room)
     group.scale.set(10, 10, 10)
     group.position.z = 20;
 
     let ambientLight = new THREE.AmbientLight(0xffffff); // soft white light
     scene.add(ambientLight);
-    let sunLight = new THREE.DirectionalLight(0xffffff, 0.6); //DirectionalLight
-    sunLight.position.set(1, -2, 0);
+    sunLight = new THREE.DirectionalLight(0xffffff, 0.6); //DirectionalLight
+    sunLight.position.set(0, 0, 100);
     sunLight.castShadow = true;
+    //sunLight.castShadow = true;
+    let sunTarget = new THREE.Object3D();
+    sunTarget.position.set(200, 0, 20);
+
+
+
+    let seat = new THREE.Mesh(new THREE.BoxBufferGeometry(1, 1, 1), new THREE.MeshPhongMaterial({ color: 0x78725B }))
+    seat.position.set(0, 0, -2)
+    seat.castShadow=true;
+    targetNode=seat
+    group.add(seat)
+
+
+    //sunLight.target = seat;
+    scene.add(sunLight.target);
+    window.sunLight=sunLight
+
+
+
+
+    window.sunTarget=sunTarget
+
+
+    sunLight.shadow.mapSize.width = SHADOW_SIZE; // default
+    sunLight.shadow.mapSize.height = SHADOW_SIZE; // default
+    sunLight.shadow.camera.near = 1; // default
+    sunLight.shadow.camera.far = 100;   
+    // default
+
+    let d1=75;
+    sunLight.shadow.camera.left = -d1;
+    sunLight.shadow.camera.right = d1;
+    sunLight.shadow.camera.top = d1;
+    sunLight.shadow.camera.bottom = -d1;
+    
+
+    sunLight.shadow.radius = 2.2; //2.2;
+    sunLight.shadow.bias = -.0005;
+
+    
+
     scene.add(ambientLight)
     scene.add(sunLight)
+    let debugLightHelper = new THREE.CameraHelper(sunLight.shadow.camera);
+    scene.add(debugLightHelper)
+    debugLightHelper.update();
+    window.debugLightHelper=debugLightHelper
     /*
         let pillar = new THREE.Mesh(new THREE.BoxBufferGeometry(1, 1, 6), new THREE.MeshStandardMaterial({ color: 0xFF274B }))
         pillar.position.set(0, 5, 0)
         group.add(pillar);
     */
-    let seat = new THREE.Mesh(new THREE.BoxBufferGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: 0x78725B }))
-    seat.position.set(0, 0, -2)
-    group.add(seat)
+    
 
     let texture = new THREE.TextureLoader().load("assets/room/bitmap.png");
     texture.wrapS = THREE.RepeatWrapping;
@@ -85,7 +138,10 @@ function init(index, dom, complete) {
         //=.children[0]
         m.position.set(0, -3, -2.5)
         m.rotation.set(0, 0, TAU / 2)
-        window.m = m;
+        m.material= new THREE.MeshPhongMaterial({ color: 0xFF274B });
+        m.castShadow=true;
+        m.recieveShadow = true;
+        
         group.add(m)
     })
 
@@ -94,7 +150,10 @@ function init(index, dom, complete) {
         m.position.set(0, 4, -2.5)
         //m.rotation.set(0,0,TAU/2)
         //window.m=m;
+        m.castShadow=true;
+        m.recieveShadow = true;
         group.add(m)
+
     })
 
     scene.add(group)
@@ -112,13 +171,26 @@ let current = 0;
 
 function animate(delta) {
     group.rotation.z += delta / 1.0;
-    plane.lookAt(Render.getCamera().position);
+    if(group.rotation.z>Math.PI)
+        group.rotation.z=-Math.PI
+
+    let pos=Main.getPos()
+    sunLight.target.position.set(pos.x*100-50,pos.y*10-5,0);
+    targetNode.position.set(pos.x*10-5,pos.y*10-5,-2);
+
+    
+    zMatrix.setFromAxisAngle( new THREE.Vector3( 0,0,1 ),-group.rotation.z );
+    zMatrix.multiply(xMatrix)
+    //console.log(zMatrix)
+    //plane.lookAt(Render.getCamera().position);
+    plane.quaternion.copy(zMatrix)
     //plane.rotation.x=TAU/4
     //plane.rotation.y=0;
     let degree = (TAU / offsets.length) / 2
-    let z = plane.rotation.z;
+    let z = group.rotation.z;
+
     //z=(z > 0 ? z : (TAU + z))+degree
-    let dir = z < 0
+    let dir = z > 0
 
 
 
@@ -268,7 +340,7 @@ function svgProcess(svg){
 }
 
 
-    function svgShake(paths,og){
+    function svgShake(paths,og){ //DEV FIX this function is ugly as sin / inefficient
         if(paths.length){
             for(let k=0;k<paths.length;k++){
                 let path=paths[k];
@@ -289,9 +361,10 @@ function svgProcess(svg){
                     let letter=points[i];
                     ns+=letter;
                     letter=letter.toUpperCase();
-                    if(letter=="M" || letter=="L" || letter=="C"){
+                    if(letter=="M" || letter=="L" || letter=="C" || letter=="S"){
                         let s=points[i+1].trim();
-                        let params=s.split(/(?=-)| /g);
+                        //let params=s.split(" ");
+                        let params=s.split(/(?=-)| /ig);
                         /*if(selectedPath){
                             let selector=$("<div class='selector'/>");
                             selector.css({left:xy[0]+"px",top:xy[1]+"px"});
@@ -304,7 +377,7 @@ function svgProcess(svg){
 
                         for(let j=0;j<params.length;j++){
                             let val=parseFloat(params[j]);
-                            val+=((Math.floor(100*Math.random())/100) - 0.5)*1.5
+                            val+=((Math.floor(100*Math.random())/100) - 0.5)*1.5;
                             ns+=val+" ";
                         }
                         //lookahead include minus sign /(?=-)/g
@@ -320,22 +393,46 @@ function svgProcess(svg){
                         //registerPoint(parseInt(xy[0]),parseInt(xy[1]),id,i);
                         let s=points[i+1].trim();
                         let val=parseFloat(s);
-                            val+=((Math.floor(100*Math.random())/100) - 0.5)*1.5
-
+                            val+=((Math.floor(100*Math.random())/100) - 0.5)*1.5;
                             ns+=val+" ";
+                    }else if(letter=="A"){
+                        let s=points[i+1].trim();
+                        let params=s.split(/(?=-)| /ig);
+                        if(params.length<7){
+                            if(params.length<6){
+                                let p=params[3][0];
+                                let p2=params[3][1];
+                                params.splice(3,0,p);
+                                params.splice(4,0,p2);
+                            }else{
+                                 let p=params[3][0];
+                                 params.splice(3,0,p);
+                            }
+                        }
+                        //let val=parseFloat(s);
+                        for(let j=0;j<params.length;j++){
+                            if(j!=3 || j!=4){ //avoid modifying the flags
+                                let val=parseFloat(params[j]);
+                                val+=((Math.floor(100*Math.random())/100) - 0.5)*1.5;
+                                ns+=val+" ";
+                            }else{
+                                 ns+=params[j]+" ";
+                            }
+                        }
+
                     }else if(letter=="Z"){
 
                     }
                 }
                 console.log('after' + ns)
-                path.setAttribute('d',ns);
+                //path.setAttribute('d',ns);
 
             }
         }
 
     }
     function chunkPath(path){
-        let array=path.split(/([MLZCHVSA])/ig); //  /(?=-)/g
+        let array=path.split(/([MLZCHVSA])/ig);
         array.shift();
         return array;
     }
