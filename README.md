@@ -13,3 +13,4 @@ Project name for the current home page of https://Makeavoy.com
     - Chat system that plugs into Socket.IO, Passport.js, Sequelize single user (me) auth with multi guest accounts, allowing anyone to message me
     - And more coming soon!
 
+![image](https://user-images.githubusercontent.com/527951/117345490-98ec6280-ae74-11eb-9cf7-2e09e95d9317.png)
