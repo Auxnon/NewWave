@@ -2,6 +2,32 @@
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+
+const paths = [
+  {
+    path: '/svg/',
+    lastmod: '2019-01-01',
+    priority: 0.8,
+    changefreq: 'yearly'
+  },
+  {
+    path: '/desk/',
+    lastmod: '2018-02-05',
+    priority: 0.5,
+    changefreq: 'yearly'
+  },{
+    path: '/fruit/',
+    lastmod: '2018-02-05',
+    priority: 0.5,
+    changefreq: 'never'
+  },{
+    path: '/stomp/',
+    lastmod: '2014-01-01',
+    priority: 0.5,
+    changefreq: 'never'
+  }
+];
+
 module.exports = (env,argv) => {
 	let devMode= argv.mode !== 'production';
 	console.log("dev mode is "+devMode+" "+argv.mode);
@@ -12,14 +38,15 @@ return {
   plugins:[
   	new CleanWebpackPlugin({ 
   		dry:false,
-  		cleanOnceBeforeBuildPatterns:['**/*','!styles','!styles/*','!assets','!assets/*','!assets/room/*','!partials','!partials/*'],
+  		cleanOnceBeforeBuildPatterns:['**/*','!styles','!styles/*','!assets','!assets/*','!assets/room/*','!partials','!partials/*','!robots.txt','!sitemap.xml'],
   		verbose: true
   	}),
   	new HtmlWebpackPlugin({template: './src/index.html'}),
   	new HtmlWebpackPlugin({ 
       filename: 'partials/about.html',
       template: './src/about.html'
-    })
+    }),
+    new SitemapPlugin({ "https://MakeAvoy.com", [], {lastmod:true} })
   ],
   module: {
 	  rules: [

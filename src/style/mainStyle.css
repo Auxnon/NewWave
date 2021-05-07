@@ -20,7 +20,9 @@
     -webkit-box-shadow: inset 0 0 12px black;
     background-color: none;
 }
-html,body {
+
+html,
+body {
     margin: 0;
     padding: 0;
     width: 100vw;
@@ -29,7 +31,8 @@ html,body {
 }
 
 body {
-    z-index: -1; /*a lot z-index mania to get our desired app overlay results DEV better alternatives?*/
+    z-index: -1;
+    /*a lot z-index mania to get our desired app overlay results DEV better alternatives?*/
     position: relative;
     background-color: white;
     stroke: white;
@@ -39,10 +42,12 @@ body {
 body.dark-mode {
     background-color: black;
 }
-button{
+
+button {
     border: none;
 }
-button:focus{
+
+button:focus {
     outline: none;
 }
 
@@ -133,7 +138,8 @@ button:focus{
     top: 50%;
     transform: translate(-50%, -50%);
 }
-button#app-sort-button{
+
+button#app-sort-button {
     position: absolute;
     width: 24px;
     height: 24px;
@@ -142,7 +148,8 @@ button#app-sort-button{
     background: center / 24px no-repeat;
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="gray"><path d="M0 0h24v24H0V0z" fill="none"/><circle cx="7" cy="14" r="3"/><circle cx="11" cy="6" r="3"/><circle cx="16.6" cy="17.6" r="3"/></svg>')
 }
-.sorting--enabled{
+
+.sorting--enabled {
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="gray"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 13a2 2 0 012 2 2 2 0 01-2 2 2 2 0 01-2-2c0-1.1.9-2 2-2zm-8 2c0 1.1.9 2 2 2a2 2 0 002-2 2 2 0 00-2-2 2 2 0 00-2 2zm-6 0c0 1.1.9 2 2 2a2 2 0 002-2 2 2 0 00-2-2 2 2 0 00-2 2zm4-6a2 2 0 00-2-2 2 2 0 00-2 2c0 1.1.9 2 2 2a2 2 0 002-2zm2 0c0 1.1.9 2 2 2a2 2 0 002-2 2 2 0 00-2-2 2 2 0 00-2 2zm6 0c0 1.1.9 2 2 2a2 2 0 002-2 2 2 0 00-2-2 2 2 0 00-2 2z"/></svg>') !important;
 }
 
@@ -177,7 +184,8 @@ button#app-sort-button{
 
 #main-title.shrink {
     left: 0;
-    transform: translate(-112px, -37px) scale(.25, .25); /*yuck*/
+    transform: translate(-112px, -37px) scale(.25, .25);
+    /*yuck*/
 }
 
 #main-title * {
@@ -376,9 +384,11 @@ button#app-sort-button{
     background-color: #85FFBD;
     background-image: linear-gradient(180deg, #85FFBD 0%, #FFFB7D 100%);
 }
-#app5 .app-icon{
+
+#app5 .app-icon {
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 16.9 16.9"><path d="M8.4 2.1c-1.8 0-3.6.6-5 1.7-2.8 2-2.2 4.5-.7 6.1 1.4 1.7 4 1.8 4.2 1.8.1 0 1 2.6 2.6 2.6-.8-1.8.5-2.7.5-2.7s2 .1 4-1.7c2-1.9 1.8-4-.7-6.2C12 2.6 10.2 2 8.4 2zm3.2 4.3c.6 0 1.1.4 1.1 1s-.5 1-1 1a1 1 0 01-1.1-1c0-.6.4-1 1-1zm-6.3 0c.6 0 1 .4 1 1s-.4 1-1 1a1 1 0 01-1.1-1c0-.6.5-1 1-1zm3 0h.1c.6 0 1 .4 1 1s-.4 1-1 1a1 1 0 01-1-1c0-.6.4-1 1-1z" fill="white"/></svg>');
 }
+
 .dark-mode #app5 {
     background-color: #094112;
     background-image: linear-gradient(180deg, black 0%, #094112 100%);
@@ -422,50 +432,169 @@ button#app-sort-button{
 }
 
 cube {
-    --s: 1s;
+    --s: 2s;
+    font-size: 50px;
     transform-style: preserve-3d;
+    content: 'LO';
     top: 50%;
     left: 50%;
     position: absolute;
     width: 100px;
     height: 100px;
-    background-color: rgba(255, 0, 0, 0.3);
+    background: center / cover no-repeat rgba(255, 0, 0, 0.3);
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" ><text font-family="arial" fill="black" x="0" y="18" font-size="18px">LO</text></svg>');
+
+
+
     transition: transform 1s;
     /*transform:  rotate(0,0,1, 10deg);*/
     animation: cube-spin-animation var(--s) linear forwards infinite;
-    outline: 5px solid black;
+    border: 8px solid white;
     box-sizing: border-box;
 }
 
 cube:before {
     display: block;
-    content: '';
+    content: 'AD';
     width: 100px;
     height: 100px;
-    top: 00px;
-    left: 0px;
+    line-height: 1.5;
     position: absolute;
+    text-align: center;
     background-color: rgba(0, 0, 255, 0.3);
-    transform: rotateX(90deg) translateZ(50px) translateY(-50px);
-    outline: 5px solid black;
+    transform: rotateX(90deg) translate3d(-8px, -50px, 58px);
+    border: 8px solid white;
     box-sizing: border-box;
+    animation: spin-extra var(--s) lienar forwards infinite;
 }
 
 cube:after {
     display: block;
-    content: '';
+    content: 'ING';
     width: 100px;
     height: 100px;
-    /*top:100px;
-	left:0px;*/
+    line-height: 1.5;
+    text-align: center;
+
     position: absolute;
     background-color: rgba(0, 255, 0, 0.3);
-    transform: rotateY(90deg) translateZ(50px) translateX(50px);
-    outline: 5px solid black;
+    transform: rotateY(90deg) translate3d(50px, -8px, 42px);
+    border: 8px solid white;
     box-sizing: border-box;
 }
 
 @keyframes cube-spin-animation {
+    0% {
+        transform: rotate3d(-1, -1, 1, 20deg) translate3d(-50%, -50%, 100px) scale(0.9);
+    }
+
+    17% {
+        transform: rotate3d(0, -1, 0, 10deg) translate3d(-50%, -50%, 100px) scale(1.1);
+    }
+
+    34% {
+        transform: rotate3d(-1, -.1, -.1, 70deg) translate3d(-50%, -50%, 20px) scale(0.9);
+    }
+
+    51% {
+        transform: rotate3d(-1, 0, 0, 80deg) translate3d(-50%, -50%, 20px) scale(1.1);
+    }
+
+    68% {
+        transform: rotate3d(-.1, -1, .1, 70deg) translate3d(-50%, -50%, 100px) scale(0.9);
+    }
+
+    85% {
+        transform: rotate3d(0, -1, 0, 80deg) translate3d(-50%, -50%, 100px) scale(1.1);
+    }
+
+    100% {
+        transform: rotate3d(-1, -1, 1, 20deg) translate3d(-50%, -50%, 100px) scale(0.9);
+    }
+
+    /* 27%{
+        transform: rotate3d(1, -1,0,60deg) translate3d(-50%, -50%, 50px);
+        
+    }
+    36%{
+        transform: rotate3d(.5, -1,.5,60deg) translate3d(-50%, -50%, 50px);
+    }
+    45%{
+        transform: rotate3d(0, -1,1,60deg) translate3d(-50%, -50%, 50px);
+    }
+    54% {
+        transform: rotate3d(-.5,-.5,1, 60deg) translate3d(-50%, -50%, 100px);
+    }
+    63% {
+        transform: rotate3d(-1,0,1, 60deg) translate3d(-50%, -50%, 100px);
+    }
+    72% {
+        transform: rotate3d(-.5,-.5,1, 60deg) translate3d(-50%, -50%, 100px);
+    }
+    81% {
+        transform: rotate3d(-0,-1,1, 60deg) translate3d(-50%, -50%, 100px);
+    }*/
+
+}
+
+/*
+@keyframes cube-spin-animation {
+    9% {
+        transform: rotate3d(0, -1,1, 60deg) translate3d(-50%, -50%, 100px);
+    }
+     18% {
+        transform: rotate3d(.5, -1,.5, 60deg) translate3d(-50%, -50%, 100px);
+    }
+    27%{
+        transform: rotate3d(1, -1,0,60deg) translate3d(-50%, -50%, 50px);
+        
+    }
+    36%{
+        transform: rotate3d(.5, -1,.5,60deg) translate3d(-50%, -50%, 50px);
+    }
+    45%{
+        transform: rotate3d(0, -1,1,60deg) translate3d(-50%, -50%, 50px);
+    }
+    54% {
+        transform: rotate3d(-.5,-.5,1, 60deg) translate3d(-50%, -50%, 100px);
+    }
+    63% {
+        transform: rotate3d(-1,0,1, 60deg) translate3d(-50%, -50%, 100px);
+    }
+    72% {
+        transform: rotate3d(-.5,-.5,1, 60deg) translate3d(-50%, -50%, 100px);
+    }
+    81% {
+        transform: rotate3d(-0,-1,1, 60deg) translate3d(-50%, -50%, 100px);
+    }
+
+}*/
+/* 0% {
+        transform: rotate3d(0, -1,1, 60deg) translate3d(-50%, -50%, 100px);
+    }
+     10% {
+        transform: rotate3d(0, -1,1, 60deg) translate3d(-50%, -50%, 100px);
+    }
+
+    20%{
+        transform: rotate3d(0, 0,0,90deg) translate3d(-50%, -50%, 50px);
+        
+    }
+    30%{
+        transform: rotate3d(-.5, 0,0,90deg) translate3d(-50%, -50%, 50px);
+    }*/
+@keyframes spin-extra {
+    33% {
+        border-radius: 64px;
+
+    }
+
+    66% {
+        border-radius: 64px;
+    }
+}
+
+/*@keyframes cube-spin-animation {
     00% {
         transform: rotate3d(-1, 0, 0, 90deg) translate3d(-50%, -50%, 50px);
     }
@@ -482,16 +611,16 @@ cube:after {
         transform: rotate3d(-1, 0, 0, 90deg) translate3d(-50%, -50%, 50px);
     }
 
-    /*80% {transform: rotate3d(-1,-1,-1, 90deg) translate3d(0,0,50px);}
-	90% {transform: rotate3d(-1,-1,1, 90deg) translate3d(0,0,50px);}
-	100% {transform: rotate3d(-1,-1,-1, 90deg) translate3d(0,0,50px);}*/
+    80% {transform: rotate3d(-1,-1,-1, 90deg) translate3d(0,0,50px);}
+    90% {transform: rotate3d(-1,-1,1, 90deg) translate3d(0,0,50px);}
+    100% {transform: rotate3d(-1,-1,-1, 90deg) translate3d(0,0,50px);}
 
-    /*90% {transform: rotate3d(-1,-1,0, 90deg)translate3d(0,0,50px);}*/
-    /*60% {transform:  rotate3d(-2,0,-1, 45deg);}*/
-    /*60% {transform:  rotate3d(0,-1,0, 90deg);}
-	80% {transform:  rotate3d(-1,-1,1, 60deg);}
-	100% {transform:  rotate3d(0,0,0, 0deg);}*/
-}
+    90% {transform: rotate3d(-1,-1,0, 90deg)translate3d(0,0,50px);}
+    60% {transform:  rotate3d(-2,0,-1, 45deg);}
+    60% {transform:  rotate3d(0,-1,0, 90deg);}
+    80% {transform:  rotate3d(-1,-1,1, 60deg);}
+    100% {transform:  rotate3d(0,0,0, 0deg);}
+}*/
 
 .line-button {
     animation: line-wiggle-animation 4s linear infinite;
@@ -515,8 +644,8 @@ cube:after {
     }
 }
 
-#close-button{
-        /*transition: opacity 0.2s;*/
+#close-button {
+    /*transition: opacity 0.2s;*/
     display: none;
     width: 48px;
     height: 48px;
@@ -525,7 +654,8 @@ cube:after {
     left: 50%;
     bottom: 128px;
     transform: translate(-50%);
-    background: center / 36px no-repeat #5553; 
-    z-index: 3; /*there's a lot going on with zIndex, needs tracing how this happened*/
+    background: center / 36px no-repeat #5553;
+    z-index: 3;
+    /*there's a lot going on with zIndex, needs tracing how this happened*/
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path fill="white" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>');
 }
