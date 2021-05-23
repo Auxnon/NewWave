@@ -14,7 +14,7 @@ function init(index, dom, complete) {
     //let scene = new THREE.Scene();
 
     shrinkTitle();
-    initChat(dom)
+    initChat(dom);
     Online.guest();
     //return scene;
     complete();
@@ -22,7 +22,11 @@ function init(index, dom, complete) {
 
 //runs every frame
 function animate(delta) {
-
+    timestampRefreshCounter += delta
+    if (timestampRefreshCounter >= 4) {
+        timestampRefreshCounter = 0;
+        refreshTimestamps();
+    }
 }
 
 //unused for now, would deload everything for memory reasons
@@ -38,6 +42,7 @@ function open(canvas) {
     //if(chatInput)
     chatWrapper.style.display = ''
     chatInput.focus();
+    timestampRefreshCounter = 180;
 }
 //called when app is closed out for another one
 function close() {
@@ -45,13 +50,13 @@ function close() {
 }
 
 function adjust(pos) {
-    chatWrapper.style.left=0;
-    chatWrapper.style.top=0;
+    chatWrapper.style.left = 0;
+    chatWrapper.style.top = 0;
     switch (pos) {
         case 0:
             chatWrapper.style.width = 'calc(100% - 128px)';
             chatWrapper.style.height = '100%';
-            chatWrapper.style.left='128px';
+            chatWrapper.style.left = '128px';
             break;
         case 2:
             chatWrapper.style.width = 'calc(100% - 128px)';
@@ -60,7 +65,7 @@ function adjust(pos) {
         case 3:
             chatWrapper.style.width = '100%';
             chatWrapper.style.height = 'calc(100% - 128px)';
-            chatWrapper.style.top='128px'
+            chatWrapper.style.top = '128px'
             break;
 
         default:
@@ -85,6 +90,7 @@ let chatWrapper; //holds all chat app elements, not the canvas as usual
 let chatPane; //holds only actual chat bubbles
 //let chatBlock;
 let chatInput; //text entry
+let timestampRefreshCounter = 0;
 
 
 //only matters to admin (me?)
@@ -286,10 +292,10 @@ function addBubble(s, player, timestamp) {
     chatBubble.classList.add('chat-bubble');
 
 
-    let chatTime=document.createElement('span');
-    chatTime.className='chat-timestamp'
-    chatTime.innerText=timeFormat(timestamp)
-    chatTime.setAttribute('time',timestamp)
+    let chatTime = document.createElement('span');
+    chatTime.className = 'chat-timestamp'
+    chatTime.innerText = timeFormat(timestamp)
+    chatTime.setAttribute('time', timestamp)
     if (lastPlayerName && lastPlayerName == player.username) {
         if (pastPlayerName == player.username) {
             lastDom.classList.remove("chat-bubble-footer");
@@ -317,9 +323,16 @@ function addBubble(s, player, timestamp) {
     lastDom = chatBubble;
     lastPlayerName = player.username;
 
+    if (player.username == Online.getUsername()) {
+        chatRow.appendChild(chatTime);
+        chatRow.appendChild(chatBubble);
+    } else {
+        chatRow.appendChild(chatBubble);
+        chatRow.appendChild(chatTime);
+    }
 
-    chatRow.appendChild(chatBubble)
-    chatPane.appendChild(chatRow)
+
+    chatPane.appendChild(chatRow);
     chatPane.scrollTo(0, chatPane.scrollHeight);
 
 
@@ -462,23 +475,32 @@ function offline() {
 }
 
 
-function timeFormat(time){
-    let diff=(Date.now()-time)/1000;
-    let hoursRaw=diff/3600
-    let hours=Math.floor(hoursRaw)
-    let minutesRaw=(hoursRaw-hours)*60
-    let minutes=Math.floor(minutesRaw)
-    let seconds=Math.floor((minutesRaw-minutes)*60)
+function timeFormat(time) {
+    let diff = (Date.now() - time) / 1000;
+    let hoursRaw = diff / 3600
+    let hours = Math.floor(hoursRaw)
+    let minutesRaw = (hoursRaw - hours) * 60
+    let minutes = Math.floor(minutesRaw)
+    let seconds = Math.floor((minutesRaw - minutes) * 60)
 
-    let finalString=hours>0?hours+"hours ":""
-    finalString+=minutes>0?minutes+"mins ":""
-    finalString+=seconds>0?seconds+"secs ":""
-    if(finalString.length>0)
-        finalString+="ago"
+    let finalString = hours > 0 ? hours + "hours " : ""
+    finalString += minutes > 0 ? minutes + "mins " : ""
+    finalString += seconds > 0 ? seconds + "secs " : ""
+    if (finalString.length > 0)
+        finalString += "ago"
     return finalString;
+}
+
+function refreshTimestamps() {
+    let stamps = chatPane.querySelectorAll('.chat-timestamp')
+    stamps.forEach(stamp => {
+        let n = parseInt(stamp.getAttribute('time'))
+        if (!isNaN(n))
+            stamp.innerText = timeFormat(n);
+    })
 }
 
 
 
 
-export { init, animate, deinit, open, close,adjust, hook, makeDivider, setRooms, lastChats, clear, unhideAdmin, offline }
+export { init, animate, deinit, open, close, adjust, hook, makeDivider, setRooms, lastChats, clear, unhideAdmin, offline }
