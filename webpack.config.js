@@ -1,6 +1,7 @@
  const path = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const SitemapPlugin = require('sitemap-webpack-plugin').default;
 
 
 const paths = [
@@ -46,7 +47,8 @@ return {
       filename: 'partials/about.html',
       template: './src/about.html'
     }),
-    new SitemapPlugin({ "https://MakeAvoy.com", [], {lastmod:true} })
+    new SitemapPlugin({ base: "https://MakeAvoy.com", paths, options: {lastmod:true} })
+
   ],
   module: {
 	  rules: [
