@@ -284,6 +284,12 @@ function addBubble(s, player, timestamp) {
         chatRow.classList.add('chat-right')
 
     chatBubble.classList.add('chat-bubble');
+
+
+    let chatTime=document.createElement('span');
+    chatTime.className='chat-timestamp'
+    chatTime.innerText=timeFormat(timestamp)
+    chatTime.setAttribute('time',timestamp)
     if (lastPlayerName && lastPlayerName == player.username) {
         if (pastPlayerName == player.username) {
             lastDom.classList.remove("chat-bubble-footer");
@@ -422,15 +428,14 @@ function updateBubble(anchor) {
 
 function setRooms(guests) {
     roomSwitcher.querySelectorAll('.room-button').forEach(r => {
-        r.removeEventListener('click', roomClick)
+        r.removeEventListener('click', roomClick);
         r.remove();
     })
     guests.forEach(guest => {
-
         let room = div('room-button');
         room.innerText = guest.room != undefined ? guest.room : "???"
         room.addEventListener('click', roomClick);
-        roomSwitcher.appendChild(room)
+        roomSwitcher.appendChild(room);
     });
 }
 
@@ -451,11 +456,27 @@ function unhideAdmin() {
 }
 
 function offline() {
-    let banner = div('chat-banner')
-    banner.innerText = 'Offline\nReload site 😵'
-    chatPane.appendChild(banner)
+    let banner = div('chat-banner');
+    banner.innerText = 'Offline\nReload site 😵';
+    chatPane.appendChild(banner);
 }
 
+
+function timeFormat(time){
+    let diff=(Date.now()-time)/1000;
+    let hoursRaw=diff/3600
+    let hours=Math.floor(hoursRaw)
+    let minutesRaw=(hoursRaw-hours)*60
+    let minutes=Math.floor(minutesRaw)
+    let seconds=Math.floor((minutesRaw-minutes)*60)
+
+    let finalString=hours>0?hours+"hours ":""
+    finalString+=minutes>0?minutes+"mins ":""
+    finalString+=seconds>0?seconds+"secs ":""
+    if(finalString.length>0)
+        finalString+="ago"
+    return finalString;
+}
 
 
 

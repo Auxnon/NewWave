@@ -1,3 +1,7 @@
+/**
+A simple image editor for the chat system from the SocialGame project
+**/
+
 function init(dom) {
 
     initSheet();
