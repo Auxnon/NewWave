@@ -1,4 +1,4 @@
-module.exports = function Game(app, express, server, io, sessionObj) {
+module.exports = function Game(app, express, server, io, sessionObj,exec) {
 
     const colors = require('colors');
 
@@ -8,7 +8,7 @@ module.exports = function Game(app, express, server, io, sessionObj) {
     const passportInit = passport.initialize();
     const passportSession = passport.session();
     const LocalStrategy = require('passport-local').Strategy
-    const {exec}= require('child_process')
+
 
     //const app = require("https-localhost")()
     const fs = require("fs");

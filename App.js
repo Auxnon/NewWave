@@ -7,6 +7,9 @@ const cookieParser = require('cookie-parser')();
 const http= require('http');
 const https = require('https');
 
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+
 
 const options = {
   key: fs.readFileSync("ssl/lh.key"),//"./test/privkey.pem"),
@@ -47,9 +50,9 @@ io.use(function(socket, next) {
 	console.log('* passed session through io socket')
     sessionObj(socket.request, {}, next); //socket.request.res || {}
 });
+nan
 
-
-var gameBase = require('./SubApp')(app,express,server,io,sessionObj);
+var gameBase = require('./SubApp')(app,express,server,io,sessionObj,exec);
 
 server.listen(8082, function(){
   console.log('1. listening on *:8080, version '+serverVersion);
