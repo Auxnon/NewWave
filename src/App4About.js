@@ -233,7 +233,7 @@ function initAbout(dom) {
 
     });
     clickerOverlay.addEventListener('click', closeAll);
-    closeButton = main.querySelector('#closeButton');
+    closeButton = main.querySelector('#close-button');
     if (closeButton)
         closeButton.addEventListener('click', closeAll);
 
