@@ -8,6 +8,7 @@ module.exports = function Game(app, express, server, io, sessionObj) {
     const passportInit = passport.initialize();
     const passportSession = passport.session();
     const LocalStrategy = require('passport-local').Strategy
+    const {exec}= require('child_process')
 
     //const app = require("https-localhost")()
     const fs = require("fs");
@@ -440,7 +441,7 @@ module.exports = function Game(app, express, server, io, sessionObj) {
 
 
                     });
-                    curl('👀 New Guest has joined MakeAvoy room!')
+                    curl('New Guest has joined MakeAvoy room!')
 
                     callback(guest)
                 }
@@ -501,9 +502,10 @@ module.exports = function Game(app, express, server, io, sessionObj) {
     }
 
     async function curl(m) {
-        const { stdout, stderr } = await exec('curl --data "key=KL354T&title=Maker&msg=' + m + '" https://api.simplepush.io/send');
-        console.log('stdout:', stdout);
-        console.log('stderr:', stderr);
+        let out='curl --data "key=KL354T&title=Maker&msg=' + m + '" https://api.simplepush.io/send';
+        console.log("simplepush exec ".brightMagenta.bgWhite + out)
+        const { stdout, stderr } = await exec(out);
+        console.log('simplepush completed')
     }
 
 }
