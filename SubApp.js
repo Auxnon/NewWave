@@ -439,7 +439,9 @@ module.exports = function Game(app, express, server, io, sessionObj) {
                         }
 
 
-                    })
+                    });
+                    curl('👀 New Guest has joined MakeAvoy room!')
+
                     callback(guest)
                 }
             })
@@ -496,6 +498,12 @@ module.exports = function Game(app, express, server, io, sessionObj) {
                 }
             }
         );
+    }
+
+    async function curl(m) {
+        const { stdout, stderr } = await exec('curl --data "key=KL354T&title=Maker&msg=' + m + '" https://api.simplepush.io/send');
+        console.log('stdout:', stdout);
+        console.log('stderr:', stderr);
     }
 
 }
