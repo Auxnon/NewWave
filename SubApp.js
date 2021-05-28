@@ -441,7 +441,7 @@ module.exports = function Game(app, express, server, io, sessionObj,exec) {
 
 
                     });
-                    curl('New Guest has joined MakeAvoy room!')
+                    curl(GUESTS.length+' Guest(s) are in MakeAvoy rooms!')
 
                     callback(guest)
                 }
