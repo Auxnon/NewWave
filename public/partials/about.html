@@ -20,7 +20,7 @@
                 <img src="./assets/connectreport.png"></img>
                 <article>
                     <h2>ConnectReport</h2>
-                    <p>ConnectReport was the first major project I worked on. This small company brought me on as technical support. However due to the small team, I was quickly upgraded to a quality assurance technician with some minor coding roles. I converted the griding system to SVG which accommodated for the abstract cell sizing, as well as optimizing some neighboring cell collision detection. Allowing for Internet Explorer compatibility meant predating ECMA6 so Babel was a necessity. Also required working with various APIs in order to generate compatible files and allowing for import/export. Worked with Node.js, AngularJS and a team oriented git environment. </p>
+                    <p>ConnectReport was the first major project I worked on. This small company brought me on as technical support and quality assurance. However due to the small team, I was quickly upgraded to a minor development role. I converted the griding system to SVG which accommodated for the abstract cell sizing, as well as optimizing some neighboring cell collision detection. Allowing for Internet Explorer compatibility meant predating ECMA6 so Babel was a necessity. It Also required working with various APIs in order to generate compatible files and allowing for import/export. I Worked with Node.js, AngularJS and a team oriented git environment. </p>
                     <a href="https://connectreport.com/" class="site-link"></a>
                 </article>
             </section>
@@ -36,7 +36,8 @@
                     <h2>FrontEnd</h2>
                     <p>
                         The main site utilizes a lot of 3D via Three.js. Due to the above average script sizes, everything is lazy loaded on demand in order to reduce the Time to Interaction. The Rendering system is triggered to load at runtime, while each additional "app" is loaded upon clicking so as to only load the necessary content, at the cost of some load time. The initial payload hosts the basics such as the 3D CSS loading animation, and the app navigation system. The site loads in a self made SVG title that 'draws' into place by a stroke-dashoffset. It also includes dynamic app button movement and placement ala an iPad, and a snazzy vector based drawing system to animate the navigation bar using perpendicular velocity offsets. The title accommodates for the bar as well. Finally, each app when loaded in applies to Canvas3D the scene contents and animation cycles. Upon swapping apps, the buffer is dumped to an image raster and stealthily swapped in for a clean load out. This is because there can only be one Canvas3D at any given time, so this was a nice hack. Finally hit the top right icon to toggle night mode! All 3D and SVG assets are my own.
-
+                    </p>
+                    <p>
                          Currently the main page hosts 5 apps. First two being mostly artistic intent: a floating island landscape, and vapor wave style skull. After that you can try the bar graph generator, try any data range, only real number arrays please! Currently you're in my portfolio app, which is over the top with its adjusting panels, but it does support left, right, spacebar, and escape for some accessibility options. Finally the chat app is a fully functional messaging system that only I can read. It supports infinite rooms for as many guest users want to send me a message, and is capable of saving to logs so I should be able to read them after the fact. I have a lot of one off ideas I want to host on the main page, since it only loads what it needs. Stay Tuned!
                     </p>
                     <a href="https://github.com/Auxnon/NewWave" class="code-link"></a>
@@ -47,7 +48,8 @@
                 <h2>Social Game - experimental online board game</h2>
                 <p>
                     This was an extremely ambitious project. As mentioned before, the server hosts an instance of Cannon.js that keeps synced up with local user instances of Cannon.js in order to replicate a multiplayer physics sandbox experience on a hexagonal grid game platform. The current results are less then ideal as the updates are not constant in order to not strain the server. But aside the occasional physics artifacts it has the ability to 'store' 3D items into the DOM, send messages including 16x16 images, modify the terrain on the fly, and user authentication and administration. There was also a D&D character sheet implemented that saves into a sqlite3 database. Everything is very WIP. An "infinite" terrain system is in the works, as well as height maps, inverse kinematics animation systems, better environmental GLSL effects, and waypointing. Like i said, extremely ambitious. But I'm super happy with it so far!
-
+                </p>
+                <p>
                     You can try one of the test users, their names all start with "B", login is just 1234. Don't crash it 😉
                 </p>
                 <a href="https://dev.makeavoy.com/" class="site-link"></a>
@@ -96,6 +98,29 @@
                 </article>
             </section>
             <section>
+                <img src="./assets/music.png" alt="">
+                <article>
+                    <h2>Round Music Player (WIP)</h2>
+                    <p>
+                        A little angular project for a unique music player design. The the tracker bar is a live waveform visualizer. it's somewhat artificial as it animates with various degrees of seveirty based on on current sound bytes amplitude. Eventually I'll just render the actual waveform properly. The data is all there it just needs the correct math. I would also like to add more music options and maybe make it a dedicate music player (Spotify API? Desktop Electron app? Who knows!)
+                    </p>
+                    <a href="https://makeavoy.com/music/" class="site-link"></a>
+                    <a href="https://github.com/Auxnon/RoundMusic" class="code-link"></a>
+                    
+                </article>
+            </section>
+            <section>
+                <img src="./assets/scrappy.png" alt="">
+                <article>
+                    <h2>Scrappy (WIP)</h2>
+                    <p>
+                        A goofy little web scraper with the intent of taking a simple 16x16 screenshot of the entire internet and displaying a wall or wave of the entire thing. It's more of an ambitious art project then anything. Currently working on a more efficient means then just running puppeteer threads, but may settle with delegating tasks to seperate servers
+                    </p>
+                    <a href="https://makeavoy.com/scrappy/" class="site-link"></a>
+                    <a href="https://github.com/Auxnon/Scrappy" class="code-link"></a>
+                </article>
+            </section>
+            <section>
                 <video src="./assets/get.mp4#t=0.001" muted loop playsinline preload="=metadata"></video>
                 <article>
                     <h2>Get</h2>
@@ -122,8 +147,27 @@
                     <a href="https://github.com/Auxnon/rust-game" class="code-link"></a>
                 </article>
             </section>
+            <section>
+                <img src="./assets/interval.jpg"></img>
+                <article>
+                    <h2>Interval</h2>
+                    <p>This ancient project really dates me. This is the best picture I could find. I attempted to make a kickstarter almost a decade ago for a Java game i had been working on. Needless to say it failed due to a variety of reasons. 1. The project scope was too ambitious, tying into a massive timeline array system. It worked but there was no way to make enough content to fit such a system. Also the fact it was build on LWJGL java library was pretty nuts since Java games never worked well (even Minecraft had massive performance issues).</p>
+
+                    <p>
+                    Even still I'd love to return to it someday. Due to it's reliance on Java it'd need to be ported to something much better. I've also learned so much about UI since then I'll have to rewrite most of it.</p>
+                    <a href="https://www.kickstarter.com/projects/aninon/interval/description" class="site-link"></a>
+                </article>
+            </section>
+            <section>
+                <img src="./assets/xmas.png" alt="">
+                <article>
+                    <h2>X-mas</h2>
+                    <p><b>[Flashing Lights Warning]</b> I can only use this once a year</p>
+                    <a href="https://makeavoy.com/xmas/" class="site-link"></a>
+                </article>
+            </section>
             
         </div>
     </div>
-    <div id="closeButton"></div>
-</main><script src="../runtime.352787ff7764c8330a05.js"></script><script src="../main.c4f2a630465478c29d87.js"></script>
+    <div id="close-button"></div>
+</main><script src="../runtime.29b39b6a823b1893e0a9.js"></script><script src="../main.c4f2a630465478c29d87.js"></script>
