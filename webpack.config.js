@@ -1,4 +1,4 @@
- const path = require('path');
+const path = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SitemapPlugin = require('sitemap-webpack-plugin').default;
@@ -34,7 +34,7 @@ module.exports = (env,argv) => {
 	console.log("dev mode is "+devMode+" "+argv.mode);
 
 return {
-  mode: 'development', //'production',
+  mode: 'production', //'production',
   entry: './src/Main.js',
   plugins:[
   	new CleanWebpackPlugin({ 

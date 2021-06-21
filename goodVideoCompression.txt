@@ -1,1 +1,15 @@
 ffmpeg -i stomp.mov -vcodec h264 -filter:v "scale=720:-1,fps=24" -acodec mp2 output8.mp4
+
+
+
+ffmpeg -i *.mov -vcodec h264 -filter:v "scale=720:-1,fps=24" -acodec mp2 output8.mp4
+
+
+for i in *.mov;
+  do name=`echo "$i" | cut -d'.' -f1`
+  echo "$name"
+  ffmpeg -i "$i" -vcodec h264 -filter:v "scale=720:-2,fps=24" -acodec mp2 "../out/${name}.mp4"
+done
+
+
+
