@@ -226,6 +226,8 @@ section {
     left: 50%;
     transform: translate(-50%, -50%);
     background: #000c;
+
+    overscroll-behavior: contain;
 }
 
 section::before {
