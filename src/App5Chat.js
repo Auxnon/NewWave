@@ -280,7 +280,7 @@ function addBubble(s, player, timestamp) {
     setTimeout(function(){
         chatBubble.innerHTML=s;
     },(s.length*0.03+2)*1000)*/
-    chatBubble.innerHTML += s;
+    chatBubble.innerText += s;
 
 
     let chatRow = document.createElement('div');
@@ -309,7 +309,7 @@ function addBubble(s, player, timestamp) {
     } else {
         let nameTag = document.createElement('p');
         nameTag.classList.add('chat-nametag');
-        nameTag.innerHTML = player.username;
+        nameTag.innerText = player.username;
         let tagRow = document.createElement('div');
         if (player.username == Online.getUsername())
             tagRow.style.textAlign = 'right'
