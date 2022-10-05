@@ -30,15 +30,15 @@
   "homepage": "https://github.com/Auxnon/NewWave#readme",
   "dependencies": {
     "colors": "^1.4.0",
-    "connect-sqlite3": "^0.9.11",
+    "connect-sqlite3": "^0.9.12",
     "cookie-parser": "^1.4.5",
     "crypto": "^1.0.1",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
-    "passport": "^0.4.1",
+    "passport": "^0.6.0",
     "passport-local": "^1.0.0",
-    "sequelize": "^6.5.1",
-    "socket.io": "^4.0.0",
-    "sqlite3": "^5.0.2"
+    "sequelize": "^6.21.2",
+    "socket.io": "^4.2.0",
+    "sqlite3": "^5.0.3"
   }
 }
